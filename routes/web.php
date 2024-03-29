@@ -16,11 +16,9 @@ use App\Http\Controllers\ModuleMapping;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 Route::get('/', function () {
     return view('welcome');
 });
-
 
 //Start Modules HTTP requests 
 route::get('modules',[moduleController::class , 'AllModules'])->name('modules');
@@ -40,11 +38,9 @@ route::get('roles/edit/{id}',[RoleMaster::class ,'EditRole']);
 route::post('roles/update/{id}',[RoleMaster::class ,'UpdateRole']);
 //End Roles HTTP requests 
 
-
 //Start Users HTTP requests 
 route::get('Users',[UserList::class , 'AllUser'])->name('users');
 //End Users HTTP requests 
-
 
 //Start Admin Userlist HTTP requests 
 route::get('Admin/Userlist',[AdminUserlist::class , 'AllUser'])->name('admin.userlist');

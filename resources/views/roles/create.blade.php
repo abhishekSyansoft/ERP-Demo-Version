@@ -1,4 +1,4 @@
-@extends('admin.layout.header')
+@include('admin.layout.header')
 @include('admin.layout.navbar')
 
 <div class="main-panel">
@@ -34,7 +34,7 @@
                             </div>
                             <div class="col-lg-6">
                             <button class="btn btn-primary btn-md">Submit</button>
-                            <button class="btn btn-success btn-md" onClick="back();">Back</button>
+                            <a class="btn btn-success btn-md" href="{{route('back')}}">Back</a>
                             </div>
                         <div>  
                     </form>
@@ -52,4 +52,4 @@
 
 
 
-@extends('admin.layout.footer')
+@include('admin.layout.footer')

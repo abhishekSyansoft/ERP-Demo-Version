@@ -1,4 +1,4 @@
-@extends('admin.layout.header')
+@include('admin.layout.header')
 @include('admin.layout.navbar')
 
 <div class="main-panel">
@@ -18,7 +18,7 @@
               </nav>
             </div>
             <div class="row">
-              <div class="col-lg-8 grid-margin stretch-card" style="margin:auto;">
+              <div class="col-lg-12 grid-margin stretch-card" style="margin:auto;">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Edit created role</h4>
@@ -49,6 +49,6 @@
 </div>
 </div>
           <!-- content-wrapper ends -->
-@extends('admin.layout.footer')
+@include('admin.layout.footer')
 
 

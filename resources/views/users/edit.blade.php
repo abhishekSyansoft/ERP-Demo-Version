@@ -1,6 +1,4 @@
-@extends('admin.layout.header')
-@include('admin.layout.navbar')
-
+@include('admin.layout.header')
 <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
@@ -18,50 +16,49 @@
               </nav>
             </div>
 
-            <div class="col-9 grid-margin stretch-card" style="margin:auto;">
+            <div class="col-12 grid-margin stretch-card" style="margin:auto;">
             <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Edit User</h4>
                     <hr>
                     <!-- <p class="card-description"> Basic form elements </p> -->
-                    <form class="forms-sample" method="POST" action="{{ url('User/Update/'.$users->id)}}">
+                    <form class="forms-sample row" method="POST" action="{{ url('user/update/'.$users->id)}}">
                     @csrf
-                      <div class="form-group">
+                      <div class="form-group col-md-6">
                         <label for="name">Name</label>
                         <input type="text" name="name" class="form-control" id="Name" placeholder="Enter your name" value="{{$users->name}}">
                       </div>
-                      <div class="form-group">
+                      <div class="form-group col-md-6">
                         <label for="email">Email address</label>
                         <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" value="{{$users->email}}">
                       </div>
 
-                      <div class="form-group">
+                      <div class="form-group col-md-6">
                         <label for="password">Password</label>
                         <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password">
                       </div>
 
-                      <div class="form-group">
+                      <div class="form-group col-md-6">
                         <label for="password_confirmation">Confirm Password</label>
                         <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="Confirm your password">
                       </div>
 
-                      <div class="form-group">
+                      <div class="form-group col-md-6">
                         <label for="admin">Role</label>
-                        <select class="form-control" name="admin" id="exampleSelectGender">
-                                <option value="">Select</option>
-                                <option value="0">User</option>
-                                <option value="1">Admin</option>
-                           
+                        <select class="form-control p-3" name="admin" id="exampleSelectGender" style="color:black;">
+                            <option value="1" {{ $users->admin == 1 ? 'selected' : '' }}>Select</option>
+                            <option value="2" {{ $users->admin == 2 ? 'selected' : '' }}>User</option>
+                            <option value="3" {{ $users->admin == 3 ? 'selected' : '' }}>Admin</option>
                         </select>
                       </div>
 
-                      <div class="form-group">
+                      <div class="form-group col-md-6">
                         <label for="designation">Desination</label>
                         <input type="designation" name="designation" class="form-control" id="designation" placeholder="Designation" value="{{$users->designation}}">
                       </div>
+                      <div class="form-group">
                       <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
-                      <a class="btn btn-gradient-warning me-2" onClick="back();">Back</a>
-                      <button class="btn btn-light">Cancel</button>
+                      </div>
                     </form>
                   </div>
                 </div>
@@ -69,8 +66,6 @@
         </div>
     </div>          
 </div>
-          <!-- content-wrapper ends -->
+<!-- content-wrapper ends -->
 
-
-
-@extends('admin.layout.footer')
+@include('admin.layout.footer')

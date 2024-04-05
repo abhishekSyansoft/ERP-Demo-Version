@@ -27,7 +27,7 @@
             <div class="col-lg-4 mx-auto">
               <div class="auth-form-light text-left p-5">
                 <div class="brand-logo">
-                  <img src="{{ asset('backend/images/logo.svg') }}">
+                  <img src="{{ asset('backend/images/company_logo.png') }}">
                 </div>
                 <hr>
                 <h4>Hello! let's get started</h4>
@@ -57,11 +57,11 @@
                     </a>
                     @endif
                   </div>
-                  <div class="mb-2">
+                  <!-- <div class="mb-2">
                     <button type="button" class="btn btn-block btn-facebook auth-form-btn">
                       <i class="mdi mdi-facebook me-2"></i>Connect using facebook </button>
-                  </div>
-                  <div class="text-center mt-4 font-weight-light"> Don't have an account? <a href="{{ route('register')}}" class="text-primary">Create</a>
+                  </div> -->
+                  <!-- <div class="text-center mt-4 font-weight-light"> Don't have an account? <a href="{{ route('register')}}" class="text-primary">Create</a> -->
                   </div>
                 </form>
               </div>

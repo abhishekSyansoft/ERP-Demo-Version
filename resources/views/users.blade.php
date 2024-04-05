@@ -1,4 +1,4 @@
-@extends('admin.layout.header')
+@include('admin.layout.header')
 @include('admin.layout.navbar')
    <div class="main-panel">
           <div class="content-wrapper">
@@ -18,7 +18,7 @@
             </div>
               
             <div class="row">
-              <div class="col-md-8" style="margin:auto;">
+              <div class="col-md-12" style="margin:auto;">
                 <div class="card">
                   <div class="card-body">
                     <div class="clearfix">
@@ -32,9 +32,10 @@
                             <th>Username</th>
                             <th>User Email</th>
                         </tr>
+                        @php($i=1)
                         @foreach($users as $user)
                         <tr>
-                            <td>{{$user->id}}</td>
+                            <td>{{$i++}}</td>
                             <td>{{$user->name}}</td>
                             <td>{{$user->email}}</td>
                         </tr>
@@ -57,4 +58,4 @@
         </div>
         <!-- main-panel ends -->
       </div>
-      @extends('admin.layout.footer')
+@include('admin.layout.footer')

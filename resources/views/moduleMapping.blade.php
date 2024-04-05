@@ -1,4 +1,4 @@
-@extends('admin.layout.header')
+@include('admin.layout.header')
 @include('admin.layout.navbar')
    <div class="main-panel">
           <div class="content-wrapper">
@@ -18,7 +18,7 @@
             </div>
               
             <div class="row">
-              <div class="col-md-8" style="margin:auto;">
+              <div class="col-md-12" style="margin:auto;">
                 <div class="card">
                   <div class="card-body">
                     <div class="clearfix">
@@ -29,21 +29,25 @@
                     <table class="table table-hover table-bordered mt-2">
                         <tr>
                             <th>Id</th>
+                            <th>Mapping Id</th>
                             <th>Module Name</th>
                             <th>Role</th>
                             <th>Action</th>
                         </tr>
+                        @php($i=1)
                        @foreach($details as $detail)
                         <tr>
+                            <td>{{$i++}}</td>
                             <td>{{$detail->mappingId}}</td>
                             <td>{{$detail->modulename}}</td>
                             <td>{{$detail->rolename}}</td>
-                            <th>
+                            <td>
                                 <a href="{{url('Module/Delete/'.$detail->mappingId)}}" class="btn btn-sm btn-danger">Delete</a>
-                            </th>
+                            </td>
                         </tr>
                         @endforeach
                     </table>
+                    {{$details->links()}}
                   </div>
                 </div>
               </div>
@@ -61,4 +65,4 @@
         </div>
         <!-- main-panel ends -->
       </div>
-      @extends('admin.layout.footer')
+@include('admin.layout.footer')

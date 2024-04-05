@@ -1,4 +1,4 @@
-@extends('admin.layout.header')
+@include('admin.layout.header')
 @include('admin.layout.navbar')
    <div class="main-panel">
           <div class="content-wrapper">
@@ -18,7 +18,7 @@
             </div>
               
             <div class="row">
-              <div class="col-md-8" style="margin:auto;">
+              <div class="col-md-12" style="margin:auto;">
                 <div class="card">
                   <div class="card-body">
                     <div class="clearfix">
@@ -28,18 +28,21 @@
                     </div>
                     <table class="table table-hover table-bordered mt-2">
                         <tr>
-                            <th>Id</th>
+                            <th>S. No.</th>
+                            <th>Role Id</th>
                             <th>Role Name</th>
                             <th>Action</th>
                         </tr>
+                        @php($i=1)
                         @foreach($roles as $role)
                         <tr>
+                            <td>{{$i++}}</td>
                             <td>{{$role->id}}</td>
                             <td>{{$role->name}}</td>
-                            <th>
+                            <td>
                                 <a href="{{ url('roles/edit/'.$role->id)}}" class="btn btn-sm btn-info">Edit</a>
                                 <a href="{{ url('roles/delete/'.$role->id)}}" class="btn btn-sm btn-danger">Delete</a>
-                            </th>
+                            </td>
                         </tr>
                         @endforeach
                     </table>
@@ -60,4 +63,4 @@
         </div>
         <!-- main-panel ends -->
       </div>
-      @extends('admin.layout.footer')
+@include('admin.layout.footer')

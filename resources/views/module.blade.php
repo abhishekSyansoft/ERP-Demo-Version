@@ -1,4 +1,4 @@
-@extends('admin.layout.header')
+@include('admin.layout.header')
 @include('admin.layout.navbar')
    <div class="main-panel">
           <div class="content-wrapper">
@@ -18,7 +18,7 @@
             </div>
               
             <div class="row">
-              <div class="col-md-8" style="margin:auto;">
+              <div class="col-md-12" style="margin:auto;">
                 <div class="card">
                   <div class="card-body">
                     <div class="clearfix">
@@ -28,25 +28,32 @@
                     </div>
                     <table class="table table-hover table-bordered mt-2">
                         <tr>
-                            <th>Id</th>
+                            <th>S No.</th>
+                            <!-- <th>Module Id</th> -->
+                            <th>Parent_module id</th>
                             <th>Module Name</th>
                             <th>Url</th>
                             <th>Icon Name</th>
+                            <th>List Order</th>
                             <th>Action</th>
                         </tr>
+                        @php($i=1)
                         @foreach($modules as $mod)
                         <tr>
-                            <td>{{$mod->id}}</td>
+                            <td>{{$i++}}</td>
+                            <td>{{$mod->parent_id}}</td>
                             <td>{{$mod->name}}</td>
                             <td>{{$mod->url}}</td>
                             <td>{{$mod->mdi_icon}}</td>
-                            <th>
+                            <td>{{$mod->order}}</td>
+                            <td>
                                 <a href="{{ url('modules/edit/'.$mod->id)}}" class="btn btn-sm btn-info">Edit</a>
                                 <a href="{{ url('modules/delete/'.$mod->id)}}" class="btn btn-sm btn-danger">Delete</a>
-                            </th>
+                            </td>
                         </tr>
                         @endforeach
                     </table>
+                    {{ $modules->links() }}
                   </div>
                 </div>
               </div>
@@ -64,4 +71,4 @@
         </div>
         <!-- main-panel ends -->
       </div>
-      @extends('admin.layout.footer')
+@include('admin.layout.footer')

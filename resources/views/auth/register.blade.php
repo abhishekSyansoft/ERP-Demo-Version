@@ -32,11 +32,15 @@
             <div class="col-lg-4 mx-auto">
               <div class="auth-form-light text-left p-5">
                 <div class="brand-logo">
-                  <img src="{{ asset('backend/images/logo.svg')}}">
+                  <img src="{{ asset('backend/images/company_logo.png')}}">
+                  <hr>
+                  <h6>New here?</h6>
+                  <hp class="font-weight-light">Signing up is easy. It only takes a few steps</p>
                 </div>
-                <div style="border:1px solid grey" class="colorCheck p-2 mb-3">
-                <h4>New here?</h4>
-                <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6>
+                <hr>
+                <div class="p-2 mb-3">
+                <!-- <h4>New here?</h4> -->
+                <!-- <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6> -->
                 </div>
                 <form method="POST" action="{{ route('register') }}">
                 @csrf

@@ -1,4 +1,4 @@
-@extends('admin.layout.header')
+@include('admin.layout.header')
 @include('admin.layout.navbar')
 
 <div class="main-panel">
@@ -18,7 +18,7 @@
               </nav>
             </div>
             <div class="row">
-              <div class="col-lg-8 grid-margin stretch-card" style="margin:auto;">
+              <div class="col-lg-12 grid-margin stretch-card" style="margin:auto;">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Create a new module</h4>
@@ -30,23 +30,38 @@
                       <div class="row">
                         <div class="col-md-12 row">
                             <div class="form-group col-lg-6">
-                                <label for="module" class="form-check-label"> Module Name </label>
+                                <label for="module" class="form-check-label"> Module Name <sup style="color:red;font-size:15px;">*</sup></label>
                                 <input type="text" name="name" id="name" placeholder="Add new module enter module name" class="form-control">
                             </div>
                             <div class="form-group col-lg-6">
-                                <label for="url" class="form-check-label"> Url </label>
+                                <label for="url" class="form-check-label"> Url <sup style="color:red;font-size:15px;">*</sup></label>
                                 <input type="text" name="url" id="url" placeholder="Add Url for routing" class="form-control">
                             </div>
                             <div class="form-group col-lg-6">
-                                <label for="mdi_icon" class="form-check-label"> Mdi Icon </label>
+                                <label for="mdi_icon" class="form-check-label"> Mdi Icon <sup style="color:red;font-size:15px;">*</sup></label>
                                 <input type="text" name="mdi_icon" id="mdi_icon" placeholder="Add Mdi Icon" class="form-control">
                             </div>
-                            <div class="col-lg-12">
-                            <button class="btn btn-primary btn-md">Submit</button>
-                            <button class="btn btn-success btn-md" onClick="back();">Back</button>
+                            <div class="form-group col-lg-6">
+                                <label for="order" class="form-check-label"> Module Listing Order <sup style="color:red;font-size:15px;">*</sup></label>
+                                <input type="text" name="order" id="order" placeholder="Add order no." class="form-control">
                             </div>
+                            <div class="form-group col-lg-6">
+                                <label for="parent_module" class="form-check-label"> Select Parent Module <sup style="color:red;font-size:15px;">*</sup></label>
+                                <select name="parent_module" id="parent_module" class="form-control p-3" placeholder="Select parent module">
+                                    @foreach($parents as $mod)
+                                      <option value="{{$mod->id}}">{{$mod->parent_module}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-12">
+                            <button class="btn btn-primary btn-md">Submit</button>                            </div>
                         <div>  
                     </form>
+                    <!-- <hr> -->
+                    <!-- <form class="col" style="float:right;margin-top:-42px;" method="POST" action="{{route('back')}}">
+                      @csrf
+                      <button type='submit' name="submit" class="btn btn-info btn-md">Go Back</button>
+                    </form> -->
                   </div>
                 </div>
               </div>
@@ -61,4 +76,4 @@
 
 
 
-@extends('admin.layout.footer')
+@include('admin.layout.footer')

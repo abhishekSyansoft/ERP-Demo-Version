@@ -1,3 +1,4 @@
+<x-app-layout>
 <x-form-section submit="updatePassword">
     <x-slot name="title">
         {{ __('Update Password') }}
@@ -37,3 +38,4 @@
         </x-button>
     </x-slot>
 </x-form-section>
+</x-app-layout>

@@ -1,4 +1,4 @@
-@extends('admin.layout.header')
+@include('admin.layout.header')
 @include('admin.layout.navbar')
 
 <div class="main-panel">
@@ -65,4 +65,4 @@
 
 
 
-@extends('admin.layout.footer')
+@include('admin.layout.footer')

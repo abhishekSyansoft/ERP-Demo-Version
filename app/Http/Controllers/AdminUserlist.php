@@ -12,14 +12,14 @@ class AdminUserlist extends Controller
     public function AllUser(){
         // $users = User::all();
         $user = User::join('roles', 'roles.id', '=', 'users.admin')
-        ->get(['roles.*','roles.name as role','users.name as username','users.email as email','users.designation as designation']);
+        ->get(['roles.*','roles.name as role','users.name as username','users.id as userid','users.email as email','users.designation as designation']);
         return view("admin-userlist",compact('user'));
     }
 
     public function DeleteUser($id){
         $user = User::findOrFail($id);
         $user->delete();
-        return redirect()->back()->with("success","User deleted successfully");
+        return redirect()->route('admin-userlist')->with("delete","User deleted successfully");
     }
 
     public function CreateUser(){
@@ -46,7 +46,7 @@ class AdminUserlist extends Controller
         'designation'=> $request->designation
        ]);
 
-        return redirect()->back()->with('success','User created successfully');
+        return redirect()->route('admin-userlist')->with('success',$request->name.' as user created successfully');
     }
 
 
@@ -77,6 +77,6 @@ class AdminUserlist extends Controller
          'designation'=> $request->designation
         ]);
  
-         return redirect()->back()->with('success','User updated successfully');
+         return redirect()->route('admin-userlist')->with('success','User updated successfully');
      }
 }

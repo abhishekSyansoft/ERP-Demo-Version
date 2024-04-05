@@ -1,4 +1,4 @@
-@extends('admin.layout.header')
+@include('admin.layout.header')
 @include('admin.layout.navbar', ['modules' => $modules = App\Models\moduleMaster::all()])
    <div class="main-panel">
           <div class="content-wrapper">
@@ -333,4 +333,4 @@
         </div>
         <!-- main-panel ends -->
       </div>
-      @extends('admin.layout.footer')
+@include('admin.layout.footer')

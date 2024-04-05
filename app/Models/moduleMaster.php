@@ -12,7 +12,9 @@ class moduleMaster extends Model
     protected $fillable = [
         'id',
         'name',
+        'parent_id',
         'url',
-        'mdi_icon'
+        'mdi_icon',
+        'order',
     ];
 }

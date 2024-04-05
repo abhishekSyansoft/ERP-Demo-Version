@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('module_masters', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('parent_id');
             $table->string('url');
             $table->string('mdi_icon');
+            $table->integer('order');
             $table->timestamps();
         });
     }

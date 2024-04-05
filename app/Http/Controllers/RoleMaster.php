@@ -27,13 +27,13 @@ class RoleMaster extends Controller
             "name"=> $request->name,
             "created_at"=> Carbon::now(),
         ]);
-        return redirect()->back()->with('message','Role Created SuccessFully');
+        return redirect()->route('roles')->with('success','Role Created SuccessFully');
     }
 
     public function DeleteRole($id){
         $role = Role::findOrFail($id);
         $role->delete();
-        return redirect()->back()->with('message','Role Deleted Successfully');
+        return redirect()->route('roles')->with('delete','Role Deleted Successfully');
     }
 
     public function EditRole($id){
@@ -49,7 +49,7 @@ class RoleMaster extends Controller
         $module = Role::find($id)->update([
             'name'=> $request->name,
         ]);
-        return redirect()->back()->with('message','Role Updated Successfully');
+        return redirect()->route('roles')->with('success','Role Updated Successfully');
     }
     
 }

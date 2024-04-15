@@ -16,6 +16,9 @@
                 </ul>
               </nav>
             </div>
+            <div>
+                        <div>
+                        <div>
             <div class="row">
               <div class="col-lg-12 grid-margin stretch-card" style="margin:auto;">
                 <div class="card">
@@ -72,7 +75,7 @@
 
                     <div id="bulk" class="tabcontent">
                     <h3>Bulk Upload</h3>
-                      <form action="{{ route('upload') }}" method="post" enctype="multipart/form-data" class="row">
+                      <form action="{{ route('upload-category') }}" method="post" enctype="multipart/form-data" class="row">
                           @csrf
                           <div class="form-group col-md-6">
                             <label for="file">Upload File <span style="color:red;">( .csv & .txt and .xlsx files only)<sup style="color:red;font-size:15px;">*</sup></span></label>

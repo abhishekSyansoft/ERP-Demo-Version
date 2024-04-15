@@ -4,7 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Purple Admin</title>
+    <title>SyanSoft Solutioning For Innovator</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{asset('backend/vendors/mdi/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('backend/vendors/css/vendor.bundle.base.css')}}">
@@ -14,19 +14,26 @@
     <!-- inject:css -->
     {{-- toastr --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+
 
     <!-- Include jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{asset('backend/css/style.css')}}">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="{{asset('backend/images/favicon.ico')}}" />
+    <link rel="shortcut icon" href="{{asset('backend/images/company_mini_logo.png')}}" />
   </head>
+
  <style>
   .card{
     overflow-x: auto;
     overflow-y: hidden;
+    margin:auto;
   }
+  /* .card-body{
+    margin:auto;
+  } */
   /* Hide scrollbar by default */
   ::-webkit-scrollbar {
         width: 0.5em;
@@ -41,17 +48,39 @@
     padding: 10px 10px;
   }
 
-  
-  
-  
+  .pagination{
+    margin-top:20px;
+  }
+
+  .pagination li{
+    border-radius:0px;
+    margin: 5px;
+  }
+  .pagination li a{
+    padding: 5px 40px;
+  }
+
+  .pagination li span{
+    padding: 5px 40px;
+  }
+  .custom-modal-dialog {
+    max-width: 1100px; /* Define custom width */
+    background-color: white; /* Apply custom background color */
+  }
+
+  @media (min-width: 992px) {
+    .modal-xl {
+      max-width: 1200px; /* Define extra-large width for larger screens */
+    }
+  }
   </style>
   <body>
     <div class="container-scroller">
        <!-- partial:partials/_navbar.html -->
  <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-          <a class="navbar-brand brand-logo" href="index.html"><img src="{{asset('backend/images/company_logo.png')}}" style="object-fit:contain;mix-blend-mode:darken;width:150px;height:70px;" alt="logo" /></a>
-          <a class="navbar-brand brand-logo-mini" href="index.html"><img src="{{asset('backend/images/logo-mini.svg')}}" alt="logo" /></a>
+          <a class="navbar-brand brand-logo" href="{{asset('dashboard')}}"><img src="{{asset('backend/images/company_logo.png')}}" style="object-fit:contain;mix-blend-mode:darken;width:150px;height:70px;" alt="logo" /></a>
+          <a class="navbar-brand brand-logo-mini" href="{{asset('dashboard')}}"><img src="{{asset('backend/images/company_mini_logo.png')}}" alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -70,7 +99,7 @@
           <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item nav-profile dropdown">
               <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                @if (!Laravel\Jetstream\Jetstream::managesProfilePhotos())
                 <div class="nav-profile-img">
                     <img src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}">
                     <span class="availability-status online"></span>
@@ -222,27 +251,26 @@
                 <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
               </a>
             </li>
-           
             @foreach($parents as $parent)
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#R{{$parent->id}}" aria-expanded="false" aria-controls="R{{$parent->id}}">
-              <span class="menu-title"><i class="mdi {{$parent->parent_icon}} menu-icon"></i>&nbsp;&nbsp;&nbsp;{{$parent->parent_module}}</span>
-                <i class="menu-arrow"></i>
+                
+              <span class="menu-title">{{$parent->parent_module}}</span>
+              <i class="menu-arrow"></i>
+              <i class="mdi {{$parent->parent_icon}} menu-icon"></i>
               </a>
               <div class="collapse" id="R{{$parent->id}}">
                 <ul class="nav flex-column sub-menu">
-                  @foreach($modules as $mod)
+                @foreach($modules as $mod)
                   @if($mod->parent_id == $parent->id)
-                   <!-- <span>{{$mod->parent_id}}</span>
-                    <span>{{$parent->id}}</span> -->
-                  <li class="nav-item"><a class="nav-link" href="http://127.0.0.1:8000/{{$mod->url}}"> <span><i class="mdi {{$mod->mdi_icon}} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span>{{$mod->name}}</a></li>
-                  <!-- <span>{{$mod->url}}</span> -->
+                  <li class="nav-item"> <a class="nav-link" href="http://127.0.0.1:8000/{{$mod->url}}"> <span><i class="mdi {{$mod->mdi_icon}} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span>{{$mod->name}}</a></li>
                   @endif
                   @endforeach
                 </ul>
               </div>
             </li>
             @endforeach
+           
           </ul>
         </nav>
         <!-- partial -->

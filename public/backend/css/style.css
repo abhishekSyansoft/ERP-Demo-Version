@@ -14110,7 +14110,7 @@ dl {
   background: #ffffff;
   font-family: "ubuntu-regular", sans-serif;
   padding: 0;
-  width: 260px;
+  width: 360px;
   z-index: 11;
   transition: width 0.25s ease, background 0.25s ease;
   -webkit-transition: width 0.25s ease, background 0.25s ease;
@@ -14276,7 +14276,7 @@ dl {
     top: 70px;
     bottom: 0;
     overflow: auto;
-    right: -260px;
+    right: -360px;
     -webkit-transition: all 0.25s ease-out;
     transition: all 0.25s ease-out; }
     .sidebar-offcanvas.active {
@@ -14425,7 +14425,7 @@ dl {
 .main-panel {
   -webkit-transition: width 0.25s ease, margin 0.25s ease;
   transition: width 0.25s ease, margin 0.25s ease;
-  width: calc(100% - 260px);
+  width: calc(100% - 380px);
   min-height: calc(100vh - 70px);
   display: -webkit-box;
   display: -ms-flexbox;

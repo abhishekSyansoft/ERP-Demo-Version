@@ -1,5 +1,5 @@
 @include('admin.layout.header')
-<div class="main-panel">
+      <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
               <h3 class="page-title">
@@ -15,6 +15,9 @@
                 </ul>
               </nav>
             </div>
+          <div>
+        <div>
+      <!-- <div> -->
 
             <div class="col-12 grid-margin stretch-card" style="margin:auto;">
             <div class="card">
@@ -67,6 +70,5 @@
         </div>
     </div>          
 </div>
-          <!-- content-wrapper ends -->
-          
+          <!-- content-wrapper ends -->         
 @include('admin.layout.footer')

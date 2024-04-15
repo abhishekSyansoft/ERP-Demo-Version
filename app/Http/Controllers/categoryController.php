@@ -37,7 +37,7 @@ class categoryController extends Controller
     
         return redirect()
         ->route('category')
-        ->with("success",$request->category1."Category Added successfully");
+        ->with("success",$request->category1." Category Added successfully");
        }
 
        public function AddSubCategory(Request $request){

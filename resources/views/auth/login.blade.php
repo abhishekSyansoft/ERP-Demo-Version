@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Purple Admin</title>
+    <title>SyanSoft Solutioning For Innovator</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{ asset('backend/vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/vendors/css/vendor.bundle.base.css') }}">
@@ -17,14 +17,23 @@
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{ asset('backend/css/style.css') }}">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="{{ asset('backend/images/favicon.icon')}}" />
+    <link rel="shortcut icon" href="{{asset('backend/images/company_mini_logo.png')}}" />
   </head>
+  <style>
+   .login_back{
+    background:url("/backend/images/company_mini_logo.png") center 80% no-repeat;
+    background-size:contain;
+    /* mix-blend-mode:darken; */
+   }
+  </style>
   <body>
     <div class="container-scroller">
       <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper d-flex align-items-center auth">
           <div class="row flex-grow">
-            <div class="col-lg-4 mx-auto">
+          <div class="col-xl-7 col-lg-6 col-md-4 login_back">
+          </div>
+            <div class="col-xl-5 col-lg-6 col-md-8">
               <div class="auth-form-light text-left p-5">
                 <div class="brand-logo">
                   <img src="{{ asset('backend/images/company_logo.png') }}">
@@ -72,6 +81,14 @@
       </div>
       <!-- page-body-wrapper ends -->
     </div>
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+      <div class="container-fluid d-flex justify-content-between">
+        <span class="text-muted d-block text-center text-sm-start d-sm-inline-block"><span><img style="mix-blend-mode:darken;object-fit:contain;height:20px;width:20px;" src="{{asset('backend/images/company_mini_logo.png')}}"></span>&nbsp;&nbsp;&nbsp;Copyright © SyanSoft 2024</span>
+        <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"><a href="" target="_blank"><img style="mix-blend-mode:darken;object-fit:contain;height:40px;width:80px;" src="{{asset('backend/images/company_mini_logo.png')}}"><img style="mix-blend-mode:darken;object-fit:contain;height:40px;width:80px;" src="{{asset('backend/images/company_logo_name.png')}}"></a></span>
+      </div>
+    </footer>
+    <!-- partial -->
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="{{ asset('backendvendors/js/vendor.bundle.base.js')}}"></script>

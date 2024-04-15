@@ -19,7 +19,8 @@ class ProductsController extends Controller
         $products = Products::join('categories', 'categories.id', '=', 'products.category_id')
               ->select('categories.category_name as category_name','categories.id as category_id', 'products.product_name as products_name','products.id as product_id','products.id as sub_cartegoryId','products.*')
               ->paginate(5);
-        return view("sub-category",compact("products"));
+        $productCount = DB::table('products')->count();
+        return view("sub-category",compact("products","productCount"));
     }
 
     public function CreateItems(){
@@ -107,7 +108,10 @@ class ProductsController extends Controller
     public function DeleteItem($id){
         $subCat = Products::findOrFail($id);
         $name = $subCat->product_name;
-        $img = $subCat->product_image;
+        // $img = $subCat->product_image;
+        $oldImagePath = $subCat->product_image;
+        // Delete the old image file from storage
+        Storage::disk('public')->delete($oldImagePath);
         $subCat->delete();
         return redirect()->route('products')->with('delete',$name.' Deleted Successfully');
     }
@@ -169,7 +173,7 @@ class ProductsController extends Controller
                     // Save the image to storage
                     Storage::disk('public')->put($imagePath, $imageContents);
 
-                    $category_name = $data[0];
+                    $category_name = trim($data[0]);
     
                     $category_id = DB::table('categories')->where('category_name', $category_name)->value('id');
         
@@ -208,7 +212,7 @@ class ProductsController extends Controller
             // Rollback transaction if any error occurs
             DB::rollback();
     
-            return redirect()->back()->with('error', 'Error uploading Products File');
+            return redirect()->back()->with('error', 'Error uploading Products File'. $e->getMessage());
         }
     }
     public function UpdateProduct(Request $request, $id)

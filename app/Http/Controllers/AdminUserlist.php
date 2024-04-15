@@ -46,7 +46,7 @@ class AdminUserlist extends Controller
         'designation'=> $request->designation
        ]);
 
-        return redirect()->route('admin-userlist')->with('success',$request->name.' as user created successfully');
+        return redirect()->back()->with('success',$request->name.' as user created successfully');
     }
 
 

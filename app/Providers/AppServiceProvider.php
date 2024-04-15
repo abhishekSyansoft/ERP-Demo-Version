@@ -36,10 +36,10 @@ class AppServiceProvider extends ServiceProvider
         );
          });
 
-         view()->composer('admin.layout.header', function($view) {
-            $view->with('parents',$parents = DB::table('parent_modules')
-            ->get()
-        );
+            view()->composer('admin.layout.header', function($view) {
+                $view->with('parents',$parents = DB::table('parent_modules')
+                ->get()
+            );
          });
     }
 

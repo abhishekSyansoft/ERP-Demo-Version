@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Procurement;
 
 use App\Http\Controllers\Controller;
+use App\Models\supplier;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -27,9 +28,10 @@ class PRController extends Controller
                 ->select('p_r_s.*', 'users.name as username')
                 ->get();
                 $users = User::all();
+                $suppliers = supplier::all();
 
                 // Return the view with the list of suppliers
-                return view("supply.procurement.pr.pr",compact("pr",'users'));
+                return view("supply.procurement.pr.pr",compact("pr",'users','suppliers'));
             } catch (\Exception $e) {
                 // Log the error or handle it in any other appropriate way
                 // For example, you can return an error view or redirect with an error message
@@ -51,12 +53,22 @@ class PRController extends Controller
                
                     $validatData = $request->validate([
                         "user_id"=> "required",
+                        "item"=> "required",
+                        "department"=> "required",
+                        "quantity"=> "required",
+                        "designation"=> "required",
+                        "vendor"=> "required",
                         "requisition_date"=> "required",
                         "status"=> "required",
                     ]);
                     // Retrieve the supplier from the database
                     PR::insert([
                         "user_id"=> $request->user_id,
+                        "item"=> $request->item,
+                        "department"=> $request->department,
+                        "quantity"=> $request->quantity,
+                        "designation"=> $request->designation,
+                        "vendor"=> $request->vendor,
                         "requisition_date"=> $request->requisition_date,
                         "status"=> $request->status,
                         'created_at' => Carbon::now()

@@ -6,6 +6,7 @@ use App\Http\Controllers\moduleController;
 use App\Http\Controllers\RoleMaster;
 use App\Http\Controllers\AdminUserlist;
 use App\Http\Controllers\ModuleMapping;
+use App\Http\Controllers\ParentController;
 use App\Http\Controllers\categoryController;
 use App\Http\Controllers\subCatController;
 use App\Http\Controllers\ProductsController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\Procurement\CMController;
 use App\Http\Controllers\Procurement\GRNController;
 use App\Http\Controllers\Procurement\POController;
 use App\Http\Controllers\Procurement\SQNController;
+use App\Http\Controllers\Procurement\InvoicesCont;
 use App\Http\Controllers\Inventory\IOController;
 use App\Http\Controllers\Inventory\IVController;
 use App\Http\Controllers\Inventory\SCController;
@@ -40,8 +42,8 @@ use App\Http\Controllers\QM\SQController;
 use App\Http\Controllers\SCAR\AnalyticsController;
 use App\Http\Controllers\SCAR\PerformanceController;
 use App\Http\Controllers\SCAR\PreddictiveController;
-use App\Models\Role;
-use App\Models\Users;
+// use App\Models\Role;
+// use App\Models\Users;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -56,6 +58,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+route::middleware(['role:3'])->group(function () {
 
 //Start Modules HTTP requests 
 route::get('modules',[moduleController::class , 'AllModules'])->name('modules');
@@ -66,6 +69,19 @@ route::get('modules/edit/{id}',[moduleController::class ,'EditModule']);
 route::post('modules/update/{id}',[moduleController::class ,'UpdateModule']);
 
 //End Modules HTTP requests 
+
+
+
+//Start Parent Modules HTTP requests 
+route::get('parent_map',[ParentController::class , 'ParentModules'])->name('parent_map');
+route::post('store/data',[ParentController::class ,'StoreData'])->name('store.data');// route::post('modules/Add',[moduleController::class ,'StoreModule'])->name('store.module');
+route::get('delete/parent/{encryptedID}',[ParentController::class ,'DeleteParent']);
+route::get('edit/parent/{encryptedID}',[ParentController::class ,'EditParent']);
+route::post('update/parent/{encryptedID}',[ParentController::class ,'UpdateParent']);
+
+//End Parent Modules HTTP requests 
+
+
 
 //Start Roles HTTP requests 
 route::get('roles',[RoleMaster::class , 'AllRole'])->name('roles');
@@ -134,7 +150,7 @@ route::get('products/delete/{id}',[ProductsController::class , 'DeleteItem']);
 route::get('products/edit/{id}',[ProductsController::class , 'EditItem']);
 route::post('update/products/{id}',[ProductsController::class , 'UpdateProduct'])->name('update.products');
 Route::post('/upload', [ProductsController::class,'upload'])->name('upload');
-// route::get('unauthorized',[ModuleMapping::class ,'Access404']);
+route::get('unauthorized',[ModuleMapping::class ,'Access404']);
 //End Products HTTP requests 
 
 
@@ -174,10 +190,15 @@ route::get('order-items/add',[OrderItemController::class , 'AddOrderItem'])->nam
 route::get('/add_order_items/fetch-dealer-details', [OrderItemController::class, 'fetchDealerDetails'])->name('/add_order_items/fetch-dealer-details');// route::get('dealers/add',[DealerController::class , 'AddDealer'])->name('dealers.create');
 route::post('order-items/store',[OrderItemController::class , 'StoreOrderItem'])->name('store.order-items');
 route::get('order-item/delete/{id}',[OrderItemController::class , 'DeteletOrderItems']);
+route::get('order-item/edit/{id}',[OrderItemController::class , 'EditOrderItems']);
+route::post('update/order-items/{id}',[OrderItemController::class , 'UpdateEditOrderItems']);
 route::get('/add_order_items/fetch-items-details',[OrderItemController::class , 'fetchItemsDetails'])->name('/add_order_items/fetch-items-details');
 Route::post('/flush-order-id',[OrderItemController::class, 'flushOrderId'])->name('flush.order.id');
 route::get('/fetch.order-header-details',[OrderItemController::class , 'fetchItemsDetails'])->name('fetch.order-header-details');
 route::GET('/preview-items', [OrderItemController::class, 'previewItems'])->name('preview_items');
+route::GET('/edit-order', [OrderItemController::class, 'EditItems'])->name('edit_order');
+route::POST('/update-order', [OrderItemController::class, 'UpdateItems'])->name('update.order-items');
+
 // Order Header http requests 
 
 //End Order management http requests 
@@ -226,7 +247,6 @@ route::get('delete-resource/{encryptedId}',[ResourceController::class ,'Resource
 
 // Production Planning Sheduling Management
 // -------------------------------------------------------------------------------------------------------------------------------------------
-
 
 // master-production-shedule Management 
 route::get('master-production-shedule',[MPSController::class ,'MPS'])->name('master-production-shedule');
@@ -309,10 +329,6 @@ route::get('delete-po/{encryptedId}',[POController::class ,'PODelete']);
 
 // -------------------------------------------------------------------------------------------------------------------------------------------
 // End Procurement Management
-
-
-
-
 
 
 // Inventory Management
@@ -503,9 +519,39 @@ route::get('delete-predictive/{encryptedId}',[PreddictiveController::class ,'Pre
 
 // End Supply Chain Management 
 
+});
+
+
+Route::middleware(['role:2,3'])->group(function () {
+
+// Supplier Quotation Negotiation Management 
+route::get('supplier-quotation',[SQNController::class ,'SQN'])->name('supplier-quotation');
+route::post('sqn/store',[SQNController::class ,'SQNAdd'])->name('sqn.store');
+route::get('edit-sqn/{encryptedId}',[SQNController::class ,'SQNEdit']);
+route::post('sqn/update/{encryptedId}',[SQNController::class ,'SQNUpdate']);
+route::get('delete-sqn/{encryptedId}',[SQNController::class ,'SQNDelete']);
+// End Supplier Quotation Negotiation Management
+
+
+// Purchase Orders Management 
+route::get('purchase-order',[POController::class ,'PO'])->name('purchase-order');
+route::post('po/store',[POController::class ,'POAdd'])->name('po.store');
+route::get('edit-po/{encryptedId}',[POController::class ,'POEdit']);
+route::post('po/update/{encryptedId}',[POController::class ,'POUpdate']);
+route::get('delete-po/{encryptedId}',[POController::class ,'PODelete']);
+//End Purchase Orders Management
+
+
+// Invoices Management 
+route::get('invoices',[InvoicesCont::class ,'Invoices'])->name('invoices');
+route::post('invoices/store',[InvoicesCont::class ,'InvoicesAdd'])->name('invoices.store');
+route::get('edit-invoice/{encryptedId}',[InvoicesCont::class ,'InvoicesEdit']);
+route::post('invoices/update/{encryptedId}',[InvoicesCont::class ,'InvoicesUpdate']);
+route::get('delete-invoice/{encryptedId}',[InvoicesCont::class ,'InvoicesDelete']);
+//End Invoices Management
+});
+
 // --------------------------------------------------------------------------------------------------------------------------------------------
-
-
 // Logout 
 route::get('logout',[ModuleMapping::class,'Logout'])->name('logout');
 

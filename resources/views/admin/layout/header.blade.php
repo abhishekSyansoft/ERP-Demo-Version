@@ -19,6 +19,7 @@
 
     <!-- Include jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{asset('backend/css/style.css')}}">
     <!-- End layout styles -->
@@ -73,6 +74,35 @@
       max-width: 1200px; /* Define extra-large width for larger screens */
     }
   }
+
+
+
+  .compare table {
+  font-family: Arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.compare td,  .compare th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.compare tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.compare .good {
+  background-color: lightgreen;
+}
+
+ .compare .bad {
+  background-color: #ffcccc;
+}
+.delete-link,.edit-link{
+  cursor: pointer;
+}
   </style>
   <body>
     <div class="container-scroller">
@@ -255,9 +285,9 @@
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#R{{$parent->id}}" aria-expanded="false" aria-controls="R{{$parent->id}}">
                 
-              <span class="menu-title">{{$parent->parent_module}}</span>
+              <span class="menu-title">{{$parent->headermodule}}</span>
               <i class="menu-arrow"></i>
-              <i class="mdi {{$parent->parent_icon}} menu-icon"></i>
+              <i class="mdi {{$parent->headericon}} menu-icon"></i>
               </a>
               <div class="collapse" id="R{{$parent->id}}">
                 <ul class="nav flex-column sub-menu">

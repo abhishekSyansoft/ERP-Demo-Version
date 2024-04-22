@@ -11,6 +11,7 @@ use Storage;
 use Intervention\Image\Facades\Image;
 use DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\HtmlString;
 
 class ProductsController extends Controller
 {
@@ -142,79 +143,99 @@ class ProductsController extends Controller
             // Skip the first line
             array_shift($fileData);
     
-            foreach ($fileData as $line) {
+            $failCount = 0; // Counter for failed rows due to insufficient data
+            $failedRows = []; // Array to store details about failed rows
+    
+            foreach ($fileData as $index => $line) {
                 // Process each row of the file
-                
+    
                 // If it's an Excel file, $line is an array containing column values
                 // If it's TXT or CSV, explode the line based on the delimiter
                 $data = ($extension == 'xlsx') ? $line : (($extension == 'txt') ? explode("\t", $line) : explode(',', $line));
     
-                // Process each data field
-                // $category_id = $data[0];
-                $product_name = $data[1];
-                $product_image = $data[2];
-                $product_description = $data[3];
-                $product_sku = $data[4];
-                $product_hsn = $data[5];
-                $product_uom = $data[6];
-                $product_weight = $data[7];
-                $product_volume = $data[8];
-                $product_taxrate = $data[9];
-                $product_price = $data[10];
-                $product_currency = $data[11];
-                $product_quantity = $data[12];
-
-                
-                    $imageContents = file_get_contents($product_image);
-                        
-                    $fileextension = pathinfo($product_image, PATHINFO_EXTENSION);
-                    $imagePath = 'images/products/' . uniqid() . '.' . $fileextension;
-                    
-                    // Save the image to storage
-                    Storage::disk('public')->put($imagePath, $imageContents);
-
-                    $category_name = trim($data[0]);
-    
-                    $category_id = DB::table('categories')->where('category_name', $category_name)->value('id');
-        
-                    if ($data[0] != null) {
-                        $data[0] = $category_id;
-                    } else {
-                        $data[0] = 0;
+                    // Check if any data field is empty
+                    $isEmpty = false;
+                    foreach ($data as $field) {
+                        if (empty(trim($field))) {
+                            $isEmpty = true;
+                            break;
+                        }
                     }
 
-                    $category_name = $data[0];
+                    if ($isEmpty || count($data) < 13) { // Adjust according to the number of fields expected
+                        $failCount++; // Increment fail count
+                        $failedRows[] = $index + 2; // Store the row number (index + 2 because 0-indexed and skip header)
+                        continue; // Skip this iteration
+                    }
+    
+                // Process each data field
+                $category_name = trim($data[0]);
+                $product_name = trim($data[1]);
+                $product_image = trim($data[2]);
+                $product_description = trim($data[3]);
+                $product_sku = trim($data[4]);
+                $product_hsn = trim($data[5]);
+                $product_uom = trim($data[6]);
+                $product_weight = trim($data[7]);
+                $product_volume = trim($data[8]);
+                $product_taxrate = trim($data[9]);
+                $product_price = trim($data[10]);
+                $product_currency = trim($data[11]);
+                $product_quantity = trim($data[12]);
+    
+                // Save the image to storage
+                $imageContents = file_get_contents($product_image);
+                $fileextension = pathinfo($product_image, PATHINFO_EXTENSION);
+                $imagePath = 'images/products/' . uniqid() . '.' . $fileextension;
+                Storage::disk('public')->put($imagePath, $imageContents);
+    
+                // Fetch category ID
+                $category_id = DB::table('categories')->where('category_name', $category_name)->value('id');
+    
+                // Assign default category ID if not found
+                $category_id = $category_id ? $category_id : 0;
     
                 // Save the data to the database
                 Products::create([
-                    'category_id' => $category_name,
-                    'product_name' => trim($product_name),
-                    'product_image' => trim($imagePath),
-                    'product_description' => trim($product_description),
-                    'product_sku' => trim($product_sku),
-                    'product_hsn' => trim($product_hsn),
-                    'product_uom' => trim($product_uom),
-                    'product_weight' => trim($product_weight),
-                    'product_volume' => trim($product_volume),
-                    'product_taxrate' => trim($product_taxrate),
-                    'product_price' => trim($product_price),
-                    'product_currency' => trim($product_currency),
-                    'product_quantity' => trim($product_quantity),
+                    'category_id' => $category_id,
+                    'product_name' => $product_name,
+                    'product_image' => $imagePath,
+                    'product_description' => $product_description,
+                    'product_sku' => $product_sku,
+                    'product_hsn' => $product_hsn,
+                    'product_uom' => $product_uom,
+                    'product_weight' => $product_weight,
+                    'product_volume' => $product_volume,
+                    'product_taxrate' => $product_taxrate,
+                    'product_price' => $product_price,
+                    'product_currency' => $product_currency,
+                    'product_quantity' => $product_quantity,
                     'created_at' => Carbon::now('Asia/Kolkata')
                 ]);
             }
+
+            $totalRows = count($fileData);
+            $successfulRows = $totalRows - $failCount;
+            
     
             // Commit transaction
             DB::commit();
     
-            return redirect()->route('products')->with('success', 'Products has been successfully uploaded.');
+            if ($failCount > 0) {
+                $message = "<br><br>Products have been successfully uploaded.<br><br>$failCount row(s) failed due to some mistake in data check carefully.<br><br>Failed row number: " . implode(', ', $failedRows) . " row(s).<br><br>Successfully inserted rows: $successfulRows";
+                return redirect()->route('products')->with('success', new HtmlString($message));
+            } else {
+                return redirect()->route('products')->with('success', 'Products have been successfully uploaded.');
+            }
         } catch (\Exception $e) {
             // Rollback transaction if any error occurs
             DB::rollback();
     
-            return redirect()->back()->with('error', 'Error uploading Products File'. $e->getMessage());
+            return redirect()->back()->with('error', 'Error uploading Products File: ' . $e->getMessage());
         }
     }
+    
+
     public function UpdateProduct(Request $request, $id)
 {
     $validateData = $request->validate([

@@ -33,7 +33,7 @@
                 <div class="card">
                     <div class="card-body mx-auto">
                         <div class="clearfix">
-                            <a href="{{ route('order_header.add') }}" class="btn btn-primary btn-md">Create New Order</a>
+                            <!-- <a href="{{ route('order_header.add') }}" class="btn btn-primary btn-md">Create New Order</a> -->
                             <a href="{{ route('order_items.add') }}" class="btn btn-primary btn-md">Create New Order</a>
                             <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
                             <hr>

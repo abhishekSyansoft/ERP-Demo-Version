@@ -41,20 +41,24 @@
                         <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
-                                <th>Supplier</th>
-                                <th>Item</th>
-                                <th>Price(rs.)</th>
-                                <th>valid Until</th>
+                                <th>Compare Quotation</th>
+                                <th>Quotation Number</th>
+                                <th>Vendor Name</th>
+                                <th>Date</th>
+                                <th>Quotation PDF</th>
                                 <th>Action</th>
                             </tr>
                             @php($i=1)
                             @foreach($sqn as $data)
                                 <tr>
                                     <td>{{$i++}}</td>
+                                    <td><input style="font-size:30px;" type="checkbox" class="mdi mdi-compare" name="compare"></td>
+                                    <td>
+                                    {{uniqid()}}
+                                    </td>
                                     <td>{{$data->supplier}}</td>
-                                    <td>{{$data->product}}</td>
-                                    <td>{{$data->price}}</td>
                                     <td>{{$data->valid_until}}</td>
+                                    <td><h1><a  style="color:red;" href="https://i.pinimg.com/originals/d5/eb/40/d5eb400220228d1ad2f285563e9ef221.jpg" class="mdi mdi-file"></a></h1></td>
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
                                         <a href="{{url('edit-sqn/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
@@ -63,7 +67,8 @@
                                 </tr>
                             @endforeach
                         </table>
-                  </div>
+                        <a class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Compare Quotation</a>
+                    </div>
                 </div>
               </div>
             </div>
@@ -131,29 +136,95 @@
                   <div class="modal-dialog  modal-lg mx-auto">
                     <div class="modal-content card mx-auto">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Edit Generated Orders</h5>
+                        <h5 class="modal-title" id="staticBackdropLabel">Comparision of Quotations</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       
-                      <div class="modal-body  mx-auto">
+                      <div class="modal-body compare">
 
-                  
-                      <form method="GET" action="" id="edit_supplier_form">
-                      <table class="table table-hover table-bordered mt-2">
+                     <center> <h2>Quotation Comparison</h2></center>
+
+                        <table class="table table-bordered table-hover">
                             <tr>
-                                <th></td>
-                                <th>S No.</th>
-                                <th>Resource Name</th>
-                                <th>Resource Description</th>
-                                <!-- <th>Action</th> -->
+                              <th>Details</th>
+                              <th>Quotation A</th>
+                              <th>Quotation B</th>
+                              <th>Quotation C</th>
                             </tr>
-                           
+                            <tr>
+                              <td>Price</td>
+                              <td>$1000</td>
+                              <td>$1200</td>
+                              <td>$1100</td>
+                            </tr>
+                            <tr>
+                              <td>Delivery Time</td>
+                              <td>2 weeks</td>
+                              <td>1 week</td>
+                              <td>3 weeks</td>
+                            </tr>
+                            <tr>
+                              <td>Quality</td>
+                              <td>High</td>
+                              <td>Medium</td>
+                              <td>High</td>
+                            </tr>
+                            <tr>
+                              <td>Payment Terms</td>
+                              <td>50% advance, 50% on delivery</td>
+                              <td>Full payment on delivery</td>
+                              <td>30% advance, 70% on delivery</td>
+                            </tr>
+                            <tr>
+                              <td>Customer Service</td>
+                              <td>Excellent</td>
+                              <td>Good</td>
+                              <td>Average</td>
+                            </tr>
+                          <!-- Add more rows for other details -->
+                        </table>
+
+                        <table class="table table-bordered mt-2">
+                          <tr>
+                            <th>Serial Number</th>
+                            <th>Quotation Number</th>
+                            <th>Quotation Name</th>
+                            <th>Action</th>
+                          </tr>
+                          <tr>
+                            <td>1</td>
+                            <td>{{uniqid().uniqid()}}</td>
+                            <td>Quotation 1</td>
+                            <td>
+                              <a class="btn btn-success appr">Send for Approval</a>
+                              <a class="btn btn-info nego">Negotiation</a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>2</td>
+                            <td>{{uniqid().uniqid()}}</td>
+                            <td>Quotation 2</td>
+                            <td>
+                              <a class="btn btn-success appr">Send for Approval</a>
+                              <a class="btn btn-info nego">Negotiation</a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>3</td>
+                            <td>{{uniqid().uniqid()}}</td>
+                            <td>Quotation 3</td>
+                            <td>
+                              <a class="btn btn-success appr">Send for Approval</a>
+                              <a class="btn btn-info nego">Negotiation</a>
+                            </td>
+                          </tr>
+
                         </table>
                         <div class="form-group mt-2">
                           <!-- <button type="submit" class="btn btn-success">Check one to edit</button> -->
-                           <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
+                           <!-- <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                             Check one to edit
-                            </button>  
+                            </button>   -->
                           <button type="button" class="btn btn-secondary">Close</button>
                         </div>
                         </form>

@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use Storage;
+use Illuminate\Support\Facades\Validator;
 
 class OrderHeaderController extends Controller
 {
@@ -61,7 +62,7 @@ class OrderHeaderController extends Controller
     {
         try {
             // Validate the incoming request data
-            $validateData = $request->validate([
+           $validateData = $request->validate([
                 "dealer" => "required",
                 // "order_date" => "required",
                 "order_status" => "required",
@@ -77,7 +78,21 @@ class OrderHeaderController extends Controller
                 "expected_delivery_date" => "required",
                 "order_source" => "required",
                 "priority" => "required",
-            ]);
+            ],
+        [
+            'dealer.required'=>'Pleaser select dealer',
+            'order_status'=>'Please select order status',
+            'representative.required'=>'Please enter Representative name',
+            'shipping_address.required'=>'Please enter shipping address',
+            'billing_address.required'=>'Please enter billing address',
+            'payment_method.required'=>'Please select payment method',
+            'shipping_carrier.required'=>'Please select shipping carrier method',
+            'shipping_tracking_number.required'=>'Please enter shipping tracking number',
+            'expected_delivery_date.required'=>'Please enter expected delivery date',
+            'order_source.required'=>'Please select order source',
+            'priority.required'=>'Please select priority level',
+        ]
+    );
                 if($request->attachments){
             // $dataImage = $request->image;
                 $attachments = $request->file('attachments');
@@ -89,6 +104,8 @@ class OrderHeaderController extends Controller
                 $last_attachments = $uplocation . $attachments_name;
 
                 Storage::disk('public')->put($last_attachments,$attachmentsdata);
+                }else{
+                    $last_attachments = 'none';
                 }
             // Insert the order header into the database
             $orderHeader = OrderHeader::create([
@@ -113,13 +130,25 @@ class OrderHeaderController extends Controller
                 'attachments' => $last_attachments,
                 'created_at' => Carbon::now()
             ]);
+
+
+            // if ($validator->fails()) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Validation error',
+            //         'errors' => $validator->errors()
+            //     ], 422); // 422 Unprocessable Entity status code for validation errors
+            // }
             
     
             return response()->json([
                 'success' => true, 
                 'message' => 'Order created successfully',
-            ], 200);        } catch (\Exception $e) {
+            ], 200);        
+        } catch (\Exception $e) {
             // Handle any exceptions that occur during the process
+            return redirect()->back()->with('error', 'Error uploading data: ' . $e->getMessage());
+
         }
     }
 

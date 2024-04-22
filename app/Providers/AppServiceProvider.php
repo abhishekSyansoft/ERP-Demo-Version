@@ -36,11 +36,22 @@ class AppServiceProvider extends ServiceProvider
         );
          });
 
-            view()->composer('admin.layout.header', function($view) {
-                $view->with('parents',$parents = DB::table('parent_modules')
-                ->get()
-            );
-         });
+        //     view()->composer('admin.layout.header', function($view) {
+        //         $view->with('parents',$parents = DB::table('parent_modules')
+        //         ->get()
+        //     );
+        //  });
+
+         view()->composer('admin.layout.header', function($view) {
+            $view->with('parents',$parents = DB::table('parent_mapping')
+            ->leftJoin('parent_modules' ,'parent_modules.id' ,'=' ,'parent_mapping.parentID' )
+            ->where('parent_mapping.roleID', '=', Auth::user()->admin)
+            ->where('parent_mapping.status', '=', 1)            
+            ->orderBy('parent_mapping.order_no')
+            ->get(['parent_modules.parent_module as headermodule','parent_modules.parent_icon as headericon','parent_mapping.parentID as id','parent_mapping.order_no as order_no'])
+        );
+     });
+
     }
 
 }

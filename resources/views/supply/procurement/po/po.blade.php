@@ -41,10 +41,13 @@
                         <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
+                                <th>Quotation View</th>
+                                <th>PO Number</th>
+                                <th>PR Number</th>
                                 <th>Supplier</th>
                                 <th>Order Date</th>
                                 <th>Delivery Date</th>
-                                <th>Total Amount</th>
+                                <!-- <th>Total Amount</th> -->
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -52,15 +55,20 @@
                             @foreach($po as $data)
                                 <tr>
                                     <td>{{$i++}}</td>
+                                    <td><a class="mdi mdi-eye" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td>
+                                    <!-- <td><a class="mdi mdi-file" style="font-size:20px;color:red;" href="https://www.wordtemplatesonline.net/wp-content/uploads/2021/06/Quotation-Template-06-2021-04.jpg"></a></td> -->
+                                    <td>{{uniqid().Carbon\Carbon::now()}}</td>
+                                    <td>{{uniqid().uniqid()}}</td>
                                     <td>{{$data->supplier}}</td>
                                     <td>{{$data->order_date}}</td>
                                     <td>{{$data->delivery_date}}</td>
-                                    <td>{{$data->total_amount}}</td>
+                                    <!-- <td>{{$data->total_amount}}</td> -->
                                     <td>{{$data->status == 1 ? 'Pending' : ($data->status == 2 ? 'Issued' : ($data->status == 3 ? 'Received' : '')) }}</td>
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
                                         <a href="{{url('edit-po/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
                                         <a href="{{url('delete-po/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
+                                        <a class="btn btn-success approvalBTN">Send to approve</a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -70,8 +78,6 @@
               </div>
             </div>
           </div>
-
-
           
 <!-- Add Supplier Modal -->
 <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
@@ -138,29 +144,93 @@
                   <div class="modal-dialog  modal-lg mx-auto">
                     <div class="modal-content card mx-auto">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Edit Generated Orders</h5>
+                        <h5 class="modal-title" id="staticBackdropLabel">Quotation regarding PO</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       
-                      <div class="modal-body  mx-auto">
+                      <div class="modal-body">
 
-                  
-                      <form method="GET" action="" id="edit_supplier_form">
-                      <table class="table table-hover table-bordered mt-2">
+                      <center><h2><u>Quotation</u></h2><br><br><br><br></center>
+                      <h1><a href="{{asset('images/products/quotation.docx')}}" class="mdi mdi-file-pdf mb-3"><span style="font-size:18px;">click to download</span></a></h1>
+
+                          <div class="row">
+
+                          <!-- Sender company details -->
+                          <div class="sender-company col-md-9">
+                            <h4>Company Detail's : </h4>
+                            <hr>
+                            <p><strong>Sender Company Name:</strong> SyanSoft</p>
+                            <p><strong>Contact Person:</strong> Jane Smith</p>
+                            <p><strong>Contact Number:</strong> 987-654-3210</p>
+                            <p><strong>Email:</strong> jane@example.com</p>
+                            <!-- Add more sender company details as needed -->
+                          </div>
+
+                          <!-- Supplier details -->
+                          <div class="supplier-details col-md-3">
+                            <h4>Supplier Detail's :</h4>
+                            <hr>
+                            <p><strong>Supplier Name:</strong> ABC Supplier</p>
+                            <p><strong>Contact Person:</strong> John Doe</p>
+                            <p><strong>Contact Number:</strong> 123-456-7890</p>
+                            <p><strong>Email:</strong> john@example.com</p>
+                            <!-- Add more supplier details as needed -->
+                          </div>
+
+                          <!-- Company details -->
+                          <!-- <div class="company-details">
+                            <p><strong>Company Name:</strong> XYZ Company</p>
+                            <p><strong>Contact Person:</strong> Jane Smith</p>
+                            <p><strong>Contact Number:</strong> 987-654-3210</p>
+                            <p><strong>Email:</strong> jane@example.com</p> -->
+                            <!-- Add more company details as needed -->
+                          <!-- </div> -->
+
+
+                          </div>
+                          <!-- Items -->
+                          <table class="quotation-table  table table-bordered">
                             <tr>
-                                <th></td>
-                                <th>S No.</th>
-                                <th>Resource Name</th>
-                                <th>Resource Description</th>
-                                <!-- <th>Action</th> -->
+                              <th>Item</th>
+                              <th>Description</th>
+                              <th>Quantity</th>
+                              <th>Unit Price</th>
+                              <th>Total</th>
                             </tr>
-                           
-                        </table>
-                        <div class="form-group mt-2">
-                          <!-- <button type="submit" class="btn btn-success">Check one to edit</button> -->
-                           <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
+                            <tr>
+                              <td>Product A</td>
+                              <td>Description of Product A</td>
+                              <td>2</td>
+                              <td>$50</td>
+                              <td>$100</td>
+                            </tr>
+                            <tr>
+                              <td>Product B</td>
+                              <td>Description of Product B</td>
+                              <td>1</td>
+                              <td>$75</td>
+                              <td>$75</td>
+                            </tr>
+                          </table>
+
+                          <!-- Total amount
+                          <div class="total-amount">
+                            <p><strong>Total Amount:</strong> $175</p>
+                          </div> -->
+
+                          <!-- Other details -->
+                          <hr>
+                          <div class="other-details row mx-auto mt-2">
+                          <p class=" col"><strong>Total Amount:</strong> $175</p>
+                            <p class=" col"><strong>PR Number:</strong> PR12345</p>
+                            <p class=" col"><strong>PO Number:</strong> PO67890</p>
+                            <p class=" col"><strong>Validity:</strong> 30 days</p>
+                            <p class=" col"><strong>Delivery Time:</strong> 2 weeks</p>
+                            <!-- Add more details as needed -->
+                          </div>
+                           <!-- <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                             Check one to edit
-                            </button>  
+                            </button>   -->
                           <button type="button" class="btn btn-secondary">Close</button>
                         </div>
                         </form>

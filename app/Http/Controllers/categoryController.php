@@ -57,7 +57,6 @@ class categoryController extends Controller
         ->with("success",$request->subcategory."Category Added successfully");
        }
 
-
        public function upload(Request $request) {
         // Validate the uploaded file
         $request->validate([
@@ -72,6 +71,8 @@ class categoryController extends Controller
         DB::beginTransaction();
     
         try {
+            $failCount = 0; // Counter for failed rows due to insufficient data
+    
             if ($extension == 'txt' || $extension == 'csv') {
                 $fileData = file($file->getRealPath());
             } elseif ($extension == 'xlsx') {
@@ -94,6 +95,12 @@ class categoryController extends Controller
                 $data = ($extension == 'txt') ? explode("\t", $line) : $line;
                 $data = ($extension == 'csv') ? explode(',', $line) : $line;
     
+                // Check if the data is insufficient
+                if (count($data) < 2) {
+                    $failCount++; // Increment fail count
+                    continue; // Skip this iteration
+                }
+    
                 $category_name = $data[0];
     
                 $result = DB::table('categories')->where('category_name', $category_name)->value('id');
@@ -115,7 +122,11 @@ class categoryController extends Controller
             // Commit transaction
             DB::commit();
     
-            return redirect()->route('category')->with('success', 'Data has been successfully uploaded.');
+            if ($failCount > 0) {
+                return redirect()->route('category')->with('error', "$failCount row(s) failed due to insufficient data.");
+            } else {
+                return redirect()->route('category')->with('success', 'Data has been successfully uploaded.');
+            }
         } catch (\Exception $e) {
             // Rollback transaction if any error occurs
             DB::rollback();
@@ -123,8 +134,7 @@ class categoryController extends Controller
             return redirect()->back()->with('error', 'Error uploading data: ' . $e->getMessage());
         }
     }
-
-
+    
 
 
     // category Edit function 

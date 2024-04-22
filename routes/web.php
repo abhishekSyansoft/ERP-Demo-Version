@@ -506,9 +506,6 @@ route::get('delete-predictive/{encryptedId}',[PreddictiveController::class ,'Pre
 // --------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-
-
 // Logout 
 route::get('logout',[ModuleMapping::class,'Logout'])->name('logout');
 

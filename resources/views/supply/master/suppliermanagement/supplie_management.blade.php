@@ -17,16 +17,23 @@
               </nav>
             </div>
               
-            <div class="row mx-auto">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card mx-auto">
-                  <div class="card-body mx-auto">
-                    <div class="clearfix">
-                      <h4 class="card-title float-left">Suppliers/vendor Lists</h4>
-                        <!-- Button to open the modal -->
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        Add Supplier
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Supplier/Vendor Lists</h4>
+                        </div>
+                         <!-- Button to open the modal -->
+                        <div class="col-md-6">
+                        <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                          <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
+                        </div>
+                        <!-- <hr>   -->
+                      </div>     
                            
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                         Edit Supplier
@@ -36,8 +43,9 @@
                         
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div class="mx-auto">
-                        <table class="table table-hover table-bordered mt-2 mx-auto">
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table">
                             <tr>
                                 
                                 <th>S No.</th>
@@ -60,6 +68,7 @@
                             </tr>
                             @php($i=1)
                             @foreach($supplier as $vendor)
+                            @for($a=0;$a<5;$a++)
                             <tr>
                                 
                                 <td>{{$i++}}</td>
@@ -84,12 +93,14 @@
                                     <a href="{{url('delete-supplier/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
+                            @endfor
                             @endforeach
                         </table>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
           </div>
 
 

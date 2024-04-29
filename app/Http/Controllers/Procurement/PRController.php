@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Procurement;
 
 use App\Http\Controllers\Controller;
+use App\Models\OrderHeader;
 use App\Models\supplier;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -28,10 +29,11 @@ class PRController extends Controller
                 ->select('p_r_s.*', 'users.name as username')
                 ->get();
                 $users = User::all();
+                $orders = OrderHeader::get();
                 $suppliers = supplier::all();
 
                 // Return the view with the list of suppliers
-                return view("supply.procurement.pr.pr",compact("pr",'users','suppliers'));
+                return view("supply.procurement.pr.pr",compact("pr",'users','suppliers','orders'));
             } catch (\Exception $e) {
                 // Log the error or handle it in any other appropriate way
                 // For example, you can return an error view or redirect with an error message

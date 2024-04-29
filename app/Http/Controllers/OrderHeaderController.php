@@ -93,26 +93,22 @@ class OrderHeaderController extends Controller
             'priority.required'=>'Please select priority level',
         ]
     );
-                if($request->attachments){
-            // $dataImage = $request->image;
-                $attachments = $request->file('attachments');
-                $attachmentsdata = $attachments->getContent();
-                $name_gen = hexdec(uniqid());
-                $attachments_ext = strtolower($attachments->getClientOriginalExtension());
-                $attachments_name = $name_gen .'.'. $attachments_ext;
-                $uplocation = 'attachments/order_header/';
-                $last_attachments = $uplocation . $attachments_name;
 
-                Storage::disk('public')->put($last_attachments,$attachmentsdata);
-                }else{
-                    $last_attachments = 'none';
-                }
+                
+                 // Calculate totals
+                 $totalDiscount = OrderItem::where('order_id', $request->order_id_header)->sum('discount');
+                 $totalTax =  OrderItem::where('order_id', $request->order_id_header)->sum('tax_amount');
+                 $subTotal =  OrderItem::where('order_id', $request->order_id_header)->sum('total_price');
+                 $totalAmount =  OrderItem::where('order_id', $request->order_id_header)->sum('sub_total');
+                 $totalQuantity =  OrderItem::where('order_id', $request->order_id_header)->count();
+ 
             // Insert the order header into the database
             $orderHeader = OrderHeader::create([
-                'order_id' => $request->order_id,
+                'order_id' =>$request->order_id_header,
                 'dealer_id' => $request->dealer,
                 'order_date' => Carbon::now(),
                 'order_status' => $request->order_status,
+                'total_amount' => $totalAmount,
                 'sales_representative' => $request->representative,
                 'shipping_address' => $request->shipping_address,
                 'billing_address' => $request->billing_address,
@@ -124,10 +120,13 @@ class OrderHeaderController extends Controller
                 'expected_delivery_date' => $request->expected_delivery_date,
                 'order_notes' => $request->order_notes,
                 'order_source' => $request->order_source,
+                'item_count' => $totalQuantity,
                 'priority' => $request->priority,
+                'discount' => $totalDiscount,
+                'order_totoal' => $subTotal,
                 'return_rma' => $request->return_rma,
                 'comments' => $request->comments,
-                'attachments' => $last_attachments,
+                // 'attachments' => $last_attachments,
                 'created_at' => Carbon::now()
             ]);
 
@@ -139,12 +138,19 @@ class OrderHeaderController extends Controller
             //         'errors' => $validator->errors()
             //     ], 422); // 422 Unprocessable Entity status code for validation errors
             // }
+
+            $orderItem = OrderItem::get();
+            $orderHeader = OrderHeader::get();
+
+            return response()->json([
+                'success'=>true,
+                'message' => 'Order created successfully',
+                'orderItems' => $orderItem,
+                'order_header'=>$orderHeader,
+            ], 200);
             
     
-            return response()->json([
-                'success' => true, 
-                'message' => 'Order created successfully',
-            ], 200);        
+        //    return redirect()->back()->with('success','Order Created successfully');
         } catch (\Exception $e) {
             // Handle any exceptions that occur during the process
             return redirect()->back()->with('error', 'Error uploading data: ' . $e->getMessage());
@@ -199,6 +205,7 @@ class OrderHeaderController extends Controller
                 $last_attachments = $uplocation . $attachments_name;
 
                 Storage::disk('public')->put($last_attachments,$attachmentsdata);
+
 
             // Insert or update the order header in the database
             $orderHeader = OrderHeader::find($id)->update(            [

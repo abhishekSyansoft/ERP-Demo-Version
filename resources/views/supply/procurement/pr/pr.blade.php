@@ -17,18 +17,23 @@
               </nav>
             </div>
               
-            <div class="row mx-auto">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card mx-auto">
-                  <div class="card-body">
-                    <div class="clearfix">
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Purchase Requisition Lists</h4>
+                        </div>
                          <!-- Button to open the modal -->
-                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        Create Purchase Requisition
+                        <div class="col-md-6">
+                        <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                          <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
-                        <hr>
-                      <h4 class="card-title float-left">Purchase Requisition Lists</h4>
-                           
+                        </div>
+                        <!-- <hr>   -->
+                      </div>     
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                         Edit Supplier
                         </button>   -->
@@ -37,8 +42,10 @@
                         
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div class="">
-                        <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
+                
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table mx-auto">
                             <tr>
                                 <th>S No.</th>
                                 <th>View Details</th>
@@ -48,25 +55,31 @@
                                 <th>Vendor</th>
                                 <th>Requisition Date</th>
                                 <th>Status</th>
+                                <th>Request</th>
                                 <th>Action</th>
                             </tr>
                             @php($i=1)
                             @foreach($pr as $data)
+                            @for($a=1;$a<4;$a++)
                                 <tr>
                                     <td>{{$i++}}</td>
-                                    <td><a class="mdi mdi-eye" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td>
+                                    <td><a style="color:white;font-size:18px;background-color:#0081b6;border-radius:5px;" class="mdi mdi-eye p-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td>
                                     <td>{{$data->department}}</td>
                                     <td>{{$data->username}}</td>
                                     <td>{{$data->designation}}</td>
                                     <td>{{$data->vendor}}</td>
                                     <td>{{$data->requisition_date}}</td>
-                                    <td>{{$data->status == 1 ? 'Pending' : ($data->status == 2 ? 'Approved' : ($data->status == 3 ? 'Rejected' : '')) }}</td>
+                                    <td style="color: {{ $data->status == 1 ? 'yellow' : ($data->status == 2 ? 'green' : ($data->status == 3 ? 'red' : '')) }}">
+                                        {{ $data->status == 1 ? 'Pending' : ($data->status == 2 ? 'Approved' : ($data->status == 3 ? 'Rejected' : '')) }}
+                                    </td>
+                                    <td> {{ $data->status == 1 ? '' : ($data->status == 2 ? 'RFQ' : ($data->status == 3 ? '' : '')) }}</td>
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
                                         <a href="{{url('edit-pr/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
                                         <a href="{{url('delete-pr/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
+                                @endfor
                             @endforeach
                         </table>
                   </div>
@@ -74,6 +87,7 @@
               </div>
             </div>
           </div>
+</div>
 
 
           
@@ -87,27 +101,18 @@
       </div>
       <div class="modal-body">
         <!-- Rescource Form -->
-                <form method="POST" action="{{route('pr.store')}}" class="row">
+                <form method="POST" action="{{route('pr.store')}}" class="row" id="PRAddModalForm">
                         @csrf
 
 
                         <div class="mb-3 col-md-6">
-                            <label for="item" class="form-label">{{ __('Item') }}</label>
-                            <select  id="todoInputPR"  class="form-control p-3" name="item" required>
-                                <option value="0">--Select Item--</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Fashion">Fashion</option>
-                                <option value="Health & Beauty"></option>
-                                <option value="Automobile">Automobile</option>
-                                <option value="IT/Software">IT/Software</option>
-                                <option value="Sales">Sales</option>
-                                <option value="Education">Education</option>
-                                <option value="Food & Beverage">Food & Beverage</option>
-                                <option value="Travel & Tourism">Travel & Tourism</option>
+                            <label for="order_id" class="form-label">{{ __('Select Order Number For PR') }}</label>
+                            <select  id="order_id"  class="form-control p-3" name="order_id" required>
+                                <!-- <option value="">--Select Order Number--</option> -->
+                                @foreach($orders as $order)
+                                <option value="{{$order->id}}">{{$order->order_id}}</option>
+                                @endforeach
                             </select>
-                            <div class="col-md-2">
-                              <a class="btn btn-primary" style="width:100%;" id="addBtninPR">Add</a>
-                           </div>
                         </div>
 
                         <div class="mb-3 col-md-6">
@@ -123,7 +128,7 @@
                         </div>
 
                         <center>
-                        <table id="todoListPR" class="col-md-11 table table-bordered mx-auto mb-3" style="width:100%;">
+                        <table id="prItemListTable" class="col-md-11 table table-bordered mx-auto mb-3" style="width:100%;">
                               <tr>
                                 <th>S no.</th>
                                 <th>Item Code</th>
@@ -131,6 +136,9 @@
                                 <th>Quantity</th>
                                 <!-- <th>dummy</th> -->
                               </tr>
+                              <tbody id="prItemList">
+                                
+                              </tbody>
                         </table>
                         </center>
 
@@ -252,7 +260,7 @@
                               </table>
 
                               <h5><b>Quantity : </b> {{uniqid()}}</h5>
-                              <h5><b>Designation : </b>HR Department</h5>
+                              <h5><b>Department : </b>HR Department</h5>
                               <h5><b>Designation : </b>Consultant</h5>
                               <h5><b>Requisition Date : </b> 2024-04-15</h5>
                               <h5><b>Status : </b> Processing</h5>

@@ -5,12 +5,7 @@ namespace App\Http\Controllers\Procurement;
 use App\Http\Controllers\Controller;
 use App\Models\Procurement\InvoicesController;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Contracts\Encryption\DecryptException;
-use App\Models\Procurement\PR;
-use App\Models\User;
 use Storage;
-use DB;
 use Carbon\Carbon;
 
 class InvoicesCont extends Controller
@@ -153,7 +148,7 @@ class InvoicesCont extends Controller
                     'invoice_number'=> 'required',
                     'invoice_date'=> 'required',
                     'invoice_total'=> 'required', 
-                    'attachments'=>'file' 
+                    'attachments'=>'file|mimes:pdf' 
                 ]);
         
                 // Check if a new file is uploaded
@@ -198,7 +193,6 @@ class InvoicesCont extends Controller
                     'invoice_date'=>$request->invoice_date,
                     'invoice_total'=>$request->invoice_total,
                     'attachment'=>$newAttachmentPath,
-                    'updated_at'=>now()
                 ]);
         
                 // Redirect back with success message

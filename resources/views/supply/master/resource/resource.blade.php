@@ -17,18 +17,23 @@
               </nav>
             </div>
               
-            <div class="row mx-auto">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card mx-auto">
-                  <div class="card-body">
-                    <div class="clearfix">
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Resource Lists</h4>
+                        </div>
                          <!-- Button to open the modal -->
-                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        Add Resources
+                        <div class="col-md-6">
+                        <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                          <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
-                        <hr>
-                      <h4 class="card-title float-left">Rescources Lists</h4>
-                           
+                        </div>
+                        <!-- <hr>   -->
+                      </div>     
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                         Edit Supplier
                         </button>   -->
@@ -37,8 +42,9 @@
                         
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div class="">
-                        <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
+                    </div>
+                        <div class="table-wrapper">
+                        <table class="table" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
                                 <th>Resource Name</th>
@@ -63,6 +69,7 @@
                 </div>
               </div>
             </div>
+          </div>
           </div>
 
 

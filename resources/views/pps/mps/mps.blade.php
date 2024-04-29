@@ -17,18 +17,23 @@
               </nav>
             </div>
               
-            <div class="row mx-auto">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card mx-auto">
-                  <div class="card-body">
-                    <div class="clearfix">
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Master Production Schedule Lists</h4>
+                        </div>
                          <!-- Button to open the modal -->
-                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        Create Master Production Schedule
+                        <div class="col-md-6">
+                        <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                          <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
-                        <hr>
-                      <h4 class="card-title float-left">Master Production Schedule Lists</h4>
-                           
+                        </div>
+                        <!-- <hr>   -->
+                      </div>     
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                         Edit Supplier
                         </button>   -->
@@ -38,12 +43,13 @@
                         
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div class="">
-                        <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
                                 <th>View prodction Details</th>
-                                <th>Product</th>
+                                <!-- <th>Product</th> -->
                                 <th>Planned Quantity</th>
                                 <th>Planned Start Date</th>
                                 <th>Planned End Date</th>
@@ -52,20 +58,22 @@
                             </tr>
                             @php($i=1)
                             @foreach($mps as $data)
+                            @for($a=0;$a<5;$a++)
                                 <tr>
                                     <td>{{$i++}}</td>
-                                    <td><a class="mdi mdi-eye" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td>
-                                    <td>{{$data->product}}</td>
+                                    <td><a class="mdi mdi-eye checkMpsDetails" data-id="{{$data->id}}"></a></td>
+                                    
                                     <td>{{$data->planned_quantity}}</td>
                                     <td>{{$data->planned_start_date}}</td>
                                     <td>{{$data->planned_end_date}}</td>
-                                    <td>{{ $data->status == 1 ? 'Pending' : ($data->status == 2 ? 'Completed' : '') }}</td>
+                                    <td>{{ $data->status == 1 ? 'Pending' : ($data->status == 2 ? 'Processing' : ($data->status == 3 ? 'Completed' : '')) }}</td>
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
                                         <a href="{{url('edit-mps/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
                                         <a href="{{url('delete-mps/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
+                                @endfor
                             @endforeach
                         </table>
                   </div>
@@ -73,6 +81,7 @@
               </div>
             </div>
           </div>
+        </div>
 
 
           
@@ -89,48 +98,23 @@
                 <form method="POST" action="{{route('mps.store')}}" class="row">
                         @csrf
                         <div class="mb-3 col-md-6">
-                            <label for="product_id" class="form-label">{{ __('Product') }}</label>
+                            <label for="product_id" class="form-label">{{ __('Order Number') }}</label>
                             <select id="product_id"  class="form-control p-3" name="product_id" required>
-                            <option value="4">Bajaj Pulsar</option>
-                              <option value="4">Bajaj Dominar</option>
-                              <option value="4">Bajaj Platina</option>
-                              <option value="4">Bajaj Avenger</option>
-                              <option value="4">Bajaj CT</option>
-                              <option value="4">Bajaj Chetak</option>
+                              <option value="0">--Select Order Number--</option>
+                                @foreach($orders as $order)
+                                  <option value="{{$order->id}}">{{$order->order_id}}</option>
+                                @endforeach
                             </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 row">
-                            <label for="items" class="form-label">{{ __('Items') }}</label>
-                           <div class="col-md-10">
-                           <select id="todoInput"  class="form-control p-3 col-md-8" name="items" required>
-                                <option value="0">--Select Item--</option> 
-                                <option value="engine">Engine</option>
-                                  <option value="transmission">Transmission</option>
-                                  <option value="brakes">Brakes</option>
-                                  <option value="suspension">Suspension</option>
-                                  <option value="steering">Steering</option>
-                                  <option value="electrical system">Electrical System</option>
-                                  <option value="cooling system">Cooling System</option>
-                                  <option value="exhaust system">Exhaust System</option>
-                                  <option value="fuel system">Fuel System</option>
-                                  <option value="body parts">Body Parts</option>
-                            </select>
-                           </div>
-                           <div class="col-md-2 m-0 p-0">
-                              <a class="btn btn-primary" style="width:100%;" id="addBtn" class="p-2">Add</a>
-                           </div>
-                            <p id="todoList" class="row col-12"></p>
                         </div>
 
 
                         <div class="mb-3 col-md-6">
                             <label for="conveyour_line" class="form-label">{{ __('Conveyor Line') }}</label>
                             <select id="conveyour_line"  class="form-control p-3" name="conveyour_line" required>
-                                <option value="1">Conveyor Line 1</option>
-                                <option value="2">Conveyor Line 2</option>
-                                <option value="3">Conveyor Line 3</option>
-                                <option value="4">Conveyor Line 4</option>
+                                <option value="Conveyor Line 1">Conveyor Line 1</option>
+                                <option value="Conveyor Line 2">Conveyor Line 2</option>
+                                <option value="Conveyor Line 3">Conveyor Line 3</option>
+                                <option value="Conveyor Line 4">Conveyor Line 4</option>
                             </select>
                         </div>
 
@@ -165,67 +149,79 @@
                         </div>
                     </form>
                 </div>
-                </div>
+       </div>
             </div>
         </div>
+        <!-- </div> -->
+        <!-- </div> -->
 
 
 
 <!-- Modal -->
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                  <div class="modal-dialog modal-lg mx-auto">
-                    <div class="modal-content card mx-auto">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">View Detail's</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      
-                      <div class="modal-body">
-
-                             <center><u> <h3>Production Plan Details</h3></u></br></br></center>
-                              <h5><b>Product Name : </b> Pulsar 125</h5>
-                              <h5><b>Items : </b> 
-                              <table class="table table-bordered">
-                                <tr>
-                                  <th>Item 1</th>
-                                  <th>Item 2</th>
-                                  <th>Item 3</th>
-                                  <th>Item 4</th>
-                                  <th>Item 5</th>
-                                  <th>Item 6</th>
-                                </tr>
-                                <tr>
-                                 <td>Seat</td>
-                                 <td>Break Shoe</td>
-                                 <td>Chain</td>
-                                 <td>Engine</td>
-                                 <td>Wheel</td>
-                                 <td>Handle</td>
-                              </table>
-                            
-                              </h5>
-                              <h5><b>Conveyour Line : </b> Conveyour Line 5</h5>
-                              <h5><b>Product Quantity : </b> 25 unit</h5>
-                              <h5><b>Planned Start date : </b> 2024-04-15</h5>
-                              <h5><b>Planned End date : </b> 2024-04-15</h5>
-                              <h5><b>Status : </b> Processing</h5>
-                              <hr>
-
-                          <!-- <button type="submit" class="btn btn-success">Check one to edit</button> -->
-                           <!-- <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
-                            Check one to edit
-                            </button>   -->
-                          <button type="button" class="btn btn-secondary">Close</button>
-                        </div>
-                        </form>
-                      </div>
-                      
-                        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
-                      <!-- </div> -->
-                    </div>
-                  </div>
+<div class="modal fade" id="FetchMpsDetailsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="FetchMpsDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg mx-auto">
+            <div class="modal-content card mx-auto">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="FetchMpsDetailsModalLabel">View Detail's</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <!-- </div>
+                <div class="modal-body row">
+                    <center><u><h3>Production Plan Details</h3></u></br></br></center>
+                    <h5><b>Order Id : </b><span id="fetched_order_id"></span></h5>
+                    <h5><b>Items : </b> 
+                    <table class="table table-bordered" id="checkMpsTblBody">
+                        <thead>
+                            <tr>
+                                <th>S No.</th>
+                                <th>Product Name</th>
+                                <th>Unitprice</th>
+                                <th>Quantity</th>
+                                <th>Total Price</th>
+                                <th>Tax Rate</th>
+                                <th>Tax Amount</th>
+                                <th>Sub Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checkMpsDetailstblBody"></tbody>
+                    </table>
+
+                    <div class="row mx-auto col-md-5 mt-3" style="float:right;">
+                        <table class="table table-bordered table-hover">
+                            <tbody class="">
+                              <tr>
+                                  <th>Total Amount</th>
+                                  <td id="total_amount"></td>
+                              </tr>
+                              <tr>
+                                  <th>Total Tax</th>
+                                  <td id="total_tax"></td>
+                              </tr>
+                              <tr>
+                                  <th>Total Discount</th>
+                                  <td id="total_discount"></td>
+                              </tr>
+                              <tr>
+                                  <th>Line Item Total</th>
+                                  <td id="line_item_total"></td>
+                              </tr>
+                              </tbody>
+                        </table>
+                    </div>
+
+                    </h5>
+                    <h5><b>Conveyour Line : </b><span id="fetched_line"></span></h5>
+                    <h5><b>Product Quantity : </b><span id="fetched_quantity"></span></h5>
+                    <h5><b>Planned Start date : </b><span id="fetched_start_date"></span></h5>
+                    <h5><b>Planned End date : </b><span id="fetched_end_date"></span></h5>
+                    <h5><b>Status : </b><span id="fetched_status"></span></h5>
+                    <hr>
+                    <div class="form-group">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>                <!-- </div>
                   </div> -->
                 <!-- </div> -->
 

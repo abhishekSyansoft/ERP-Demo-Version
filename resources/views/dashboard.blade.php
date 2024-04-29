@@ -1,8 +1,8 @@
 @include('admin.layout.header')
 @include('admin.layout.navbar', ['modules' => $modules = App\Models\moduleMaster::all()])
-   <div class="main-panel">
+   <div class="main-panel main-panel-dashboard">
           <div class="content-wrapper">
-            <div class="page-header">
+            <div class="page-header dashboard">
               <h3 class="page-title">
                 <span class="page-title-icon bg-gradient-primary text-white me-2">
                   <i class="mdi mdi-home"></i>
@@ -16,7 +16,8 @@
                 </ul>
               </nav>
             </div>
-            <div class="row">
+      @if(Auth::user()->admin == 3)
+      <div class="row">
               <div class="col-md-4 stretch-card grid-margin">
                 <div class="card bg-gradient-danger card-img-holder text-white">
                   <div class="card-body">
@@ -320,6 +321,157 @@
                 </div>
               </div>
             </div>
+      @elseif (Auth::user()->admin == 2)
+      <div class="content-wrapper">
+        <div class="row p-2">
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white m-1">
+                  <div class="card-body p-0">
+                    <div class="row m-3">
+                      <div class="col-md-8">
+                        <h2 class="mt-1">1200</h2>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h1 style="float:right;"><i class="bi bi-people-fill" style="float:right;"></i></h1>
+                      </div>
+                    </div>
+                      <h4 class="font-weight-normal mb-5 m-3">Customers</h4>
+                   
+                    <h6 class="card-text text-center p-2" style="background-color:rgba(0, 0, 0, 0.1);">More Info <i class="mdi mdi-arrow-right-box"></i></h6>
+                  </div>
+              </div>
+            </div>
+            <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white m-1">
+                  <div class="card-body p-0">
+                    <div class="row m-3">
+                      <div class="col-md-8">
+                        <h2 class="mt-1">83</h2>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h1 style="float:right;"><i class="bi bi-people-fill" style="float:right;"></i></h1>
+                      </div>
+                    </div>
+                      <h4 class="font-weight-normal mb-5 m-3">Employees</h4>
+                   
+                    <h6 class="card-text text-center p-2" style="background-color:rgba(0, 0, 0, 0.1);">More Info <i class="mdi mdi-arrow-right-box"></i></h6>
+                  </div>
+              </div>
+              </div>
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white m-1">
+                  <div class="card-body p-0">
+                    <div class="row m-3">
+                      <div class="col-md-8">
+                        <h2 class="mt-1">6</h2>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h1 style="float:right;"><i class="bi bi-people-fill" style="float:right;"></i></h1>
+                      </div>
+                    </div>
+                      <h4 class="font-weight-normal mb-5 m-3">Vendor</h4>
+                   
+                    <h6 class="card-text text-center p-2" style="background-color:rgba(0, 0, 0, 0.1);">More Info <i class="mdi mdi-arrow-right-box"></i></h6>
+                  </div>
+              </div>
+              </div>
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white m-1">
+                  <div class="card-body p-0">
+                    <div class="row m-3">
+                      <div class="col-md-8">
+                        <h2 class="mt-1">78</h2>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h1 style="float:right;"><i class="bi bi-people-fill" style="float:right;"></i></h1>
+                      </div>
+                    </div>
+                      <h4 class="font-weight-normal mb-5 m-3">All Orders</h4>
+                   
+                    <h6 class="card-text text-center p-2" style="background-color:rgba(0, 0, 0, 0.1);">More Info <i class="mdi mdi-arrow-right-box"></i></h6>
+                  </div>
+              </div>
+              </div>
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white m-1">
+                  <div class="card-body p-0">
+                    <div class="row m-3">
+                      <div class="col-md-8">
+                        <h2 class="mt-1">4</h2>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h1 style="float:right;"><i class="bi bi-people-fill" style="float:right;"></i></h1>
+                      </div>
+                    </div>
+                      <h4 class="font-weight-normal mb-5 m-3">All Categories</h4>
+                   
+                    <h6 class="card-text text-center p-2" style="background-color:rgba(0, 0, 0, 0.1);">More Info <i class="mdi mdi-arrow-right-box"></i></h6>
+                  </div>
+              </div>
+              </div>
+              <!-- </div> -->
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white m-1">
+                  <div class="card-body p-0">
+                    <div class="row m-3">
+                      <div class="col-md-8">
+                        <h2 class="mt-1">21</h2>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h1 style="float:right;"><i class="bi bi-people-fill" style="float:right;"></i></h1>
+                      </div>
+                    </div>
+                      <h4 class="font-weight-normal mb-5 m-3">Products</h4>
+                   
+                    <h6 class="card-text text-center p-2" style="background-color:rgba(0, 0, 0, 0.1);">More Info <i class="mdi mdi-arrow-right-box"></i></h6>
+                  </div>
+              </div>
+              </div>
+              <!-- </div> -->
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white m-1">
+                  <div class="card-body p-0">
+                    <div class="row m-3">
+                      <div class="col-md-8">
+                        <h2 class="mt-1">6</h2>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h1 style="float:right;"><i class="bi bi-people-fill" style="float:right;"></i></h1>
+                      </div>
+                    </div>
+                      <h4 class="font-weight-normal mb-5 m-3">Items</h4>
+                   
+                    <h6 class="card-text text-center p-2" style="background-color:rgba(0, 0, 0, 0.1);">More Info <i class="mdi mdi-arrow-right-box"></i></h6>
+                  </div>
+              </div>
+              </div>
+              <!-- </div> -->
+
+              <div class="col-md-3 stretch-card grid-margin">
+                <div class="card bg-gradient-primary card-img-holder text-white m-1">
+                  <div class="card-body p-0">
+                    <div class="row m-3">
+                      <div class="col-md-8">
+                        <h2 class="mt-1">11</h2>
+                      </div>
+                      <div class="col-md-4 text-end">
+                        <h1 style="float:right;"><i class="bi bi-people-fill" style="float:right;"></i></h1>
+                      </div>
+                    </div>
+                      <h4 class="font-weight-normal mb-5 m-3">All Payments</h4>
+                   
+                    <h6 class="card-text text-center p-2" style="background-color:rgba(0, 0, 0, 0.1);">More Info <i class="mdi mdi-arrow-right-box"></i></h6>
+                  </div>
+              </div>
+              </div>
+              <!-- </div> -->
+
+              
+
+              </div>
+        </div>
+      </div>
+      @endif
           </div>
           <!-- content-wrapper ends -->
 @include('admin.layout.footer')

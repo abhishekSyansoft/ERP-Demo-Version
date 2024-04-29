@@ -17,18 +17,25 @@
               </nav>
             </div>
               
-            <div class="row mx-auto">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card mx-auto">
-                  <div class="card-body">
-                    <div class="clearfix">
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">GRN Lists</h4>
+                        </div>
                          <!-- Button to open the modal -->
-                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        Create Goods Recieving Note's
+                        <div class="col-md-6">
+                          @if(Auth::user()->admin==3)
+                        <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                          <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
-                        <hr>
-                      <h4 class="card-title float-left"> Invoices Recieved</h4>
-                           
+                        @endif
+                        </div>
+                        <!-- <hr>   -->
+                      </div>     
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                         Edit Supplier
                         </button>   -->
@@ -37,15 +44,16 @@
                         
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div class="">
-                        <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
                                 <th>Preview</th>
-                                <th>Attachment</th>
-                                <th>Order Number</th>
+                                <!-- <th>Attachment</th> -->
+                                <th>PO no.</th>
                                 <th>Invoice Number</th>
-                                <th>Quotation Number</th>
+                                <th>QUT Number</th>
                                 <!-- <th>Order Number</th> -->
                                 <th>Received Date</th>
                                 <th>Received Quantity</th>
@@ -54,26 +62,31 @@
                             </tr>
                             @php($i=1)
                             @foreach($grn as $data)
+                            @for($a=0;$a<10;$a++)
                                 <tr>
                                     <td>{{$i++}}</td>
-                                    <td><a class="mdi mdi-eye" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td>
-                                    <td><a class="mdi mdi-file" href="https://templatearchive.com/wp-content/uploads/2020/06/quotation-template-06-scaled.jpg" style="font-size:20px;color:red;"></a></td>
-                                    <td>{{$data->order_number}}</td>
-                                    <td>{{uniqid().uniqid()}}</td>
-                                    <td>{{uniqid().uniqid()}}</td>
+                                    <td><a class="mdi mdi-eye p-1" style="background-image:linear-gradient(to right, #283b96, #96a1d6);color:white;border-radius:5px;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td>
+                                    <!-- <td><a class="mdi mdi-file" href="https://templatearchive.com/wp-content/uploads/2020/06/quotation-template-06-scaled.jpg" style="font-size:20px;color:red;"></a></td> -->
+                                    <td>PO{{mt_rand(1000, 9999)}}</td>
+                                    <td>Invoice_{{mt_rand(1000, 9999)}}</td>
+                                    <td>QUT{{mt_rand(1000, 9999)}}</td>
                                     <td>{{$data->received_date}}</td>
                                     <td>{{$data->received_quantity}}</td>
                                     <!-- <td>Approved</td> -->
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
+                                    @if(Auth::user()->admin==3)
                                         <a href="{{url('edit-grn/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
+                                    @endif
                                         <a href="{{url('delete-grn/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
+                                @endfor
                             @endforeach
                         </table>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>

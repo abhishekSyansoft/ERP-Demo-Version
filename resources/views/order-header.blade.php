@@ -26,20 +26,27 @@
                 </div>
             </form>
         </div> -->
-        
-
-        <div class="row">
-            <div class="col-md-12" style="margin:auto;">
-                <div class="card">
-                    <div class="card-body mx-auto">
-                        <div class="clearfix">
-                            <!-- <a href="{{ route('order_header.add') }}" class="btn btn-primary btn-md">Create New Order</a> -->
-                            <a href="{{ route('order_items.add') }}" class="btn btn-primary btn-md">Create New Order</a>
-                            <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                            <hr>
-                            <h4 class="card-title float-left">All Orders</h4>
+       
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">All Orders Lists</h4>
                         </div>
-                        <table class="table table-hover table-bordered mt-2">
+                         <!-- Button to open the modal -->
+                        <div class="col-md-6">
+                        <b style="color:white;font-size:20px;"><a href="{{route('order_items.add')}}" class="btn btn-primary mdi mdi-plus-circle" style="color:white;float:right;">New</a></b>
+                       
+                        </div>
+                        <!-- <hr>   -->
+                      </div>   
+                    </div>  
+
+                        <div class="table-wrapper">
+                        <table class="table">
                             <tr>
                                 <th>S. No.</th>
                                 <th>Order Id</th>
@@ -70,6 +77,7 @@
                             </tr>
                             @php($i=1)
                             @foreach($orderheader as $header)
+                            @for($a=0;$a<3;$a++)
                             <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$header->order_id}}</td>
@@ -138,6 +146,7 @@
                                     <a href="{{url('order-header/delete/'.$header->id)}}" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
+                            @endfor
                             @endforeach
                         </table>
                         {{$orderheader->links()}}
@@ -146,5 +155,6 @@
             </div>
         </div>
     </div>
+</div>
     <!-- content-wrapper ends -->
 @include('admin.layout.footer')

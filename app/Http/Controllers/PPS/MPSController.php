@@ -9,6 +9,8 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use App\Models\supplier\resource;
 use App\Models\PPS\MPS;
 use App\Models\Products;
+use App\Models\OrderHeader;
+use App\Models\OrderItem;
 use DB;
 use Carbon\Carbon;
 
@@ -24,18 +26,46 @@ class MPSController extends Controller
 
                 // Retrieve all resources from the database
                 $mps = DB::table('m_p_s')
-                ->join('products', 'products.id', '=', 'm_p_s.product_id')
-                ->select('m_p_s.*', 'products.product_name as product')
+                ->join('order_headers', 'order_headers.id', '=', 'm_p_s.product_id')
+                ->select('m_p_s.*')
                 ->get();
                 $products = Products::all();
+                $orders = OrderHeader::all();
 
                 // Return the view with the list of suppliers
-                return view("pps.mps.mps",compact("mps",'products'));
+                return view("pps.mps.mps",compact("mps",'products','orders'));
             } catch (\Exception $e) {
                 // Log the error or handle it in any other appropriate way
                 // For example, you can return an error view or redirect with an error message
                 return view("error")->with("error", "Failed to fetch resources: ".$e->getMessage());
             }
+        }
+
+
+
+        public function MPSFetchView(Request $request){
+            $id = $request->input('id');
+            $mpsdetails = MPS::where('id',$id)->first();
+
+            $header_id = $mpsdetails->product_id;
+
+            $plannedHeader = OrderHeader::where('id',$header_id)->first();
+
+            $order_id  = $plannedHeader->order_id;
+
+            $order_items = OrderItem::where('order_id',$order_id)->get();
+
+            $totalTaxAmount = $order_items->sum('tax_amount');
+
+            return response()->json([
+                'success'=>true,
+                'message'=>'Fetched Successfully',
+                'mpsdetails'=>$mpsdetails,
+                'plannedHeader'=> $plannedHeader,
+                'order_items' =>  $order_items,
+                'totalTaxAmount' => $totalTaxAmount
+            ]);
+
         }
 
 
@@ -52,6 +82,7 @@ class MPSController extends Controller
                
                     $validatData = $request->validate([
                         "product_id"=> "required",
+                        "conveyour_line"=>"required",
                         "planned_quantity"=> "required",
                         "planned_start_date"=> "required",
                         "planned_end_date"=> "required",
@@ -60,6 +91,7 @@ class MPSController extends Controller
                     // Retrieve the supplier from the database
                     MPS::insert([
                         "product_id"=> $request->product_id,
+                        "conveyour_line"=> $request->conveyour_line,
                         "planned_quantity"=> $request->planned_quantity,
                         "planned_start_date"=> $request->planned_start_date,
                         "planned_end_date"=> $request->planned_end_date,

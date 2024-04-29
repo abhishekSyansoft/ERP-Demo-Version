@@ -17,18 +17,25 @@
               </nav>
             </div>
               
-            <div class="row mx-auto">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card mx-auto">
-                  <div class="card-body">
-                    <div class="clearfix">
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Purchase Order Lists</h4>
+                        </div>
                          <!-- Button to open the modal -->
-                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        Create Purchase Orders
+                        <div class="col-md-6">
+                          @if(Auth::user()->admin == 3)
+                        <button style="float:right;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                          <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
-                        <hr>
-                      <h4 class="card-title float-left"> Purchase Orders Lists</h4>
-                           
+                        @endif
+                        </div>
+                        <!-- <hr>   -->
+                      </div>     
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                         Edit Supplier
                         </button>   -->
@@ -37,13 +44,19 @@
                         
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div class="">
-                        <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table">
                             <tr>
                                 <th>S No.</th>
-                                <th>Quotation View</th>
+                                <!-- <th>Quotation View</th> -->
                                 <th>PO Number</th>
                                 <th>PR Number</th>
+                                <th>Product</th>
+                                <th>Sub Category</th>
+                                <th>Category</th>
+                                <th>Item</th>
+                                <th>Quantity</th>
                                 <th>Supplier</th>
                                 <th>Order Date</th>
                                 <th>Delivery Date</th>
@@ -53,12 +66,21 @@
                             </tr>
                             @php($i=1)
                             @foreach($po as $data)
+                            @for($a=0;$a<4;$a++)
                                 <tr>
                                     <td>{{$i++}}</td>
-                                    <td><a class="mdi mdi-eye" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td>
+                                    <!-- <td><a class="mdi mdi-eye" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td> -->
                                     <!-- <td><a class="mdi mdi-file" style="font-size:20px;color:red;" href="https://www.wordtemplatesonline.net/wp-content/uploads/2021/06/Quotation-Template-06-2021-04.jpg"></a></td> -->
-                                    <td>{{uniqid().Carbon\Carbon::now()}}</td>
-                                    <td>{{uniqid().uniqid()}}</td>
+                                    <td>PO{{mt_rand(1000, 9999)}}</td>
+                                    <td>PR{{mt_rand(1000, 9999)}}</td>
+                                    <!-- <td>VEN{{mt_rand(1000, 9999)}}</td> -->
+                                  
+                                    <td>Bike</td>
+                                    <td></td>
+                                    <td>Vehicle</td>
+                                    <td>Item</td>
+                                    <td>29</td>
+                                    
                                     <td>{{$data->supplier}}</td>
                                     <td>{{$data->order_date}}</td>
                                     <td>{{$data->delivery_date}}</td>
@@ -66,11 +88,16 @@
                                     <td>{{$data->status == 1 ? 'Pending' : ($data->status == 2 ? 'Issued' : ($data->status == 3 ? 'Received' : '')) }}</td>
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
+                                      @if(Auth::user()->admin == 3)
                                         <a href="{{url('edit-po/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
                                         <a href="{{url('delete-po/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                         <a class="btn btn-success approvalBTN">Send to approve</a>
+                                      @else
+                                        <a class="btn btn-success createInvoice" data-bs-toggle="modal" data-bs-target="#downloadInvoiceModal">Create Invoice</a>
+                                      @endif
                                     </td>
                                 </tr>
+                                @endfor
                             @endforeach
                         </table>
                   </div>
@@ -78,6 +105,30 @@
               </div>
             </div>
           </div>
+
+
+             <!-- Modal -->
+             <div class="modal fade" id="downloadInvoiceModal" tabindex="-1" aria-labelledby="downloadInvoiceModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:white;">
+              <div class="modal-header">
+                <h5 class="modal-title" id="downloadInvoiceModalLabel">Download Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <center>
+                  <img src="https://cdn.vertex42.com/WordTemplates/images/word-invoice-template.png" id="invoice-image" style="object-fit:contain;" alt="Invoice">
+                </center>
+                <div class="mt-3 text-center">
+                  <!-- Download button -->
+                  <a href="https://cdn.vertex42.com/WordTemplates/images/word-invoice-template.png" download="invoice.png" class="btn btn-primary mx-2">Download</a>
+                  <!-- Print button -->
+                  <!-- <button onclick="printImage('invoice-image')" class="btn btn-secondary mx-2">Print</button> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
           
 <!-- Add Supplier Modal -->
 <div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
@@ -89,8 +140,61 @@
       </div>
       <div class="modal-body">
         <!-- Rescource Form -->
-                <form method="POST" action="{{route('po.store')}}" class="row">
+                <form method="POST" action="{{route('po.store')}}" class="row" id="createPOform">
                         @csrf
+
+
+                        <div class="mb-3 col-md-6">
+                            <label for="order_no" class="form-label">{{ __('Order No') }}</label>
+                            <select id="order_no"  class="form-control p-3" name="order_no" required>
+                                <option value="0">--Select Order--</option>
+                                @foreach($suppliers as $supplier)
+                                <option value="{{$supplier->id}}">Order_no_{{mt_rand(1000, 9999)}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+<center>
+                        <div class="mb-3 col-md-10 demotable" style="display:none;">
+                        <table class="table table-bordered">
+                                <tr>
+                                  <th>S no.</th>
+                                  <th>Item Code</th>
+                                  <th>Item Name</th>
+                                  <th>Unit</th>
+                                </tr>
+                                <tr>
+                                 <td> 1</td>
+                                 <td>7925</td>
+                                 <td>Wheel</td>
+                                 <td>17</td>
+                                </tr>
+
+                                <tr>
+                                 <td> 2</td>
+                                 <td>9232</td>
+                                 <td>Meter</td>
+                                 <td>12</td>
+                                </tr>
+
+                                <tr>
+                                 <td> 3</td>
+                                 <td>2342</td>
+                                 <td>Handle</td>
+                                 <td>20</td>
+                                </tr>
+
+                                <tr>
+                                 <td> 4</td>
+                                 <td>679</td>
+                                 <td>Break Shoe</td>
+                                 <td>2</td>
+                                </tr>
+                              </table>
+                            </div>
+                            </center>
+
+
                         <div class="mb-3 col-md-6">
                             <label for="supplier_id" class="form-label">{{ __('Supplier') }}</label>
                             <select id="supplier_id"  class="form-control p-3" name="supplier_id" required>

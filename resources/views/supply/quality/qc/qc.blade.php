@@ -17,18 +17,25 @@
               </nav>
             </div>
               
-            <div class="row mx-auto">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card mx-auto">
-                  <div class="card-body">
-                    <div class="clearfix">
+               
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Quality Control Lists</h4>
+                        </div>
                          <!-- Button to open the modal -->
-                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        Create Quality Control
+                        <div class="col-md-6">
+                        <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                          <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
-                        <hr>
-                      <h4 class="card-title float-left">Quality Control Lists</h4>
-                           
+                        </div>
+                        <!-- <hr>   -->
+                      </div>     
+                       
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                         Edit Supplier
                         </button>   -->
@@ -37,11 +44,13 @@
                         
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div class="">
-                        <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
                                 <th>Product</th>
+                                <th>Category Name</th>
                                 <th>Inspection date</th>
                                 <th>Result</th>
                                 <th>Remarks</th>
@@ -49,24 +58,28 @@
                             </tr>
                             @php($i=1)
                             @foreach($qc as $data)
+                            @for($a=0;$a<10;$a++)
                                 <tr>
                                     <td>{{$i++}}</td>
-                                    <td>{{$data->product}}</td>
+                                    <td>{{ $i % 2 == 0 ? 'Bajaj Pulsar' : 'Mahindra Thar' }}</td>
+                                    <td>{{ $i % 2 == 0 ? 'Small Vehicle' : 'Large Vehicle' }}</td>
                                     <td>{{$data->inspection_date}}</td>
-                                    <td>{{ ($data->result == 1) ? 'Pass' : (($data->result == 2) ? 'Fail' : '')}}</td>
-                                    <td>{{$data->remarks}}</td>
+                                    <td>{{ $i % 2 == 0 ? 'Fail' : 'Pass' }}</td>
+                                    <td>{{ $i % 2 == 0 ? 'Rework' : 'Rejected' }}</td>
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
                                         <a href="{{url('edit-qc/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
                                         <a href="{{url('delete-qc/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
+                                @endfor
                             @endforeach
                         </table>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
           </div>
 
 
@@ -93,6 +106,18 @@
                             </select>
                         </div>
 
+
+                        <div class="mb-3 col-md-6">
+                            <label for="product_id" class="form-label">{{ __('Category') }}</label>
+                            <select id="product_id"  class="form-control p-3" name="product_id" required>
+                                <option value="0">--Select Category--</option>
+                                <option >Small Vehicle</option>
+                                <option >Medium Vehicle</option>
+                                <option >Large Vehicle</option>
+                               
+                            </select>
+                        </div>
+
                         <div class="mb-3 col-md-6">
                             <label for="inspection_date" class="form-label">{{ __('Inspection Date') }}</label>
                             <input type="date" id="inspection_date" class="form-control" name="inspection_date" placeholder="Enter the negotiated price" required>
@@ -109,7 +134,7 @@
 
                         <div class="mb-3 col-md-6">
                             <label for="remarks" class="form-label">{{ __('Remarks') }}</label>
-                            <input type="text" id="remarks" class="form-control" name="remarks" placeholder="Enetr terms & condition" required>
+                            <input type="text" id="remarks" class="form-control" name="remarks" placeholder="Enetr your remarks" required>
                         </div>
 
                         <div class="form-group">

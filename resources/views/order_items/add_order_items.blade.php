@@ -60,7 +60,8 @@
                                 <div class="modal-body mx-auto">
                                   <form method="GET" action="{{route('edit_order')}}" id="edit_order_form">
                                     @csrf
-                                    <table class="table table-hover table-bordered mt-2">
+                                    <div class="table-wrapper" style="overflow:block;">
+                                    <table class="table ">
                                       <!-- Table headers remain the same -->
                                       <tr>
                                                           <th></th>
@@ -168,6 +169,7 @@
                                       <button type="submit" name="submit" data-bs-toggle="modal" data-bs-target="#editBackdrop" class="btn btn-success">Submit &nbsp;&nbsp;&nbsp;<i class="mdi mdi-pen"></i></button>
                                       <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
                                     </div>
+                                    </div>
                                   </form>
                                 </div>
                               </div>
@@ -193,18 +195,19 @@
 
 
                 <!-- Modal -->
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal fade previewModalForm" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                   <div class="modal-dialog  modal-lg">
                     <div class="modal-content card">
                       <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">Preview Generated Orders</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
-                      <div class="modal-body mx-auto">
+                      <div class="modal-body mx-auto" clas="card">
 
                   
                       <form method="GET" action="{{route('preview_items')}}" id="preview_order_form">
-                      <table class="table table-hover table-bordered mt-2">
+                      <div class="table-wrapper">
+                      <table class="table mt-2">
                             <tr>
                                 <th></th>
                                 <th>S. No.</th>
@@ -311,9 +314,9 @@
                         </div>
                         </form>
                       </div>
-                      
+                      </div>
                         <!-- <button type="button" class="btn btn-primary">Understood</button> -->
-                      <!-- </div> -->
+                      </div>
                     </div>
                   </div>
                 </div>

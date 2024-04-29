@@ -17,12 +17,11 @@
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{ asset('backend/css/style.css') }}">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="{{asset('backend/images/company_mini_logo.png')}}" />
+    <link rel="shortcut icon" href="{{asset('backend/images/company_mini_logo.png')}}" style=" image-rendering: pixelated;" />
   </head>
   <style>
-   .login_back{
-    background:url("/backend/images/company_mini_logo.png") center 80% no-repeat;
-    background-size:contain;
+   .login_back{ 
+    background: url("/backend/images/company_mini_logo.png") center/contain no-repeat;
     /* mix-blend-mode:darken; */
    }
   </style>
@@ -36,7 +35,7 @@
             <div class="col-xl-5 col-lg-6 col-md-8">
               <div class="auth-form-light text-left p-5">
                 <div class="brand-logo">
-                  <img src="{{ asset('backend/images/company_logo.png') }}">
+                  <img src="{{ asset('backend/images/company_logo.png') }}" style="image-rendering: high-quality;">
                 </div>
                 <hr>
                 <h4>Hello! let's get started</h4>

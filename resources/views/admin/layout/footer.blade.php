@@ -1,5 +1,5 @@
    <!-- partial:partials/_footer.html -->
-   <footer class="footer">
+   <footer class="footer" style="background-color:white;color:black;">
       <div class="container-fluid d-flex justify-content-between">
         <span class="text-muted d-block text-center text-sm-start d-sm-inline-block"><span><img style="mix-blend-mode:darken;object-fit:contain;height:20px;width:20px;" src="{{asset('backend/images/company_mini_logo.png')}}"></span>&nbsp;&nbsp;&nbsp;Copyright © SyanSoft 2024</span>
         <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"><a href="" target="_blank"><img style="mix-blend-mode:darken;object-fit:contain;height:30px;" src="{{asset('backend/images/company_mini_logo.png')}}"><img style="mix-blend-mode:darken;object-fit:contain;height:30px;width:80px;" src="{{asset('backend/images/company_logo_name.png')}}"></a></span>
@@ -22,74 +22,425 @@
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
+     <script>
+       
+    </script>
+
 
      <script>
 
 
 
     $(document).ready(function() {
-        $('.btn').css('padding','15px');
-        $('.page-item span').css('background-color','#c67bff');
-        $('.page-item span').css('color','white');
-        // Function to show Toastr notifications
-        function showToast(message, type) {
-            toastr.options = {
-                "closeButton": true,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "1000",
-                "extendedTimeOut": "1000",
-                "toastClass": "toast-white"
-            };
 
-            switch (type) {
-                case 'success':
-                    toastr.success(message, 'Success');
-                    break;
-                case 'error':
-                    toastr.error(message, 'Error');
-                    break;
-                default:
-                    toastr.info(message);
-                    break;
+
+
+        $('#PRAddModalForm #order_id').on('change', function() {
+            // Log a message to confirm the event listener is triggered
+            alert('Keyup event triggered');
+            
+            // Get the entered value
+            var orderId = $(this).children('option:selected').html();
+            
+            // Log the entered value
+            alert('Entered Order ID:', orderId);
+            
+            // You can perform further actions here, such as making an AJAX request to fetch data related to the entered order_id.
+        });
+
+
+
+
+        // Declare formDataArray outside the document ready function
+        var formDataArray = [];     
+
+                // Handle form submission
+                    $('#addItemModalTestForm').submit(function(event) {
+                        event.preventDefault(); // Prevent default form submission
+                        console.clear(); // Clear console
+                        var formData = $(this).serialize(); // Serialize form data
+
+                        // Push form data into the array
+                        formDataArray.push(formData);
+
+
+                        // Create a new row for the table
+                        var newRow = $('<tr>');
+
+                        // Add data from the form to the new row
+                        // newRow.append('<td>' + (formDataArray.length) + '</td>'); // Index number
+                        newRow.append('<td>' + $('#product_id option:selected').text() + '</td>'); // Product Name
+                        newRow.append('<td hidden>' + $('#order_id').val() + '</td>'); // Order ID
+                        newRow.append('<td hidden>' + $('#product_id').val() + '</td>'); // Product ID
+                        newRow.append('<td hidden>' + $('#sku').val() + '</td>'); // SKU
+                        newRow.append('<td>' + $('#unitprice').val() + '</td>'); // Unit Price
+                        newRow.append('<td>' + $('#quantity').val() + '</td>'); // Quantity
+                        newRow.append('<td>' + $('#total_price').val() + '</td>'); // SKU
+                        newRow.append('<td>' + $('#tax_rate').val() + '</td>'); // Tax Rate
+                        newRow.append('<td>' + $('#tax_amount').val() + '</td>'); // Tax Amount
+                        newRow.append('<td>' + $('#discount').val() + '</td>'); // Discount
+                        newRow.append('<td>' + $('#sub_total').val() + '</td>'); // Sub Total
+                        newRow.append('<td><a style="color:red;cursor:pointer;" id="testOrderDelete" class="mdi mdi-delete"></a></td>');
+                        newRow.append('</tr>'); // Sub Total
+
+                        // Append the new row to the table body
+                        $('#orderItemTest').append(newRow);
+                        
+
+                        // Clear the form fields after submission
+                        $('#addItemModalTestForm')[0].reset();
+
+                        // Close the modal
+                        $('#addItemModalTest').modal('hide');
+
+                        
+                        function parseFormData(formDataArray) {
+                    var formData = {}; // Object to store form data
+
+                    // Split the string by '&' to get individual key-value pairs
+                    var keyValuePairs = formDataArray.split('&');
+
+                    // Loop through each key-value pair
+                    keyValuePairs.forEach(function(pair) {
+                        // Split each pair by '=' to separate key and value
+                        var keyValue = pair.split('=');
+                        var key = decodeURIComponent(keyValue[0]); // Decode URI component for the key
+                        var value = decodeURIComponent(keyValue[1]); // Decode URI component for the value
+                        if (key !== '_token') { // Skip adding the token field to formData
+                            formData[key] = value; // Add key-value pair to formData object
+                        }
+                        // formData[key] = value; // Add key-value pair to formData object
+                    });
+
+                    return formData;
+                }
+
+                // Function to parse all form data strings in the array
+                function parseAllFormData(formDataArray) {
+                    var allFormData = []; // Array to store parsed form data
+
+                    // Loop through each form data string
+                    formDataArray.forEach(function(formDataArray) {
+                        // Parse the form data string and add to the array
+                        var parsedFormData = parseFormData(formDataArray);
+                        allFormData.push(parsedFormData);
+                    });
+
+                    return allFormData;
+                }
+
+                // Parse all form data strings
+                var parsedFormData = parseAllFormData(formDataArray);
+
+                // Log the parsed form data
+                // console.log(parsedFormData);
+                $('#orderItemTest').on('click','#testOrderDelete',function(){
+                    var row = $(this).closest('tr').remove();
+                    console.clear();
+                    
+                    // Remove the corresponding data from the parsedFormData array
+                    var index = row.index();
+                    parsedFormData.splice(index, 1);
+
+                    return parsedFormData;
+                    // Remove the row from the DOM
+                    row.remove();
+                })
+             });
+
+
+             $('#createPOform #order_no').on('change',function(){
+                // alert('hi');
+
+                $('#createPOform .demotable').show();
+
+             });
+
+             function printImage(imageId) {
+                var imageSrc = $('#' + imageId).attr('src');
+                var printWindow = window.open('', '_blank');
+                printWindow.document.write('<html><head><title>Print Invoice</title></head><body><img src="' + imageSrc + '" style="max-width:100%;" /></body></html>');
+                printWindow.document.close();
+                printWindow.onload = function() {
+                    printWindow.print();
+                    printWindow.close();
+                };
             }
-        }
 
-    // Display toast notifications based on session messages
-    @if(Session::has('success'))
-        var successData = "{{ Session::get('success') }}"; // Assuming success data is stored in 'success_data'
-        if (successData) {
-            showToast(successData, 'success');
-        }
-    @endif
 
-    @if(Session::has('message'))
-        var successData = "{{ Session::get('message') }}"; // Assuming success data is stored in 'success_data'
-        if (successData) {
-            showToast(successData, 'message');
-        }
-    @endif
+             $("#send_modal_data").click(function() {
+                    var dataToSend = [];
 
-    @if(Session::has('error'))
-        var errorData = "{{ Session::get('error') }}"; // Assuming error data is stored in 'error_data'
-        if (errorData) {
-            showToast(errorData, 'error');
-        }
-    @endif
+                    // Loop through each row of the table
+                    $("#dataTableTestTable tbody tr").each(function() {
+                        var rowData = {};
 
-    @if(Session::has('delete'))
-        var errorData = "{{ Session::get('delete') }}"; // Assuming error data is stored in 'error_data'
-        if (errorData) {
-            showToast(errorData, 'delete');
-        }
-    @endif
-});
+                        // Loop through each cell of the current row
+                        $(this).find("td").each(function() {
+                            // Get the column name from the table header
+                            var columnName = $(this).closest('table').find('th').eq($(this).index()).text().trim();
+                            
+                            // Get the text content of the cell
+                            var cellData = $(this).text().trim();
+                            
+                            // Add cell data to rowData with column name as key
+                            rowData[columnName] = cellData;
+                        });
 
-</script>
+                        // Push the rowData object to dataToSend array
+                        dataToSend.push(rowData);
+                    });
+
+                    // Send data to server via AJAX
+                    sendDataToServer(dataToSend);
+                    sendDataToServerHeader();
+                });
+
+
+                $('.createInvoice').on('click',function(){
+                    alert('Invoice Created Successfully.');
+                });
+
+
+                function toggleDropdown() {
+                    var dropdownContent = document.getElementById("dropdownContent");
+                    if (dropdownContent.style.display === "block") {
+                        dropdownContent.style.display = "none";
+                    } else {
+                        dropdownContent.style.display = "block";
+                    }
+                    }
+
+                    function selectOption(option) {
+                    var dropbtn = document.querySelector(".dropbtn");
+                    dropbtn.textContent = option;
+                    toggleDropdown(); // Close the dropdown after selection
+                    }
+
+
+
+                    function sendDataToServer(data) {
+                    // Send data via AJAX to a Laravel route that maps to a controller function
+                    // Replace 'your-route' with the actual route name in your Laravel routes file
+                    // Replace 'your-controller-method' with the actual method name in your controller
+                    
+                    $.ajax({
+                        url: '/save_these_data',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        dataType: 'json', // Specify that you're expecting JSON data in the response
+                        data: JSON.stringify({ data: data }),
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            console.log('Data sent successfully:', response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error sending data:', error);
+                        }
+                    });
+
+                    }
+
+
+                    function sendDataToServerHeader(){
+                        $('#headerOrderForm').submit();
+                        $('#headerOrderForm').submit(function(event){
+                                event.preventDefault(); // Prevent default form submission
+
+                                var formData = new FormData(this); // Serialize form data
+                                
+                                // AJAX submission
+                                $.ajax({
+                                    url: $(this).attr('action'),
+                                    type: $(this).attr('method'),
+                                    data: formData,
+                                    processData: false,
+                                    contentType: false,
+                                    success: function(response){
+                                        
+                                                $('#errorList').empty();
+                                                // Append the HTML markup for error messages to the errorList element
+                                                $('#errorList').append('<p class="alert text-success">'+response.message+'</p>');
+                                                $('#errorsModal').modal('show');
+
+                                                // console.log(response);
+
+                                                    // If AJAX request successful, close current accordion
+                                        },
+                                    error: function(xhr, status, error){
+                                                    // Check if the response JSON contains errors
+                                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                            // Clear the existing content of the errorList element
+                                            $('#errorList').empty();
+                                            
+                                            // Initialize an empty string to store HTML markup for error messages
+                                            var errorMessageList = '';
+                                            
+                                            // Loop through each error and handle them
+                                            $.each(xhr.responseJSON.errors, function(key, value) {
+                                                // Generate HTML markup for the error message and append it to errorMessageList
+                                                errorMessageList += '<p class="alert text-danger p-0">' + value[0] + '</p>';
+                                            });
+
+                                            // Append the HTML markup for error messages to the errorList element
+                                            $('#errorList').html(errorMessageList);
+                                            
+                                            // Show the modal containing error messages
+                                            $('#errorsModal').modal('show');
+                                        }
+                                    }
+                                });
+                            });
+                        }
+
+                        $('.btn').css('padding','15px');
+                        $('.page-item span').css('background-color','#283b97');
+                        $('.page-item span').css('color','white');
+                        // Function to show Toastr notifications
+                        function showToast(message, type) {
+                            toastr.options = {
+                                "closeButton": true,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "1000",
+                                "extendedTimeOut": "1000",
+                                "toastClass": "toast-white"
+                            };
+
+                            switch (type) {
+                                case 'success':
+                                    toastr.success(message, 'Success');
+                                    break;
+                                case 'error':
+                                    toastr.error(message, 'Error');
+                                    break;
+                                default:
+                                    toastr.info(message);
+                                    break;
+                            }
+                        }
+
+                    // Display toast notifications based on session messages
+                    @if(Session::has('success'))
+                        var successData = "{{ Session::get('success') }}"; // Assuming success data is stored in 'success_data'
+                        if (successData) {
+                            showToast(successData, 'success');
+                        }
+                    @endif
+
+                    @if(Session::has('message'))
+                        var successData = "{{ Session::get('message') }}"; // Assuming success data is stored in 'success_data'
+                        if (successData) {
+                            showToast(successData, 'message');
+                        }
+                    @endif
+
+                    @if(Session::has('error'))
+                        var errorData = "{{ Session::get('error') }}"; // Assuming error data is stored in 'error_data'
+                        if (errorData) {
+                            showToast(errorData, 'error');
+                        }
+                    @endif
+
+                    @if(Session::has('delete'))
+                        var errorData = "{{ Session::get('delete') }}"; // Assuming error data is stored in 'error_data'
+                        if (errorData) {
+                            showToast(errorData, 'delete');
+                        }
+                    @endif
+                });
+
+                </script>
 <script>
     $(document).ready(function() {
+
+
+
+ // Attach click event handler to the anchor element
+ $('.checkMpsDetails').on('click', function(e) {
+        // Prevent the default action of the anchor
+        e.preventDefault();
+        
+        // Get the order ID from the data attribute
+        var id = $(this).data('id');
+        
+        // Make AJAX call
+        $.ajax({
+            url: '/fetch-mps-details', // Specify your endpoint URL
+            type: 'GET', // Or 'GET' depending on your server route
+            data: { id: id }, // Send the order ID in the request
+            success: function(response) {
+                // Handle the AJAX response here
+                console.log('Response:', response);
+
+                $('#FetchMpsDetailsModal').modal('show');
+
+
+                // Optionally, you can redirect the user to a success page or perform any other actions
+                var tableBody = '';
+                  
+                  $.each(response.order_items, function(index, item) {
+                      tableBody += '<tr>';
+                      tableBody += '<td>' + (index + 1) + '</td>';
+                      tableBody += '<td>' + item.product_name + '</td>';
+                      tableBody += '<td>' + parseFloat(item.unit_price).toLocaleString() + '</td>';
+                      tableBody += '<td>' + parseInt(item.quantity).toLocaleString() + '</td>';
+                      tableBody += '<td>' + parseFloat(item.total_price).toLocaleString() + '</td>';
+                      tableBody += '<td>' + parseFloat(item.tax_amount).toLocaleString() + '</td>';
+                      tableBody += '<td>' + parseFloat(item.discount).toLocaleString() + '</td>';
+                      tableBody += '<td>' + parseFloat(item.sub_total).toLocaleString() + '</td>';
+                      tableBody += '</tr>';
+                  });
+
+                  $('#checkMpsDetailstblBody').html(tableBody);
+
+                //   $.each(response.plannedHeader, function(index, item) {
+
+                    var plannedHeader = response.plannedHeader;
+
+                    $('#fetched_order_id').text(plannedHeader.order_id);
+                    $('#total_amount').text(parseFloat(plannedHeader.order_totoal).toLocaleString() );
+                    $('#total_discount').text(parseFloat(plannedHeader.discount).toLocaleString() );
+                    $('#line_item_total').text(parseFloat(plannedHeader.total_amount).toLocaleString() );
+                    $('#total_tax').text(parseFloat(response.totalTaxAmount).toLocaleString() );
+
+                   
+                        
+
+                   
+                   var mpsdetails =   response.mpsdetails;
+                   var status = status = mpsdetails.status == 1 ? 'Pending':(mpsdetails.status == 2 ? 'Processing':(mpsdetails.status == 3 ? 'Completed': ''))
+                   $('#fetched_status').text(status);
+                   $('#fetched_start_date').text(mpsdetails.planned_start_date);
+                   $('#fetched_end_date').text(mpsdetails.planned_end_date);
+                   $('#fetched_quantity').text(mpsdetails.planned_quantity);
+                   $('#fetched_line').text(mpsdetails.conveyour_line);
+                   
+
+   
+                  
+                //   });
+
+
+
+
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors
+                console.error('Error:', error);
+            }
+        });
+    });
+
+
+
+
+
+
 
         // When the button with id forecastProductModalButton is clicked
     $('#forecastProductModalButton').click(function(event) {
@@ -107,8 +458,10 @@
         $('#order_accordian_toggle').click(function(){
             $('.accordion-item #collapseOne').collapse('hide');
             $('.accordion-item #collapseTwo').collapse('hide');
-            $('#collapseOne').toggle('hide');
-            $('#collapseTwo').toggle('hide');
+            $('.accordion-item #collapseThree').collapse('hide');
+            $('.accordion-item #collapseOne').toggle();
+            $('.accordion-item #collapseTwo').toggle();
+            $('.accordion-item #collapseThree').toggle();
             // $('#collapseThree').toggle();
         })
 
@@ -288,7 +641,7 @@ $('#update_order_items_form').submit(function(e) {
                     // Handle success response
                     // var order_header = response.order_header;
                     // console.log(order_header);
-                    console.log(response);
+                    // console.log(response);
 
                     // Optionally, you can redirect the user to a success page or perform any other actions
                     var tableBody = '';
@@ -357,6 +710,14 @@ $('#update_order_items_form').submit(function(e) {
                 }
             });
         });
+
+
+
+    $('#addItemModalTestForm').submit(function(){
+        
+    })
+
+
 
 
         $('#preview_order_form').submit(function(event) {
@@ -951,7 +1312,7 @@ $('#update_order_items_form').submit(function(e) {
 
                                                         // $('#EditorderedItemsBody').html(tableBody);
 
-                                                    console.log(response);
+                                                    // console.log(response);
                                                 },
                                                 error: function(xhr, status, error) {
                                                     // Parse the response JSON to access the error messages
@@ -986,14 +1347,8 @@ $('#update_order_items_form').submit(function(e) {
                                                 }
                                             });
                                         });
+
                                        
-
-
-
-
-
-
-
 
 
         $('#sourceSelect').change(function(){
@@ -1261,15 +1616,23 @@ $('#update_order_items_form').submit(function(e) {
     });
 
 
+
+
+
         let quantity = $('quantity').val();
         $('#tick_check').hide();
+
+        $('#addItemModalTest').on('hidden.bs.modal', function () {
+            $('#order_items, #addItemModalTest #product_id').css('background-color', 'white');
+            $('#tick_check').hide();
+        });
         // Attach change event listener to the select element
-        $('#exampleModal #product_id').change(function() {
+        $('#exampleModal,#addItemModalTest #product_id').change(function() {
             // Get the selected dealer ID
             var selectedDealerId = $(this).children('option:selected').val(); // Get the value of the selected option
             // alert('Selected Dealer ID:' + selectedDealerId);
             $('#tick_check').show();
-            $('#order_items #product_id').css('background-color','rgba(72,235,150,0.5)');
+            $('#order_items,#addItemModalTest #product_id').css('background-color','rgba(72,235,150,0.5)');
 
             $.ajax({
                 url: '/add_order_items/fetch-dealer-details', // Route URL
@@ -1388,12 +1751,17 @@ $('#update_order_items_form').submit(function(e) {
 </script>
 
     <script>
+       $(document).ready(function() {
       $('.form-control').css('border-bottom','1px solid black');
-      $('.table th').addClass('table-primary border-warning')
-      $('.table tr').addClass('table-warning')
+      $('.table th').css('color','#273a96');
+      $('.table tr').css('border-bottom','1px solid #273a96');
+    //   $('.table th').css('color','white');
+     
     //   $('.table th').css('background-color','#598ac2');
     //   $('.table tr').css('background-color','#d5d7da')
-      $('.table').addClass('table-sm')
+      $('.table').addClass('table-sm');
+      $('table').removeClass('table-hovered');
+});
     </script>
     </body>
 </html>

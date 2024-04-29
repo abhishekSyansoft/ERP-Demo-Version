@@ -11,23 +11,30 @@
               <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
                   <li class="breadcrumb-item active" aria-current="page">
-                    <span></span>Supplier Quotation/Negotiation<i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+                    <span></span>Supplier Quotation<i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
                   </li>
                 </ul>
               </nav>
             </div>
-              
-            <div class="row mx-auto">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card mx-auto">
-                  <div class="card-body">
-                    <div class="clearfix">
+
+
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Supplier Quotation/Negotiation Lists</h4>
+                        </div>
                          <!-- Button to open the modal -->
-                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        Create Supplier Quotation/Negotiation
-                        </button>  
-                        <hr>
-                      <h4 class="card-title float-left">Purchase Requisition Lists</h4>
+                        <div class="col-md-6">
+                        <!-- <button style="float:right;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                          <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
+                        </button>   -->
+                        </div>
+                        <!-- <hr>   -->
+                      </div>     
                            
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                         Edit Supplier
@@ -37,28 +44,71 @@
                         
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div class="">
-                        <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table mx-auto" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
-                                <th>Compare Quotation</th>
-                                <th>Quotation Number</th>
+                               
+                                <th>View</th>
+                                <!-- <th>Create</th> -->
+                                <th>Req No.</th>
+                                <th>RFQ No.</th>
+                                <th>QUT No.</th>
+                                <th>Vendor Name.</th>
+                                <th>Product</th>
+                                <th>Sub Category</th>
+                                <th>Category</th>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Number</th>
                                 <th>Vendor Name</th>
-                                <th>Date</th>
+                                <th>Price</th>
+                                <th>Delivery Date</th>
+                                <!-- <th>Neq Price</th>
+                                <th>Neq Date</th> -->
+                                <th>Status</th>
                                 <th>Quotation PDF</th>
+                                <th>Approval</th>
                                 <th>Action</th>
                             </tr>
                             @php($i=1)
+                            @for($a=0;$a<6;$a++)
                             @foreach($sqn as $data)
                                 <tr>
                                     <td>{{$i++}}</td>
-                                    <td><input style="font-size:30px;" type="checkbox" class="mdi mdi-compare" name="compare"></td>
-                                    <td>
-                                    {{uniqid()}}
-                                    </td>
+                                    
+                                    <td><a href="https://www.projectmanager.com/wp-content/uploads/2021/01/RFQ-Screenshot-600x508.jpg" style="background-image:linear-gradient(to right, #283b96, #96a1d6);color:white;border-radius:5px;" class="btn mdi mdi-eye p-2"></a></td>
+                                    <td>PR{{mt_rand(1000, 9999)}}</td>
+                                    <td>RFQ{{mt_rand(1000, 9999)}}</td>
+                                    <td>VEN{{mt_rand(1000, 9999)}}</td>
+                                    <td>Abhishek Kumar</td>
+                                    <td>Bike</td>
+                                    <td></td>
+                                    <td>Vehicle</td>
+                                    <td>Item</td>
+                                    <td>21</td>
+                                    <td>28</td>
+                                   
                                     <td>{{$data->supplier}}</td>
+                                    <td>Rs. {{mt_rand(1000, 9999)}}</td>
                                     <td>{{$data->valid_until}}</td>
-                                    <td><h1><a  style="color:red;" href="https://i.pinimg.com/originals/d5/eb/40/d5eb400220228d1ad2f285563e9ef221.jpg" class="mdi mdi-file"></a></h1></td>
+                                    <!-- <td>Rs. {{mt_rand(1000, 9999)}}</td>
+                                    <td>{{$data->valid_until}}</td> -->
+                                    <td>
+                                      <div class="dropdown">
+                                        <a class="dropbtn" style="background-color:transparent;text-decoration:none;color:black;color:{{ $i % 2 == 0 ? 'Green' : 'Red' }}" onclick="toggleDropdown()">{{ $i % 2 == 0 ? 'Approved' : 'Rejected' }}</a>
+                                        <div id="dropdownContent" class="dropdown-content">
+                                          <a href="#" onclick="selectOption('Approved')">Approved</a>
+                                          <a href="#" onclick="selectOption('Rejected')">Rejected</a>
+                                          <a href="#" onclick="selectOption('Pending')">Pending</a>
+                                          <!-- Add more options as needed -->
+                                        </div>
+                                      </div>
+                                    </td>
+                                  
+                                    <td><h3><a style="color:red;" href="https://i.pinimg.com/originals/d5/eb/40/d5eb400220228d1ad2f285563e9ef221.jpg" class="mdi mdi-file"></a></h3></td>
+                                    <td><a class="btn btn-success appr">Send</a></td>
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
                                         <a href="{{url('edit-sqn/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
@@ -66,13 +116,14 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            @endfor
                         </table>
-                        <a class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Compare Quotation</a>
                     </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
 
           

@@ -18,7 +18,7 @@
               </nav>
             </div>
             <div class="row">
-              <div class="col-lg-8 grid-margin stretch-card" style="margin:auto;">
+              <div class="col-lg-12 m-0 p-0">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Create a new role</h4>

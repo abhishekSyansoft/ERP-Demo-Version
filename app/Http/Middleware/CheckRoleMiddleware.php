@@ -4,12 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Models\User;
 use Auth;
-use App\Models\mapping;
-use DB;
-use Illuminate\Support\HtmlString;
+
 
 class CheckRoleMiddleware
 {
@@ -30,6 +26,6 @@ class CheckRoleMiddleware
         }
 
         // User does not have the required role, return unauthorized response
-        return abort(401, 'Oops! Unauthorized Action. Please contact your administrator for assistance.');
+        return abort(403, 'Oops! Unauthorized Action. Please contact your administrator for assistance.');
     }
 }

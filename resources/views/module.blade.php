@@ -16,17 +16,28 @@
                 </ul>
               </nav>
             </div>
-              
-            <div class="row">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="clearfix">
-                      <h4 class="card-title float-left">All Modules</h4>
-                      <a href="{{route('add.module')}}" class="btn btn-primary btn-md">Add Module's</a>
-                      <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div>
-                    <table class="table table-hover table-bordered mt-2">
+
+
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">All Modules Lists</h4>
+                        </div>
+                         <!-- Button to open the modal -->
+                        <div class="col-md-6">
+                        <b style="color:white;font-size:20px;"><a href="{{route('add.module')}}" class="btn btn-primary mdi mdi-plus-circle" style="color:white;float:right;">New</a></b>
+                       
+                        </div>
+                        <!-- <hr>   -->
+                      </div>   
+                    </div> 
+                    <div class="table-wrapper">
+       
+                    <table class="table">
                         <tr>
                             <th>S No.</th>
                             <!-- <th>Module Id</th> -->
@@ -58,6 +69,7 @@
                 </div>
               </div>
             </div>
+          </div>
           </div>
           <!-- content-wrapper ends -->
          

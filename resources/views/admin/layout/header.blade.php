@@ -4,10 +4,12 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>SyanSoft Solutioning For Innovator</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{asset('backend/vendors/mdi/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('backend/vendors/css/vendor.bundle.base.css')}}">
+    
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <!-- End plugin css for this page -->
@@ -15,6 +17,7 @@
     {{-- toastr --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 
     <!-- Include jQuery -->
@@ -27,24 +30,91 @@
   </head>
 
  <style>
-  .card{
-    overflow-x: auto;
-    overflow-y: hidden;
-    margin:auto;
+  .table-wrapper{
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    margin:30px !important;
   }
-  /* .card-body{
+
+  #editBackdrop .card, .previewModalForm .card{
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    /* margin:auto !important; */
+  }
+
+
+  #edit_order_form  .table-wrapper, .accordion-body .card {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    margin:30px !important;
+  }
+
+  .main-panel,.content-wrapper{
+    margin:0px;
+    padding:0px;
+  }
+  /* .card{
+    height:100vh;
+  } */
+  .card-body:not(.main-panel-dashboard .card-body) {
+    height: 100vh;
+    box-shadow: 0 0 53px 10px rgba(0, 0, 0, 0.6);
+}
+
+.main-panel-dashboard .card-body{
+    /* box-shadow: 0 0 14px 1px rgba(0, 0, 0, 0.6); */
+}
+
+  .btn{
+    padding:7px !important;
+  }
+
+   /* .card-body{
     margin:auto;
   } */
   /* Hide scrollbar by default */
   ::-webkit-scrollbar {
-        width: 0.5em;
-        background-color: #f5f5f5;
+        background-color: #0081bb;
+        display:none;
       }
+
+
+  .main-panel .content-wrapper .page-header:not(.main-panel-dashboard .page-header){
+    display: none !important;
+    }
+
+    .sidebar-item .sidebar-link:hover {
+    background-color: #273a96 !important;
+    color:white !important;
+    }
+
+    .sidebar-item a.active {
+    color:white !important;
+    }
+
+    .sidebar-item a:hover {
+    color: white !important;
+    }
+
+    .sidebar-item .sidebar-link{
+      padding-top:10px !important;
+      padding-bottom:10px !important;
+    }
+
+  .main-panel,.content-wrapper{
+    margin:1px;
+    padding:1px;
+  }
+
   .table td,.table{
     padding:5px;
     text-align:center;
   }
 
+  .btn-danger{
+    background-color:#79a4e4;
+    border:0px;
+  }
   select option {
     padding: 10px 10px;
   }
@@ -53,29 +123,27 @@
     margin-top:20px;
   }
 
-  .pagination li{
-    border-radius:0px;
-    margin: 5px;
+  .card-body{
+    border-radius:10px !important;
   }
-  .pagination li a{
-    padding: 5px 40px;
+  .clearfix:not(.main-panel-dashboard .card-body .clearfix){
+    background-image:linear-gradient(to right, #273a96, #74b6d1) !important;
+    padding-top:20px !important;
+    padding-bottom:20px !important;
   }
 
-  .pagination li span{
-    padding: 5px 40px;
-  }
-  .custom-modal-dialog {
-    max-width: 1100px; /* Define custom width */
-    background-color: white; /* Apply custom background color */
-  }
+    .accordion-button[aria-expanded="true"] {
+      background-image: linear-gradient(to right, #273a96, #74b6d1) !important;
+      color:white !important;
+    }
+  
+
 
   @media (min-width: 992px) {
     .modal-xl {
       max-width: 1200px; /* Define extra-large width for larger screens */
     }
   }
-
-
 
   .compare table {
   font-family: Arial, sans-serif;
@@ -103,6 +171,49 @@
 .delete-link,.edit-link{
   cursor: pointer;
 }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background-color: #273a96;
+  color: white;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  max-height: 100px; /* Set the max height for the dropdown */
+  overflow-y: auto; /* Enable vertical scrolling */
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #74b6d1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #74b6d1;
+}
+
   </style>
   <body>
     <div class="container-scroller">
@@ -281,11 +392,28 @@
                 <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
               </a>
             </li>
+
+            <li class="nav-item sidebar-item" style="padding-left:10px;padding-right:10px;">
+              <a class="nav-link sidebar-link" style="padding-left:10px;padding-right:10px;" href="{{route('dashboard')}}"><b>Dashboard</b>  <i class="mdi mdi-view-dashboard menu-icon"></i></a>
+            </li>
+
+            @if(Auth::user()->admin == 2)
+              @foreach($modules as $mod)
+              @if($mod->name !== "Role's" && $mod->name !== 'Mapping')
+              <li class="nav-item sidebar-item pl-2">
+                    <a class="nav-link sidebar-link" href="http://127.0.0.1:8000/{{ $mod->url }}">
+                        <span><i class="mdi {{ $mod->mdi_icon }} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <b>{{ $mod->name !== "Complete Lists" ? ($mod->name === 'RFQ' ? 'RFQ' : $mod->name) : 'RFQ' }}</b>
+                    </a>
+                </li>               
+              @endif
+              @endforeach
+            @endif
             @foreach($parents as $parent)
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#R{{$parent->id}}" aria-expanded="false" aria-controls="R{{$parent->id}}">
+            <li class="nav-item sidebar-item" style="padding-left:10px;padding-right:10px;">
+              <a class="nav-link sidebar-link" style="padding-left:10px;padding-right:10px;" data-bs-toggle="collapse" href="#R{{$parent->id}}" aria-expanded="false" aria-controls="R{{$parent->id}}">
                 
-              <span class="menu-title">{{$parent->headermodule}}</span>
+              <span class="menu-title"><b>{{$parent->headermodule}}</b></span>
               <i class="menu-arrow"></i>
               <i class="mdi {{$parent->headericon}} menu-icon"></i>
               </a>
@@ -293,7 +421,7 @@
                 <ul class="nav flex-column sub-menu">
                 @foreach($modules as $mod)
                   @if($mod->parent_id == $parent->id)
-                  <li class="nav-item"> <a class="nav-link" href="http://127.0.0.1:8000/{{$mod->url}}"> <span><i class="mdi {{$mod->mdi_icon}} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span>{{$mod->name}}</a></li>
+                  <li class="nav-item sidebar-item"> <a class="nav-link sidebar-link" href="http://127.0.0.1:8000/{{$mod->url}}"> <span><i class="mdi {{$mod->mdi_icon}} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span><b>{{$mod->name}}</b></a></li>
                   @endif
                   @endforeach
                 </ul>

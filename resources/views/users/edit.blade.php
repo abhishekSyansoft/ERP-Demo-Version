@@ -50,6 +50,7 @@
                             <option value="1" {{ $users->admin == 1 ? 'selected' : '' }}>Select</option>
                             <option value="2" {{ $users->admin == 2 ? 'selected' : '' }}>User</option>
                             <option value="3" {{ $users->admin == 3 ? 'selected' : '' }}>Admin</option>
+                            <option value="6" {{ $users->admin == 6 ? 'selected' : '' }}>Test</option>
                         </select>
                       </div>
 

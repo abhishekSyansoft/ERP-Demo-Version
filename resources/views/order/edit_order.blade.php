@@ -2,7 +2,7 @@
 <div class="accordion mb-5" id="edit_orders">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button p-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <button class="accordion-button p35" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                       <h5>Edit Order</h5>
                     </button>
                   </h2>
@@ -245,13 +245,14 @@
                 </div>
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="headingTwo">
-                    <button class="accordion-button collapsed p-5 mt-2 mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                    <button class="accordion-button collapsed p-3 mt-2 mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                       <h5>Items in Order</h5>
                     </button>
                   </h2>
                   <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#add_orders">
                     <div class="accordion-body">
-                    <div style="border:1px solid black;height:400px;width:100%;background-color:#f2edf3;" class="mb-2 card">
+                    <div  class="card" style="height:400px;background-color:lightgray;">
+                    <!-- <div class="table-wrapper mx-auto"> -->
                     <table id="previewOrderedItems" class="table table-hover mb-2">
                               <tr>
                                   <th>S. No.</th>
@@ -273,6 +274,7 @@
                                  
                               </tbody>
                           </table>
+                        <!-- </div> -->
                         </div>
                         <div style="width:100%;" class="card">
                           <table class="table">
@@ -645,18 +647,7 @@
 
                   </div>
                 </div>
-                <div class="accordion-item mt-2">
-                  <h2 class="accordion-header" id="headingThree">
-                    <button class="accordion-button collapsed p-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                      <h5>Accordion Item</h5>
-                    </button>
-                  </h2>
-                  <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#add_orders">
-                    <div class="accordion-body">
-                      <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                    </div>
-                  </div>
-                </div>
+              
              
             <!-- <div class="items mt-4 mb-4">
               <div class="card">

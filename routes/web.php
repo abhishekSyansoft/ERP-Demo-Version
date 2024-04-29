@@ -6,6 +6,7 @@ use App\Http\Controllers\moduleController;
 use App\Http\Controllers\RoleMaster;
 use App\Http\Controllers\AdminUserlist;
 use App\Http\Controllers\ModuleMapping;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\categoryController;
 use App\Http\Controllers\subCatController;
@@ -16,6 +17,9 @@ use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\supplier\SupplierControler;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\RawMaterialController;
+use App\Http\Controllers\RFQ\CreateRFQController;
+use App\Http\Controllers\RFQ\SendRFQController;
+use App\Http\Controllers\RFQ\CompListController;
 use App\Http\Controllers\PPS\MPSController;
 use App\Http\Controllers\PPS\MRPController;
 use App\Http\Controllers\PPS\CPController;
@@ -58,7 +62,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-route::middleware(['role:3'])->group(function () {
+route::middleware(['role:3,6,2'])->group(function () {
 
 //Start Modules HTTP requests 
 route::get('modules',[moduleController::class , 'AllModules'])->name('modules');
@@ -255,6 +259,7 @@ route::get('edit-mps/{encryptedId}',[MPSController::class ,'MPSEdit']);
 route::post('mps/update/{encryptedId}',[MPSController::class ,'MPSUpdate']);
 route::get('delete-mps/{encryptedId}',[MPSController::class ,'MPSDelete']);
 route::get('view-mps/{encryptedId}',[MPSController::class ,'MPSView']);
+route::get('/fetch-mps-details',[MPSController::class ,'MPSFetchView']);
 // End master-production-shedule Management
 
 
@@ -329,6 +334,42 @@ route::get('delete-po/{encryptedId}',[POController::class ,'PODelete']);
 
 // -------------------------------------------------------------------------------------------------------------------------------------------
 // End Procurement Management
+
+
+// RFQ Management
+// -------------------------------------------------------------------------------------------------------------------------------------------
+
+
+// Create RFQ Management 
+route::get('create_rfq',[CreateRFQController::class ,'CRFQ'])->name('create_rfq');
+route::post('crfq/store',[CreateRFQController::class ,'CRFQAdd'])->name('crfq.store');
+route::get('edit-crfq/{encryptedId}',[CreateRFQController::class ,'CRFQEdit']);
+route::post('crfq/update/{encryptedId}',[CreateRFQController::class ,'CRFQUpdate']);
+route::get('delete-crfq/{encryptedId}',[CreateRFQController::class ,'CRFQDelete']);
+// End Create RFQ Management
+
+
+// Send RFQ Management 
+route::get('send_rfq',[SendRFQController::class ,'SRFQ'])->name('send_rfq');
+route::post('sqrf/store',[SendRFQController::class ,'SRFQAdd'])->name('sqrf.store');
+route::get('edit-sqrf/{encryptedId}',[SendRFQController::class ,'SRFQEdit']);
+route::post('sqrf/update/{encryptedId}',[SendRFQController::class ,'SRFQUpdate']);
+route::get('delete-sqrf/{encryptedId}',[SendRFQController::class ,'SRFQDelete']);
+// End Send RFQ Management
+
+// Completed Lists Management 
+route::get('completed',[CompListController::class ,'CSRF'])->name('completed');
+route::post('grn/store',[CompListController::class ,'GRNAdd'])->name('grn.store');
+route::get('edit-grn/{encryptedId}',[CompListController::class ,'GRNEdit']);
+route::post('grn/update/{encryptedId}',[CompListController::class ,'GRNUpdate']);
+route::get('delete-grn/{encryptedId}',[CompListController::class ,'GRNDelete']);
+// Completed Lists Management
+
+// -------------------------------------------------------------------------------------------------------------------------------------------
+// End RFQ Management
+
+
+
 
 
 // Inventory Management
@@ -515,6 +556,15 @@ route::get('delete-predictive/{encryptedId}',[PreddictiveController::class ,'Pre
 // End Supply Chain Analytics and Reporting Management
 
 
+
+
+
+
+
+
+
+
+
 // --------------------------------------------------------------------------------------------------------------------------------------------
 
 // End Supply Chain Management 
@@ -548,6 +598,17 @@ route::post('invoices/store',[InvoicesCont::class ,'InvoicesAdd'])->name('invoic
 route::get('edit-invoice/{encryptedId}',[InvoicesCont::class ,'InvoicesEdit']);
 route::post('invoices/update/{encryptedId}',[InvoicesCont::class ,'InvoicesUpdate']);
 route::get('delete-invoice/{encryptedId}',[InvoicesCont::class ,'InvoicesDelete']);
+//End Invoices Management
+});
+
+Route::middleware(['role:6,3'])->group(function () {
+// Invoices Management 
+route::get('order',[OrderController::class ,'Order'])->name('order');
+route::post('order/store',[OrderController::class ,'OrderAdd'])->name('order.store');
+route::get('edit-order/{encryptedId}',[OrderController::class ,'OrderEdit']);
+route::post('order/update/{encryptedId}',[OrderController::class ,'OrderUpdate']);
+route::get('delete-order/{encryptedId}',[OrderController::class ,'OrderDelete']);
+route::post('/save_these_data',[OrderController::class ,'SaveTheseData']);
 //End Invoices Management
 });
 

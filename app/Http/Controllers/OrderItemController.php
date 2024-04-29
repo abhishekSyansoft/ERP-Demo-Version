@@ -174,6 +174,7 @@ class OrderItemController extends Controller
                 // Update OrderHeader
                 OrderHeader::where('order_id', $request->order_id)->update([
                     'discount' => $totalDiscount,
+                    'order_totoal'=>$subTotal,
                     'total_amount' => $totalAmount,
                     'item_count' => $totalQuantity,
                     'order_date' => Carbon::now(),
@@ -264,6 +265,7 @@ class OrderItemController extends Controller
                 OrderHeader::where('order_id', $request->update_order_id)->update([
                     'discount' => $totalDiscount,
                     'total_amount' => $totalAmount,
+                    'order_totoal'=>$subTotal,
                     'item_count' => $totalQuantity,
                     'order_date' => Carbon::now(),
                     'created_at'=> Carbon::now()
@@ -354,6 +356,7 @@ public function UpdateEditOrderItems(Request $request,$id){
      OrderHeader::where('order_id', $request->update_edit_order_id)->update([
          'discount' => $totalDiscount,
          'total_amount' => $totalAmount,
+         'order_totoal'=>$subTotal,
          'item_count' => $totalQuantity,
         //  'order_date' => Carbon::now(),
         //  'created_at'=> Carbon::now()
@@ -408,7 +411,7 @@ public function UpdateEditOrderItems(Request $request,$id){
             'total_amount' => $totalAmount,
             'item_count' => $totalQuantity,
             'order_status'=> 1,
-            'order_totoal'=>1,
+            'order_totoal'=>$subTotal,
             'payment_status'=> 2,
             'order_date' => Carbon::now(),
             'created_at' => Carbon::now(),

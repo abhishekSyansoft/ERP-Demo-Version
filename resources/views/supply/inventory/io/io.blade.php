@@ -17,18 +17,23 @@
               </nav>
             </div>
               
-            <div class="row mx-auto">
-              <div class="col-md-12" style="margin:auto;">
-                <div class="card mx-auto">
-                  <div class="card-body">
-                    <div class="clearfix">
+            <div class="row mx-auto m-1 p-1">
+              <div class="col-md-12 m-0 p-0">
+                <div class="card mx-auto p-0">
+                  <div class="card-body p-0" style="border-radius:10px;">
+                    <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                      <div class="row">
+                        <div class="col-md-6 m-0">
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Inventory Optimization Lists</h4>
+                        </div>
                          <!-- Button to open the modal -->
-                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                        Create Inventory Optimization
+                        <div class="col-md-6">
+                        <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                          <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
-                        <hr>
-                      <h4 class="card-title float-left">Inventory Optimization Lists</h4>
-                           
+                        </div>
+                        <!-- <hr>   -->
+                      </div>     
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                         Edit Supplier
                         </button>   -->
@@ -37,21 +42,29 @@
                         
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                    </div class="">
-                        <table class="table table-hover table-bordered mt-2 mx-auto"style="width: 100%;">
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
                                 <th>Product</th>
-                                <th>Reorder Point</th>
-                                <th>Optimal Quantity</th>
+                                <th>Warehouse</th>
+                                <th>Location</th>
+                                <th>Assistant</th>
+                                <th>Capacity</th>
+                                <th>Item Inventory</th>
                                 <th>Action</th>
                             </tr>
                             @php($i=1)
                             @foreach($io as $data)
+                            @for($a=0;$a<9;$a++)
                                 <tr>
                                     <td>{{$i++}}</td>
-                                    <td>{{$data->product}}</td>
-                                    <td>{{$data->reorder_point}}</td>
+                                    <td class="pt-2 pb-2">{{ $i % 2 == 0 ? 'Bajaj Pulsar' : 'Mahindra Thar' }}</td>
+                                    <td>{{ $i % 2 == 0 ? 'Warehouse 1' : 'Warehouse 2' }}</td>
+                                    <td>{{ $i % 2 == 0 ? 'Gurugram' : 'Greater Noida' }}</td>
+                                    <td>{{ $i % 2 == 0 ? 'Abhishek Kumar' : 'Priyanka Tamta' }}</td>
+                                    <td>5,000</td>
                                     <td>{{$data->optimal_quantity}}</td>
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
@@ -59,8 +72,10 @@
                                         <a href="{{url('delete-io/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
+                                @endfor
                             @endforeach
                         </table>
+                  </div>
                   </div>
                 </div>
               </div>
@@ -91,16 +106,34 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="warehouse" class="form-label">{{ __('Warehouse') }}</label>
+                            <select id="warehouse" class="form-control p-3" name="warehouse" required>
+                            <option value="0">Warehouse 1</option>
+                            <option value="0">Warehouse 2</option>
+                            </select>
+                        </div>
                        
 
                         <div class="mb-3 col-md-6">
-                            <label for="reorder_point" class="form-label">{{ __('Reorder Point') }}</label>
+                            <label for="reorder_point" class="form-label">{{ __('Location') }}</label>
                             <input type="text" id="reorder_point" class="form-control" name="reorder_point" placeholder="Enter the Warehouse name" required>
                         </div>
 
                         <div class="mb-3 col-md-6">
-                            <label for="optimal_quantity" class="form-label">{{ __('Optimal Quantity') }}</label>
+                            <label for="assistant" class="form-label">{{ __('Assistant') }}</label>
+                            <input type="text" id="assistant" class="form-control" name="assistant" placeholder="Enter the Assistant name" required>
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="optimal_quantity" class="form-label">{{ __('Capacity') }}</label>
                             <input type="text" id="optimal_quantity" class="form-control" name="optimal_quantity" placeholder="Enter the Warehouse location" required>
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="item" class="form-label">{{ __('Item Inventory') }}</label>
+                            <input type="text" id="item" class="form-control" name="item" placeholder="Enter the Item Inventory" required>
                         </div>
 
                         <div class="form-group">

@@ -77,7 +77,6 @@
                             </tr>
                             @php($i=1)
                             @foreach($orderheader as $header)
-                            @for($a=0;$a<3;$a++)
                             <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$header->order_id}}</td>
@@ -146,7 +145,6 @@
                                     <a href="{{url('order-header/delete/'.$header->id)}}" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
-                            @endfor
                             @endforeach
                         </table>
                         {{$orderheader->links()}}

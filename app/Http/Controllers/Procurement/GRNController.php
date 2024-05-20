@@ -50,15 +50,44 @@ class GRNController extends Controller
                 // Validate the incoming request data
                
                     $validatData = $request->validate([
+                        "reciept_number"=>"required",
+                        "received_date"=>"required",
+                        "received_by"=>"required",
+                        "received_quantity"=>"required",
+                        "expected_quantity"=>"required",
+                        "unit_cost"=>"required",
+                        "total_cost"=>"required",
+                        
+                        "receiving_location"=>"required",
+                        
+                        "serial_number"=>"required",
+                        
+                      
+                        "supplier_id"=>"required",
+                        "shipping_carrier"=>"required",
+                        
                         "order_id"=> "required",
-                        "received_date"=> "required",
-                        "received_quantity"=> "required",
                     ]);
                     // Retrieve the supplier from the database
                     GRN::insert([
+                        "reciept_number"=>$request->reciept_number,
+                        "received_date"=>$request->received_date,
+                        "received_by"=>$request->received_by,
+                        "received_quantity"=>$request->received_quantity,
+                        "expected_quantity"=>$request->expected_quantity,
+                        "unit_cost"=>$request->unit_cost,
+                        "total_cost"=>$request->total_cost,
+                        "remarks"=>$request->remarks,
+                        "receiving_location"=>$request->receiving_location,
+                        "quality_control_information"=>$request->quality_control_information,
+                        "serial_number"=>$request->serial_number,
+                        "tracking_number"=>$request->tracking_number,
+                        "delivery_method"=>$request->delivery_method,
+                        "supplier_id"=>$request->supplier_id,
+                        "shipping_carrier"=>$request->shipping_carrier,
+                        "condition"=>$request->condition,
+                        "inspection_result"=>$request->inspection_result,
                         "po_id"=> $request->order_id,
-                        "received_date"=> $request->received_date,
-                        "received_quantity"=> $request->received_quantity,
                         'created_at' => Carbon::now()
                     ]);
 
@@ -85,18 +114,42 @@ class GRNController extends Controller
         try {
 
             $validatData = $request->validate([
+                "reciept_number"=>"required",
+                "received_date"=>"required",
+                "received_by"=>"required",
+                "received_quantity"=>"required",
+                "expected_quantity"=>"required",
+                "unit_cost"=>"required",
+                "total_cost"=>"required",
+                "receiving_location"=>"required",
+                "serial_number"=>"required",
+                "supplier_id"=>"required",
+                "shipping_carrier"=>"required",
                 "order_id"=> "required",
-                "received_date"=> "required",
-                "received_quantity"=> "required",
             ]);
             // Decrypt the encrypted ID to get the actual supplier ID
             $id = decrypt($encryptedId);
             
                 // Retrieve the supplier from the database
                 GRN::where('id',$id)->update([
+                    "reciept_number"=>$request->reciept_number,
+                    "received_date"=>$request->received_date,
+                    "received_by"=>$request->received_by,
+                    "received_quantity"=>$request->received_quantity,
+                    "expected_quantity"=>$request->expected_quantity,
+                    "unit_cost"=>$request->unit_cost,
+                    "total_cost"=>$request->total_cost,
+                    "remarks"=>$request->remarks,
+                    "receiving_location"=>$request->receiving_location,
+                    "quality_control_information"=>$request->quality_control_information,
+                    "serial_number"=>$request->serial_number,
+                    "tracking_number"=>$request->tracking_number,
+                    "delivery_method"=>$request->delivery_method,
+                    "supplier_id"=>$request->supplier_id,
+                    "shipping_carrier"=>$request->shipping_carrier,
+                    "condition"=>$request->condition,
+                    "inspection_result"=>$request->inspection_result,
                     "po_id"=> $request->order_id,
-                    "received_date"=> $request->received_date,
-                    "received_quantity"=> $request->received_quantity,
                 ]);
 
             // Update supplier details with the data from the request

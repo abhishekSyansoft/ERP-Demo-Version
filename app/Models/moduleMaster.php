@@ -13,6 +13,7 @@ class moduleMaster extends Model
         'id',
         'name',
         'parent_id',
+        'module_name',
         'url',
         'mdi_icon',
         'order',

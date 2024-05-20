@@ -47,7 +47,7 @@
                       </div>     
 
 </div>
-                        <div class="table-wrapper col-md-12 p-0 m-0">
+                        <div class="table-wrapper">
                         <table class="table">
                             <tr>
                                 <th>S. No.</th>

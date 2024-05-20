@@ -463,11 +463,7 @@
                     <h6 class="card-text text-center p-2" style="background-color:rgba(0, 0, 0, 0.1);">More Info <i class="mdi mdi-arrow-right-box"></i></h6>
                   </div>
               </div>
-              </div>
-              <!-- </div> -->
-
               
-
               </div>
         </div>
       </div>

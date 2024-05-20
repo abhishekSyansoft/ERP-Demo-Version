@@ -13,10 +13,26 @@ return new class extends Migration
     {
         Schema::create('i_v_s', function (Blueprint $table) {
             $table->id();
-            $table->string('product_id');
-            $table->string('unit_cost');
-            $table->string('total_value');
-            $table->timestamps();
+            $table->string('inventory_id');
+            $table->string('part_number');
+            $table->string('unit_cost'); // Note: Appears twice in your list, I'll assume it's intentional
+            $table->string('vehicle');
+            $table->string('qty_on_hand'); // Assuming this should be added based on the provided list
+            $table->string('total_cost');
+            $table->string('valuation_method');
+            $table->date('valuation_date');
+            $table->string('inventory_value');
+            $table->string('inventory_turnover');
+            $table->string('stock_aging');
+            $table->string('financial_metrics');
+            $table->string('inventory_adjustments');
+            $table->string('inventory_reserves');
+            $table->string('inventory_analysis');
+            $table->string('inventory_reports');
+            $table->string('comparison_metrics');
+            $table->string('compliance');
+            $table->string('audit_trials');
+            $table->timestamps(); // Adds created_at and updated_at columns
         });
     }
 

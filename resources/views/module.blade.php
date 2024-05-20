@@ -41,7 +41,7 @@
                         <tr>
                             <th>S No.</th>
                             <!-- <th>Module Id</th> -->
-                            <th>Parent_module id</th>
+                            <th>Parent_module</th>
                             <th>Module Name</th>
                             <th>Url</th>
                             <th>Icon Name</th>
@@ -52,13 +52,14 @@
                         @foreach($modules as $mod)
                         <tr>
                             <td>{{$i++}}</td>
-                            <td>{{$mod->parent_id}}</td>
+                            <td>{{$mod->head_module}}</td>
                             <td>{{$mod->name}}</td>
                             <td>{{$mod->url}}</td>
                             <td>{{$mod->mdi_icon}}</td>
                             <td>{{$mod->order}}</td>
+                            @php($encryptedID = encrypt($mod->id))
                             <td>
-                                <a href="{{ url('modules/edit/'.$mod->id)}}" class="btn btn-sm btn-info">Edit</a>
+                                <a href="{{ url('modules/edit/'.$encryptedID)}}" class="btn btn-sm btn-info">Edit</a>
                                 <a href="{{ url('modules/delete/'.$mod->id)}}" class="btn btn-sm btn-danger">Delete</a>
                             </td>
                         </tr>

@@ -19,7 +19,7 @@
               <!-- <div> -->
             </div>
             <div class="row">
-              <div class="col-lg-12 m-0 p-0">
+              <div class="col-lg-12">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Create a new module</h4>
@@ -54,6 +54,16 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="form-group col-lg-6">
+                                <label for="module_name" class="form-check-label"> Select Module</label>
+                                <select name="module_name" id="module_name" class="form-control p-3" placeholder="Select module">
+                                    @foreach($module as $mode)
+                                      <option value="{{$mode->id}}">{{$mode->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             <div class="col-lg-12">
                             <button class="btn btn-primary btn-md">Submit</button>                            </div>
                         <div>  

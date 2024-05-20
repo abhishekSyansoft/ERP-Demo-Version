@@ -45,47 +45,82 @@
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
                     </div>
                     <div class="table-wrapper">
-                        <table class="table">
+                        <table class="table table-bordered border-primary">
                             <tr>
                                 
-                                <th>S No.</th>
-                                <!-- <th>Module Id</th> -->
-                                <th>Supplier Name</th>
-                                <th>Contact Person</th>
-                                <th>Email</th>
-                                <th>Phone nUmber</th>
-                                <th>Address</th>
-                                <th>City</th>
-                                <th>State</th>
-                                <th>Country</th>
-                                <th>Postal Code</th>
-                                <th>Account Number</th>
-                                <th>Tax Id</th>
-                                <th>Payment Terms</th>
-                                <th>Lead Time</th>
-                                <th>Notes</th>
-                                <th>Action</th>
+                                <th rowspan="2">S No.</th>
+                                <th rowspan="2">Vendor Id</th>
+                                <th rowspan="2">Vendor</th>
+                                <th rowspan="2">Manager</th>
+                                <th rowspan="1" colspan="3">Vendor</th>
+                                <th rowspan="1" colspan="4">Contact Information</th>
+                                <th rowspan="1" colspan="5">Location</th>
+                                <th rowspan="2">Type</th>
+                                <th rowspan="2">Product/Serveices</th>
+                                <th rowspan="2">Prefered Payment Terms</th>
+                                <th rowspan="2">Delivery Shedule</th>
+                                <th rowspan="2">Quality Standard</th>
+                                <th rowspan="2">Contract Terms</th>
+                                <th rowspan="1" colspan="4">Account detail's</th>
+                                <th rowspan="2">Notes</th>
+                                <th rowspan="2">Next Steps</th>
+                                <th rowspan="2">Action</th>
+                            </tr>
+                            <tr>
+                              <th>Evaluation</th>
+                              <th>Diversity</th>
+                              <th>Relationship</th>
+                              <th>Contact Person</th>
+                              <th>Phone Number</th>
+                              <th>Email</th>
+                              <th>Preffered Method</th>
+                              <th colspan="1">Address</th>
+                              <th colspan="1">City</th>
+                              <th colspan="1">State</th>
+                              <th colspan="1">Country</th>
+                              <th colspan="1">Postal Code</th>
+                              <th colspan="1">Account Number</th>
+                              <th colspan="1">Tax ID</th>
+                              <th colspan="1">GSTIN Number</th>
+                              <th colspan="1">TIN Number</th>
                             </tr>
                             @php($i=1)
                             @foreach($supplier as $vendor)
-                            @for($a=0;$a<5;$a++)
+                          
                             <tr>
                                 
                                 <td>{{$i++}}</td>
+                                <td>{{$vendor->supplier_id}}</td>
                                 <td>{{$vendor->supplier_name}}</td>
+                                <td>{{$vendor->manager}}</td>
+                                <td>{{$vendor->supplier_evaluation}}</td>
+                                <td>{{$vendor->supplier_diversity}}</td>
+                                <td>{{$vendor->supplier_relationship}}</td>
                                 <td>{{$vendor->contact_person}}</td>
-                                <td>{{$vendor->email}}</td>
                                 <td>{{$vendor->phone_number}}</td>
+                                <td>{{$vendor->email}}</td>
+                                <td>{{$vendor->method}}</td>
                                 <td>{{$vendor->address}}</td>
                                 <td>{{$vendor->city}}</td>
                                 <td>{{$vendor->state}}</td>
                                 <td>{{$vendor->country}}</td>
                                 <td>{{$vendor->postal_code}}</td>
-                                <td>{{$vendor->account_number}}</td>
-                                <td>{{$vendor->tax_id}}</td>
+                                <td>{{$vendor->type == 1 ? 'Manufacturing' :($vendor->type == 2 ? 'Sales' :($vendor->type == 3 ? 'Production' :($vendor->type == 4 ? 'Distribution' :'')))}}</td>
+                                <td>{{$vendor->service}}</td>
                                 <td>{{$vendor->payment_terms}}</td>
                                 <td>{{$vendor->lead_time}}</td>
+                                <td>{{$vendor->quality_standard}}</td>
+                                <td>{{$vendor->contract_terms}}</td>
+                                <!-- <td></td> -->
+                                <!-- <td></td> -->
+                                <!-- <td></td>
+                                <td></td> -->
+                                <td>{{$vendor->account_number}}</td>
+                                <td>{{$vendor->tax_id}}</td>
+                                <td>{{$vendor->gst_in}}</td>
+                                <td>{{$vendor->tin_no}}</td>
                                 <td>{{$vendor->notes}}</td>
+                                <td>{{$vendor->steps}}</td>
                                 @php($encryptedId = encrypt($vendor->id))
                                
                                 <td>
@@ -93,7 +128,7 @@
                                     <a href="{{url('delete-supplier/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
-                            @endfor
+                            
                             @endforeach
                         </table>
                   </div>
@@ -113,7 +148,7 @@
         <h4 class="modal-title" id="addSupplierModalLabel">Add Supplier</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body p-4 m-1">
         <!-- Supplier Form -->
         <form id="addSupplierForm" method="POST" action="{{route('supplier.add')}}" class="row">
         @csrf
@@ -124,77 +159,183 @@
           </div> -->
 
           <!-- Supplier Name -->
-          <div class="mb-3 col-md-6">
-            <label for="supplier_name" class="form-label">Supplier Name</label>
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="supplier_name" class="form-label">Vendor Name</label>
             <input type="text" class="form-control" id="supplier_name" name="supplier_name" required placeholder="Name of the supplier/vendor">
           </div>
-          <!-- Contact Person -->
-          <div class="mb-3 col-md-6">
-            <label for="contact_person" class="form-label">Contact Person</label>
-            <input type="text" class="form-control" id="contact_person" name="contact_person" placeholder="Contact person at the supplier/vendor">
+
+           <!-- Supplier Name -->
+           <div class="mb-3 col-md-6 col-lg-3">
+            <label for="service" class="form-label">Product/Service</label>
+            <input type="text" class="form-control" id="service" name="service" placeholder="Enter short detail about produt or service" required>      
           </div>
-          <!-- Email -->
-          <div class="mb-3 col-md-6">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Email address of the supplier/vendor">
+
+          <!-- Tin Number -->
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="tin_no" class="form-label">TIN Number</label>
+            <input type="text" class="form-control" id="tin_no" name="tin_no" placeholder="Enter TIN Number of the supplier" required>      
           </div>
-          <!-- Phone Number -->
-          <div class="mb-3 col-md-6">
-            <label for="phone_number" class="form-label">Phone Number</label>
-            <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Phone number of the supplier/vendor">
+
+          <!-- GSTIN Number Number -->
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="gst_in" class="form-label">GSTIN Number</label>
+            <input type="text" class="form-control" id="gst_in" name="gst_in" placeholder="Enter GST IN Number of the supplier" required>      
           </div>
-          <!-- Address -->
-          <div class="mb-3 col-md-6">
-            <label for="address" class="form-label">Address</label>
-            <input type="text" class="form-control" id="address" name="address" placeholder="Address of the supplier/vendor">
+
+          <!-- Account Manager Number -->
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="manager" class="form-label">Account Manager</label>
+            <input type="text" class="form-control" id="manager" name="manager" placeholder="The designated account manager or representative at the supplier's organization." required>      
           </div>
-          <!-- City -->
-          <div class="mb-3 col-md-6">
-            <label for="city" class="form-label">City</label>
-            <input type="text" class="form-control" id="city" name="city" placeholder="City of the supplier/vendor">
+
+          <!-- Supplier Evaluation Number -->
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="supplier_evaluation" class="form-label">Supplier Evaluation</label>
+            <input type="text" class="form-control" id="supplier_evaluation" name="supplier_evaluation" placeholder="Evaluation criteria and scores used to assess and rank suppliers based on performance, reliability, and quality." required>      
           </div>
-          <!-- State -->
-          <div class="mb-3 col-md-6">
-            <label for="state" class="form-label">State</label>
-            <input type="text" class="form-control" id="state" name="state" placeholder="State or region of the supplier/vendor">
+
+           <!-- Supplier Diversity Number -->
+           <div class="mb-3 col-md-6 col-lg-3">
+            <label for="supplier_diversity" class="form-label">Supplier Diversity</label>
+            <input type="text" class="form-control" id="supplier_diversity" name="supplier_diversity" placeholder="Information about diversity initiatives and programs aimed at sourcing from diverse suppliers." required>      
           </div>
-          <!-- Country -->
-          <div class="mb-3 col-md-6">
-            <label for="country" class="form-label">Country</label>
-            <input type="text" class="form-control" id="country" name="country" placeholder="Country of the supplier/vendor">
+
+              <!-- Supplier Relationship Number -->
+              <div class="mb-3 col-md-6 col-lg-3">
+            <label for="supplier_relationship" class="form-label">Supplier Relationship</label>
+            <input type="text" class="form-control" id="supplier_relationship" name="supplier_relationship" placeholder="Information about diversity initiatives and programs aimed at sourcing from diverse suppliers." required>      
           </div>
-          <!-- Postal Code -->
-          <div class="mb-3 col-md-6">
-            <label for="postal_code" class="form-label">Postal Code</label>
-            <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Postal code of the supplier/vendor">
-          </div>
+
+          
           <!-- Account Number -->
-          <div class="mb-3 col-md-6">
+          <div class="mb-3 col-md-6 col-lg-3">
             <label for="account_number" class="form-label">Account Number</label>
             <input type="text" class="form-control" id="account_number" name="account_number" placeholder="Account number for financial transactions">
           </div>
+
           <!-- Tax ID -->
-          <div class="mb-3 col-md-6">
+          <div class="mb-3 col-md-6 col-lg-3">
             <label for="tax_id" class="form-label">Tax ID</label>
             <input type="text" class="form-control" id="tax_id" name="tax_id" placeholder="Tax identification number for the supplier/vendor">
           </div>
-          <!-- Payment Terms -->
+
+          <hr class="m-1 mb-3">
+
           <div class="mb-3 col-md-6">
-            <label for="payment_terms" class="form-label">Payment Terms</label>
+             <div class="row">
+             <strong class="mb-2">Contact Information : </strong>
+          <!-- Contact Person -->
+              <div class="col-md-6 mb-3">
+                <label for="contact_person" class="form-label">Contact Person</label>
+                <input type="text" class="form-control" id="contact_person" name="contact_person" placeholder="Contact person at the supplier/vendor">
+              </div>
+              <!-- Phone Number -->
+              <div class="col-md-6 mb-3">
+                <label for="phone_number" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Phone number of the supplier/vendor">
+              </div>
+              <!-- Email -->
+              <div class="col-md-12 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email address of the supplier/vendor">
+              </div>
+
+              <div class="col-md-12 mb-3">
+                <label for="method" class="form-label">Preffered Communication Method</label>
+                <select class="form-control p-3" id="method" name="method">
+                  <option value="">--select--</option>
+                  <option value="Email">Email</option>
+                  <option value="Phone">Phone</option>
+                  <option value="Fax">Fax</option>
+                </select>
+              </div>
+             </div>
+          </div>
+
+          <div class="mb-3 col-md-6 row mx-auto">
+              <strong class="mb-2">Location : </strong>
+              <!-- Address -->
+            <div class="col-md-12 mb-3">
+              <label for="address" class="form-label">Streen Address</label>
+              <input type="text" class="form-control" id="address" name="address" placeholder="Address of the supplier/vendor">
+            </div>
+            <!-- City -->
+            <div class="mb-3 col-md-6">
+              <label for="city" class="form-label">City</label>
+              <input type="text" class="form-control" id="city" name="city" placeholder="City of the supplier/vendor">
+            </div>
+            <!-- State -->
+            <div class="mb-3 col-md-6">
+              <label for="state" class="form-label">State</label>
+              <input type="text" class="form-control" id="state" name="state" placeholder="State or region of the supplier/vendor">
+            </div>
+            <!-- Country -->
+            <div class="mb-3 col-md-6">
+              <label for="country" class="form-label">Country</label>
+              <input type="text" class="form-control" id="country" name="country" placeholder="Country of the supplier/vendor">
+            </div>
+            <!-- Postal Code -->
+            <div class="mb-3 col-md-6">
+              <label for="postal_code" class="form-label">Postal Code</label>
+              <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Postal code of the supplier/vendor">
+            </div>
+          </div>
+
+          <hr class="m-1 mb-3">
+
+
+          <!-- Type -->
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="type" class="form-label">Type</label>
+            <select class="form-control p-3" id="type" name="type" required>
+              <option value="">--Select--</option>
+              <option value="1">Manufacturing</option>
+              <option value="2">Sales</option>
+              <option value="3">Production</option>
+              <option value="4">Distribution</option>
+            </select>
+          </div>
+
+           <!--Prefered Payment Terms -->
+           <div class="mb-3 col-md-6 col-lg-3">
+            <label for="payment_terms" class="form-label">Prefered Payment Terms</label>
             <input type="text" class="form-control" id="payment_terms" name="payment_terms" placeholder="Payment terms agreed upon with the supplier/vendor">
           </div>
-          <!-- Lead Time -->
-          <div class="mb-3 col-md-6">
-            <label for="lead_time" class="form-label">Lead Time</label>
+
+          <!--Delivery Shedule Lead Time -->
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="lead_time" class="form-label">Deliery Shedule</label>
             <input type="text" class="form-control" id="lead_time" name="lead_time" placeholder="Lead time for order fulfilment from the supplier/vendor">
           </div>
-          <!-- Notes -->
-          <div class="mb-3 col-md-6">
-            <label for="notes" class="form-label">Notes</label>
-            <input type="text" class="form-control" id="notes" name="notes" placeholder="Additional notes or comments about the supplier/vendor">
+            <!--Quality Standard -->
+            <div class="mb-3 col-md-6 col-lg-3">
+            <label for="quality_standard" class="form-label">Quality Standard</label>
+            <input type="text" class="form-control" id="quality_standard" name="quality_standard" placeholder="Quality standard approved by goverment (e.g. ISO 9001 Certified)">
           </div>
+
+
+            <!--Quality Standard -->
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="contract_terms" class="form-label">Contract Terms</label>
+            <input type="text" class="form-control" id="contract_terms" name="contract_terms" placeholder="Contract terms signed (e.g. NON Disclosure Aggreement required)">
+          </div>
+
+         
+          <!-- Notes -->
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="notes" class="form-label">Notes</label>
+            <input type="text" class="form-control" id="notes" name="notes" placeholder="Additional notes or comments about the supplier/vendor (optional)">
+          </div>
+
+
+          <!-- Notes -->
+          <div class="mb-3 col-md-6 col-lg-3">
+            <label for="steps" class="form-label">Next Steps</label>
+            <input type="text" class="form-control" id="steps" name="steps" placeholder="Enter Next steps (optional)">
+          </div>
+
           <!-- Submit Button -->
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-12">
           <button type="submit" class="btn btn-primary">Add Supplier</button>
           </div>
         </form>

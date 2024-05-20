@@ -89,9 +89,10 @@
                             <td>{{$status = $dealer->dealership_status == 2 ? 'active' : ($dealer->dealership_status == 3 ? 'inactive' : 'false');}}</td>
                             <td>{{$dealer->dealership_notes}}</td>
                             <td>
-                            <a href="{{url('dealers/edit/'.$dealer->id)}}" class="mdi mdi-pen mdi-lg m-2 btn btn-primary btn-sm">  Edit</a>
+                            @php($encryptedId = encrypt($dealer->id)) 
+                            <a href="{{url('dealers/edit/'.$encryptedId)}}" class="mdi mdi-pen mdi-lg m-2 btn btn-primary btn-sm">  Edit</a>
                             <!-- <a href="" class="btn btn-sm btn-primary">Update Role</a> -->
-                            <a href="{{url('dealers/delete/'.$dealer->id)}}" class="mdi mdi-delete mdi-lg m-2 btn btn-danger btn-sm">  Delete</a>
+                            <a href="{{url('dealers/delete/'.$encryptedId)}}" class="mdi mdi-delete mdi-lg m-2 btn btn-danger btn-sm">  Delete</a>
                             </td>
                         </tr>
                         @endfor

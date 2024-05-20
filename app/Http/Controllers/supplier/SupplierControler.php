@@ -7,6 +7,7 @@ use App\Models\supplier\supplier;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Carbon\Carbon;
 
 // use Exception;
 
@@ -43,6 +44,11 @@ class SupplierControler extends Controller
                 // Validate the incoming request data
                 $validatData = $request->validate([
                     "supplier_name"=> "required",
+                    "service"=> "required",
+                    "type"=> "required",
+                    "quality_standard"=> "required",
+                    "contract_terms"=> "required",
+                    "steps"=> "required",
                     "contact_person"=> "required",
                     "email"=> "required",
                     "phone_number"=> "required",
@@ -59,8 +65,21 @@ class SupplierControler extends Controller
 
                 // Insert the new supplier data into the database
                 Supplier::insert([
+                    "supplier_id"=> "VEN_" . str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT),
                     "supplier_name"=> $request->supplier_name,
                     "contact_person"=> $request->contact_person,
+                    "service"=> $request->service,
+                    "tin_no"=> $request->tin_no,
+                    "gst_in"=> $request->gst_in,
+                    "manager"=> $request->manager,
+                    "method"=> $request->method,
+                    "supplier_evaluation"=> $request->supplier_evaluation,
+                    "supplier_diversity"=> $request->supplier_diversity,
+                    "supplier_relationship"=> $request->supplier_relationship,
+                    "type"=> $request->type,
+                    "steps"=> $request->steps,
+                    "quality_standard"=> $request->quality_standard,
+                    "contract_terms"=> $request->contract_terms,
                     "email"=> $request->email,
                     "phone_number"=> $request->phone_number,
                     "address"=> $request->address,
@@ -72,7 +91,8 @@ class SupplierControler extends Controller
                     "tax_id"=> $request->tax_id,
                     "lead_time"=> $request->lead_time,
                     "payment_terms"=> $request->payment_terms,
-                    "notes"=> $request->notes
+                    "notes"=> $request->notes,
+                    "created_at"=>Carbon::now()
                 ]);
 
                 // Redirect back with success message if successful
@@ -98,6 +118,11 @@ class SupplierControler extends Controller
 
             $validatData = $request->validate([
                 "supplier_name"=> "required",
+                "service"=> "required",
+                "type"=> "required",
+                "quality_standard"=> "required",
+                "contract_terms"=> "required",
+                "steps"=> "required",
                 "contact_person"=> "required",
                 "email"=> "required",
                 "phone_number"=> "required",
@@ -117,6 +142,18 @@ class SupplierControler extends Controller
             // Retrieve the supplier from the database
             Supplier::where('id',$id)->update([
             "supplier_name"=> $request->supplier_name,
+            "service"=> $request->service,
+            "type"=> $request->type,
+            "tin_no"=> $request->tin_no,
+            "gst_in"=> $request->gst_in,
+            "manager"=> $request->manager,
+            "method"=> $request->method,
+            "supplier_evaluation"=> $request->supplier_evaluation,
+            "supplier_diversity"=> $request->supplier_diversity,
+            "supplier_relationship"=> $request->supplier_relationship,
+            "steps"=> $request->steps,
+            "quality_standard"=> $request->quality_standard,
+            "contract_terms"=> $request->contract_terms,
             "contact_person"=> $request->contact_person,
             "email"=> $request->email,
             "phone_number"=> $request->phone_number,

@@ -45,42 +45,80 @@
                 
                     </div>
                     <div class="table-wrapper">
-                        <table class="table mx-auto">
-                            <tr>
-                                <th>S No.</th>
-                                <th>View Details</th>
-                                <th>Department</th>
-                                <th>User</th>
-                                <th>Designation</th>
-                                <th>Vendor</th>
-                                <th>Requisition Date</th>
-                                <th>Status</th>
-                                <th>Request</th>
-                                <th>Action</th>
-                            </tr>
+                        <table class="table table-bordered border-primary">
+                        <!-- <thead> -->
+                              <tr>
+                                  <th rowspan="2">S. No</th>
+                                  <th rowspan="2">PR Number</th>
+                                  <th rowspan="2">View PR</th>
+                                  <th rowspan="2">PR Items</th>
+                                  <th colspan="4">Requester</th>
+                                  <th rowspan="2">Department</th>
+                                  <th rowspan="2">Requisition Date</th>
+                                  <th rowspan="2">Priority</th>
+                                  <th colspan="4">Delivery Location</th>
+                                  <th colspan="4">Supplier</th>
+                                  <th rowspan="2">Attachments</th>
+                                  <th rowspan="2">Notes</th>
+                                  <th rowspan="2">Reference Number</th>
+                                  <th rowspan="2">Created At</th>
+                                  <th rowspan="2">Action</th>
+                              </tr>
+                              <tr>
+                                  <th>Name</th>
+                                  <th>Phone</th>
+                                  <th>Email</th>
+                                  <th>Designation</th>
+                                  <th>Street Address</th>
+                                  <th>City</th>
+                                  <th>State</th>
+                                  <th>Date</th>
+                                  <th>Name</th>
+                                  <th>Phone Number</th>
+                                  <th>Email</th>
+                                  <th>Contact Person</th>
+                              </tr>
+                          <!-- </thead>
+                          <tbody> -->
                             @php($i=1)
-                            @foreach($pr as $data)
-                            @for($a=1;$a<4;$a++)
-                                <tr>
-                                    <td>{{$i++}}</td>
-                                    <td><a style="color:white;font-size:18px;background-color:#0081b6;border-radius:5px;" class="mdi mdi-eye p-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td>
-                                    <td>{{$data->department}}</td>
-                                    <td>{{$data->username}}</td>
-                                    <td>{{$data->designation}}</td>
-                                    <td>{{$data->vendor}}</td>
-                                    <td>{{$data->requisition_date}}</td>
-                                    <td style="color: {{ $data->status == 1 ? 'yellow' : ($data->status == 2 ? 'green' : ($data->status == 3 ? 'red' : '')) }}">
-                                        {{ $data->status == 1 ? 'Pending' : ($data->status == 2 ? 'Approved' : ($data->status == 3 ? 'Rejected' : '')) }}
-                                    </td>
-                                    <td> {{ $data->status == 1 ? '' : ($data->status == 2 ? 'RFQ' : ($data->status == 3 ? '' : '')) }}</td>
-                                    @php($encryptedId = encrypt($data->id)) 
-                                    <td>
-                                        <a href="{{url('edit-pr/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
-                                        <a href="{{url('delete-pr/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
-                                    </td>
-                                </tr>
-                                @endfor
-                            @endforeach
+                              @foreach($pr as $requisition)
+                              <tr>
+                                  <td>{{$i++}}</td>
+                                  <td>{{ $requisition->pr_num }}</td>
+                                  <!-- data-bs-toggle="modal" data-bs-target="#staticBackdrop" -->
+                                  <td><a class="btn btn-primary mdi mdi-eye prView" data-id="{{$requisition->pr_num}}"></a></td>
+                                  <td><a class="btn btn-primary mdi mdi-eye prItemListsView" data-id="{{$requisition->id}}"></a></td>
+                                  <td>{{ $requisition->req_name }}</td>
+                                  <td>{{ $requisition->req_phone }}</td>
+                                  <td>{{ $requisition->req_email }}</td>
+                                  <td>{{ $requisition->req_desig }}</td>
+                                  <td>{{ $requisition->department }}</td>
+                                  <td>{{ $requisition->requisition_date }}</td>
+                                  <td>{{ $requisition->priority }}</td>
+                                  <td>{{ $requisition->del_addr }}</td>
+                                  <td>{{ $requisition->del_city }}</td>
+                                  <td>{{ $requisition->del_state }}</td>
+                                  <td>{{ $requisition->del_date }}</td>
+                                  <td>{{ $requisition->supplier }}</td>
+                                  <td>{{ $requisition->supplier_phone }}</td>
+                                  <td>{{ $requisition->supplier_email }}</td>
+                                  <td>{{ $requisition->supplier_person }}</td>
+                                  @if($requisition->attachments )
+                                  <td><a class="mdi mdi-file btn btn-primary" href="{{ asset('Storage/'.$requisition->attachments) }}"></a></td>
+                                  @else
+                                  <td></td>
+                                  @endif
+                                  <td>{{ $requisition->notes }}</td>
+                                  <td>{{ $requisition->ref_number }}</td>
+                                  <td>{{ $requisition->created_at }}</td>
+                                  @php($encryptedId = encrypt($requisition->id))
+                                  <td>
+                                      <a href="{{url('edit-pr/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
+                                      <a href="{{url('delete-pr/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
+                                  </td>
+                              </tr>
+                              @endforeach
+                          <!-- </tbody> -->
                         </table>
                   </div>
                 </div>
@@ -96,26 +134,53 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content" style="background-color:white;">
       <div class="modal-header">
-        <h4 class="modal-title" id="addSupplierModalLabel">Add Purchase Requisition</h4>
+        <h4 class="modal-title" id="addSupplierModalLabel">Create Purchase Requisition</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <!-- Rescource Form -->
-                <form method="POST" action="{{route('pr.store')}}" class="row" id="PRAddModalForm">
+                <form method="POST" action="{{route('pr.store')}}" class="row" id="PRAddModalForm" enctype="multipart/form-data">
                         @csrf
 
-
-                        <div class="mb-3 col-md-6">
-                            <label for="order_id" class="form-label">{{ __('Select Order Number For PR') }}</label>
-                            <select  id="order_id"  class="form-control p-3" name="order_id" required>
-                                <!-- <option value="">--Select Order Number--</option> -->
-                                @foreach($orders as $order)
-                                <option value="{{$order->id}}">{{$order->order_id}}</option>
-                                @endforeach
-                            </select>
+                        <div class="col-12">
+                          <hr>
+                          <h4>Requisitioner Detail's</h4>
+                          <hr>
                         </div>
 
-                        <div class="mb-3 col-md-6">
+                        <div class="col-md-6 col-lg-3 form-group">
+                          <label for="pr_num">PR Number</label>
+                          <input type="text" name="pr_num" class="form-control" id="pr_num" value="PR_{{uniqid()}}" placeholder="Pr Number will be autogenerated">
+                        </div>
+
+                          
+                        <div class="mb-3 col-md-6 col-lg-3">
+                            <label for="req_name" class="form-label">{{ __('Requisitioner Name') }}<sup class="text-danger">*</sup></label>
+                            <input list="req_name_list" id="req_name" class="form-control" name="req_name" placeholder="Enter Requisitionar Name" required>
+                            <datalist id="req_name_list">
+                                @foreach($users as $user)
+                                    <option value="{{$user->name}}">
+                                @endforeach
+                                <!-- Add more options as needed -->
+                            </datalist>
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 form-group">
+                          <label for="req_phone">Phone Number</label>
+                          <input type="text" name="req_phone" class="form-control" id="req_phone" placeholder="Enter Contact of the Requisitioner">
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 form-group">
+                          <label for="req_email">Email</label>
+                          <input type="text" name="req_email" class="form-control" id="req_email" placeholder="Enter Email of the Requisitioner">
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 form-group">
+                          <label for="req_desig">Designation</label>
+                          <input type="text" name="req_desig" class="form-control" id="req_desig" placeholder="Enter designantion of the Requisitioner">
+                        </div>
+                       
+                        <div class="mb-3 col-md-6 col-lg-3">
                             <label for="department" class="form-label">{{ __('Department') }}</label>
                             <select id="department"  class="form-control p-3" name="department" required>
                                 <option value="0">--Select Department--</option>
@@ -127,72 +192,163 @@
                             </select>
                         </div>
 
-                        <center>
-                        <table id="prItemListTable" class="col-md-11 table table-bordered mx-auto mb-3" style="width:100%;">
-                              <tr>
-                                <th>S no.</th>
-                                <th>Item Code</th>
-                                <th>Item Name</th>
-                                <th>Quantity</th>
-                                <!-- <th>dummy</th> -->
-                              </tr>
-                              <tbody id="prItemList">
-                                
-                              </tbody>
-                        </table>
-                        </center>
-
-                        <div class="mb-3 col-md-6">
-                            <label for="quantity" class="form-label">{{ __('Quantity') }}</label>
-                            <input type="text" id="quantity" class="form-control" name="quantity" placeholder="Enter quantity wanted to send for RFQ" required>
-                        </div>
-
-
-                        <div class="mb-3 col-md-6">
-                            <label for="user_id" class="form-label">{{ __('Person ') }}</label>
-                            <select id="user_id"  class="form-control p-3" name="user_id" required>
-                                <option value="0">--Select Person--</option>
-                                @foreach($users as $user)
-                                <option value="{{$user->id}}">{{$user->name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6">
-                            <label for="designation" class="form-label">{{ __('Designation') }}</label>
-                            <select id="designation"  class="form-control p-3" name="designation" required>
-                                <option value="0">--Select Product--</option>
-                                @foreach($users as $user)
-                                <option value="{{$user->designation}}">{{$user->designation}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-
-                        <div class="mb-3 col-md-6">
-                            <label for="vendor" class="form-label">{{ __('Vendor') }}</label>
-                            <select id="vendor"  class="form-control p-3" name="vendor" required>
-                                <option value="0">--Select vendor--</option>
-                                @foreach($suppliers as $supplier)
-                                <option value="{{$supplier->supplier_name}}">{{$supplier->supplier_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-6 col-lg-3">
                             <label for="requisition_date" class="form-label">{{ __('Requisition Date') }}</label>
-                            <input type="date" id="requisition_date" class="form-control" name="requisition_date" required>
+                            <input type="date" id="requisition_date" value="{{ date('Y-m-d') }}" class="form-control" name="requisition_date" required>
                         </div>
 
-                        <div class="mb-3 col-md-6">
-                            <label for="status" class="form-label">{{ __('Status') }}</label>
-                            <select id="status" class="form-control p-3" name="status" required>
-                                <option value="0">--Select Option--</option>
-                                <option value="1">Pending</option>
-                                <option value="2">Approved</option>
-                                <option value="3">Rejected</option>
+                        <div class="mb-3 col-md-6 col-lg-3">
+                            <label for="priority" class="form-label">{{ __('Priority') }}</label>
+                            <select id="priority"  class="form-control p-3" name="priority" required>
+                                <option value="">--Select Priority Level--</option>
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
                             </select>
+                        </div>
+
+
+                        <div class="col-12">
+                          <hr>
+                          <h4>Delivery Detail's</h4>
+                          <hr>
+                        </div>
+
+                          
+                          <div class="col-md-6 col-lg-3 form-group">
+                            <label for="del_addr">Address Line 1</label>
+                            <input type="text" name="del_addr" id="del_addr" class="form-control" placeholder="Address for delivery">
+                          </div>
+
+                          <div class="col-md-6 col-lg-3 form-group">
+                            <label for="del_city">City</label>
+                            <input type="text" name="del_city" class="form-control" id="del_city" placeholder="City where order needed to be delivered">
+                          </div>
+
+                          <div class="col-md-6 col-lg-3 form-group">
+                            <label for="del_state">State</label>
+                            <input type="text" name="del_state" class="form-control" id="del_state" placeholder="State where order needed to be delivered">
+                          </div>
+
+                          <div class="col-md-6 col-lg-3 form-group">
+                            <label for="del_date">Delivery Date</label>
+                            <input type="date" name="del_date" class="form-control" id="del_date" placeholder="If required on particular date for delivery">
+                          </div>
+
+
+                          <div class="col-12">
+                            <hr>
+                            <h4>Item Details</h4>
+                            <hr>
+                          </div>
+
+                          <div class="col-md-6 col-lg-4 form-group">
+                            <label for="item_type">Type</label>
+                            <select  name="item_type" class="form-control p-3 text-center" id="item_type" placeholder="Quantityof the item">
+                              <option value="">--Select--</option>
+                              <option value="Goods">Goods</option>
+                              <option value="Services">Services</option>
+                            </select>
+                          </div>
+
+                          <div class="col-md-6 col-lg-4 form-group">
+                            <label for="item_des">Item Description</label>
+                            <input type="text" name="item_des" id="item_des" class="form-control" placeholder="Mention description pf item to purchase">
+                          </div>
+
+                          <div class="col-md-6 col-lg-4 form-group">
+                            <label for="item_qty">Quantity</label>
+                            <input type="number" name="item_qty" class="form-control" id="item_qty" placeholder="Quantity of the item">
+                          </div>
+                          
+
+
+                          <div class="col-md-12 form-group">
+                            <label for="item_feature">Features</label>
+                            <textarea type="text" name="item_feature" cols="10" rows="10" class="form-control" id="item_feature" placeholder="If any features or spacification"></textarea>
+                          </div>
+
+
+                          <div class="form-group">
+                            <a class="btn btn-primary" id="add_pr_item">Add Item</a>
+                          </div>
+
+                          <div class="form-group">
+                           <h6>PR Item List's</h6>
+                           <table class="table table-bordered border-primary">
+                            <thead>
+                            <tr>
+                              <th>PR Number</th>
+                                <th>Type</th>
+                                <th>Item Description</th>
+                                <th>Quantity</th>
+                                <th>Feature</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody id="pr_item_lists">
+
+                            </tbody>
+                           </table>
+                          </div>
+
+
+
+
+                          <div class="col-12">
+                          <hr>
+                          <h4>Supplier Detail's</h4><span>(If any suitable supplier for your PR.)</span>
+                          <hr>
+                        </div>
+
+                          
+                        <div class="mb-3 col-md-6 col-lg-3">
+                            <label for="part_number" class="form-label">{{ __('Supplier') }}<sup class="text-danger">*</sup></label>
+                            <input list="supplier_list" id="supplier" class="form-control" name="supplier" placeholder="Supplier name if any for this PR" required>
+                            <datalist id="supplier_list">
+                                @foreach($suppliers as $supplier)
+                                    <option value="{{$supplier->supplier_name}}">
+                                @endforeach
+                                <!-- Add more options as needed -->
+                            </datalist>
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 form-group">
+                          <label for="supplier_phone">Phone Number</label>
+                          <input type="text" name="supplier_phone" class="form-control" id="supplier_phone" placeholder="Supplier Contact number">
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 form-group">
+                          <label for="supplier_email">Email</label>
+                          <input type="text" name="supplier_email" class="form-control" id="supplier_email" placeholder="Supplier email">
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 form-group">
+                          <label for="supplier_person">Contact Person</label>
+                          <input type="text" name="supplier_person" class="form-control" id="supplier_person" placeholder="Supplier contact person">
+                        </div>
+
+
+
+                          <div class="col-12">
+                            <hr>
+                            <h4>Other Detail's</h4>
+                            <hr>
+                          </div>
+
+                        <div class="col-md-6 col-lg-3 mb-3">
+                          <label for="attachments">Attachments</label>
+                          <input type="file" name="attachments" class="form-control" id="attachments" placeholder="Upload file related with PR if any">
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 mb-3">
+                          <label for="notes">Comment's/Notes</label>
+                          <input type="text" name="notes" class="form-control" id="notes" placeholder="Enter any comments or notes related with PR">
+                        </div>
+
+                        <div class="col-md-6 col-lg-3 mb-3">
+                          <label for="ref_number">Reference Number</label>
+                          <input type="text" name="ref_number" class="form-control" id="ref_number" placeholder="Enter if this PR is related with any past PR">
                         </div>
 
                         <div class="form-group">
@@ -208,68 +364,163 @@
 
 
 
-<!-- Modal -->
+
+        
+            <!-- Modal -->
+            <div class="modal fade" id="PRViewModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="PRViewModalLabel" aria-hidden="true">
+                  <div class="modal-dialog  modal-lg mx-auto">
+                    <div class="modal-content card mx-auto">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="PRViewModalLabel">Purchase Requisition</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      
+                    <div class="modal-body">
+                      <div class="container p-3" style="border:1px solid black;">
+                        <h2 class="text-center">Purchase Requisition</h2>
+                        <h6 class="text-center">The Owner's Corporation of SyanSoft Pvt. Ltd.</h6>
+                        <div style="float:right;"><b>PR No. </b><span id="pr_number">  PR_6647027e0e15e  </span></div><br><br><br>
+
+                        <div><b>Delivery: </b><span id="del_date"> 2024-05-17 </span><b>(on or before) </b></div><br><br>
+
+                        <div id="details" class="row">
+                          <div class="col-md-6">
+                            <div><h4><b>Requester Details: </b></h4></div>
+                            <div class="mb-1"><b>Name:&nbsp;&nbsp;&nbsp;</b><span id="req_name">Abhishek Kumar</span></div>
+                            <div class="mb-1"><b>Email:&nbsp;&nbsp;&nbsp;</b><span id="req_email">kumarpuplish@gmail.com</span></div>
+                            <div class="mb-1"><b>Phone:&nbsp;&nbsp;&nbsp;</b><span id="req_phone">+91 6202074551</span></div>
+                            <div class="mb-1"><b>Designation:&nbsp;&nbsp;&nbsp;</b><span id="req_desig">PHP Developer</span></div>
+                          </div>
+                          <div class="col-md-6">
+                            <div><h4><b>Delivery Location: </b></h4></div>
+                            <div class="mb-1"><b>Street Address:&nbsp;&nbsp;&nbsp;</b></><span id="street_address">&nbsp;&nbsp;&nbsp;D-136, Fazilpur Road, Sec-48</span></div>
+                            <div class="mb-1"><b>City:&nbsp;&nbsp;&nbsp;</b><span id="del_city">&nbsp;&nbsp;&nbsp;Gurugram</span></div>
+                            <div class="mb-1"><b>State:&nbsp;&nbsp;&nbsp;</b><span id="del_state">&nbsp;&nbsp;&nbsp;Haryana</span></div>
+                          </div>
+                        </div>
+
+
+                        <br><br>
+                        <h5><b>Item Lists</b></h5>
+                       <div class="table-wrapper" style="height:auto;">
+                       <table class="table table-bordered border-primary">
+                          <!-- <thead> -->
+                            <th>S No.</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Features</th>
+                          <!-- </thead> -->
+                          <tbody id="prItemViewAll">
+
+                          </tbody>
+                        </table>
+
+                       </div>
+                        <br><br>
+                        <br>
+
+
+                        <h5><b>Vendor Details</b></h5>
+                        <div class="table-wrapper" style="height:auto;">
+                        <table class="table table-bordered border-primary">
+                          <!-- <thead> -->
+                            <!-- <th>S No.</th> -->
+                            <th>Vendor Name</th>
+                            <th>Phone Number</th>
+                            <th>Contact Email</th>
+                            <th>Contact Person</th>
+                          <!-- </thead> -->
+                          <tbody id="prVendorList">
+                            <tr>
+                              <td id="vendorName">Abhishek Kumar</td>
+                              <td id="vendorPhone">+91 6202074551</td>
+                              <td id="vendorEmail">kumarpuplish@gmail.com</td>
+                              <td id="contactPerson">Priyanka Tamta</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        </div>
+
+
+
+                        <br><br>
+
+                        <div><b> Request For Department: </b><span id="req_depatment">IT Department</span></div>
+                        <div><b> Purpose: </b><span id="purpose">Fullfilment f products to the employees</span></div>
+                        
+                        <br><br><br>
+
+                        <div><h4><b>Approval Details: </b></h4></div>
+
+
+                            <!-- Responsive step process component with minimal markup -->
+                            <div dir="RTL">
+                            <ol class="checkout">
+                              <li class="step completed">
+                              <span class="step-icon"></span><br>
+                                <span class="step-label step-label">Approved</span>
+                              </li>
+                              <li class="step reject">
+                                <span class="step-icon"></span><br>
+                                <span class="step-label step-label-even">Rejected</span>
+                              </li>
+                              <li class="step reviow">
+                                <span class="step-icon"></span><br>
+                                <span class="step-label">Pending</span>
+                              </li>
+                              <li class="step skip">
+                                <span class="step-icon"></span><br>
+                                <span class="step-label">On Hold</span>
+                              </li>
+                              <li class="step active">
+                                <span class="step-icon"></span><br>
+                                <span class="step-label">Processing</span>
+                              </li>
+                              <li class="step">
+                                <span class="step-icon"></span><br>
+                                <span class="step-label">Active</span>
+                              </li>
+                            </ol>
+                            </div>
+
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+                <!-- Modal -->
                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                   <div class="modal-dialog  modal-lg mx-auto">
                     <div class="modal-content card mx-auto">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Edit Generated Orders</h5>
+                        <h5 class="modal-title" id="staticBackdropLabel">Purchase Requisition</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       
                       <div class="modal-body">
 
                    
-                      <center><u> <h3>Purchase Requisition Detail's</h3></u></br></br></center>
+                      <!-- <center><u> <h3>Purchase Requisition Detail's</h3></u></br></br></center> -->
                         
-                              <h5><b>Items : </b></h5>
-                              <table class="table table-bordered">
+                              <h5><b>PR Items List's: </b></h5>
+                              <table class="table table-bordered border-primary">
+                               <!-- <thead> -->
                                 <tr>
-                                  <th>S no.</th>
-                                  <th>Item Code</th>
-                                  <th>Item Name</th>
-                                  <th>Unit</th>
-                                </tr>
-                                <tr>
-                                 <td> 1</td>
-                                 <td>7925</td>
-                                 <td>Wheel</td>
-                                 <td>17</td>
-                                </tr>
+                                    <th>S no.</th>
+                                    <th>Item Name</th>
+                                    <th>Quantity</th>
+                                    <th>Features</th>
+                                  </tr>
+                               <!-- </thead> -->
+                               <tbody id="prItemView">
 
-                                <tr>
-                                 <td> 2</td>
-                                 <td>9232</td>
-                                 <td>Meter</td>
-                                 <td>12</td>
-                                </tr>
-
-                                <tr>
-                                 <td> 3</td>
-                                 <td>2342</td>
-                                 <td>Handle</td>
-                                 <td>20</td>
-                                </tr>
-
-                                <tr>
-                                 <td> 4</td>
-                                 <td>679</td>
-                                 <td>Break Shoe</td>
-                                 <td>2</td>
-                                </tr>
-                              </table>
-
-                              <h5><b>Quantity : </b> {{uniqid()}}</h5>
-                              <h5><b>Department : </b>HR Department</h5>
-                              <h5><b>Designation : </b>Consultant</h5>
-                              <h5><b>Requisition Date : </b> 2024-04-15</h5>
-                              <h5><b>Status : </b> Processing</h5>
-                              <center> 
-                                <h4 style="color:blue;"><u>Click on image to print your Purchase Requisition</u></h4>
-                                <a href="https://images.sampletemplates.com/wp-content/uploads/2017/04/Purchase-Requisition-Form-Sample.jpg" download>
-                                  <img src="https://images.sampletemplates.com/wp-content/uploads/2017/04/Purchase-Requisition-Form-Sample.jpg" style="object-fit: contain; width: 50%;" alt="Image">
-                              </a>        
-                            </center>                      
+                               </tbody>
+                              </table>           
                               <hr>
 
 

@@ -18,8 +18,9 @@
                             <div class="form-group col-md-6">
                                 <label for="edit_dealer" class="form-control-label"><b>Select Dealer : <sup style="color:red;font-size:15px;">*</sup></b></label>
                                 <select name="edit_dealer" id="edit_dealer" class="form-control p-3">
+                                  <option value="">--Select--</option>
                                   @foreach($dealers as $dealer)
-                                    <option value="{{$dealer->id}}">{{$dealer->dealership_name}}</option>
+                                    <option value="{{$dealer->supplier_id}}">{{$dealer->supplier_name}}</option>
                                   @endforeach
                                 </select>
                                 @error('dealer')
@@ -250,7 +251,7 @@
                     </button>
                   </h2>
                   <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#add_orders">
-                    <div class="accordion-body">
+                    <div class="accordion-body" >
                     <div  class="card" style="height:400px;background-color:lightgray;">
                     <!-- <div class="table-wrapper mx-auto"> -->
                     <table id="previewOrderedItems" class="table table-hover mb-2">
@@ -276,7 +277,7 @@
                           </table>
                         <!-- </div> -->
                         </div>
-                        <div style="width:100%;" class="card">
+                        <div class="mx-auto card">
                           <table class="table">
                               <tr>
                                 <th>Total Items</th>

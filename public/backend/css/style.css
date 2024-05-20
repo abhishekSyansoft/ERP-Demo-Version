@@ -1731,6 +1731,23 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 :root {
+  --line-width: 2px;
+--line-color: #afb3b9;
+--line-color-completed: #18d112;
+--line-color-reject: #D32F2F;
+--line-color-reviow: #FFEB3B;
+--line-color-skip: #2196F3;
+--label-height-even: 2em;
+ --label-height-odd: -2em;
+--label-color-active: #405560;
+--label-color-inactive: #99a4ac;
+--icon-size: 20px;
+--icon-color-checked: #18d112;
+--icon-color-unchecked: #fff;
+--icon-color-reject: #D32F2F;
+--icon-color-reviow: #FFEB3B;
+--icon-color-skip: #2196F3;
+--icon-color-current: #757575;
   --bs-blue: #5E50F9;
   --bs-indigo: #6610f2;
   --bs-purple: #6a008a;

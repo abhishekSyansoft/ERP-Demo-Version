@@ -9,8 +9,19 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Models\Inventory\SC;
 use App\Models\Inventory\WM;
+use Storage;
 use DB;
 use Carbon\Carbon;
+use Milon\Barcode\DNS1D;
+use Picqer\Barcode\BarcodeGeneratorHTML;
+// use Endroid\QrCode\QrCode;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use BaconQrCode\Renderer\Image\Png;
+use BaconQrCode\Writer;
+use Intervention\Image\ImageManagerStatic as Image;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\Inventory\Parts;
+use App\Models\Inventory\Vehicles;
 
 class WMController extends Controller
 {
@@ -45,18 +56,72 @@ class WMController extends Controller
          */
         public function WMAdd(Request $request){
             try {
-                // Validate the incoming request data
-               
+
+                    // Validate the incoming request data
                     $validatData = $request->validate([
-                        "warehouse_name"=> "required",
-                        "location"=> "required",
-                        "capacity"=> "required",
+                        "warehouse_id"=>'required',
+                        "warehouse_name"=>'required',
+                        "warehouse_manager"=>'required',
+                        "capacity"=>'required',
+                        "inventory_audits"=>'required',
+                        "integration_with_ims"=>'required',
                     ]);
+
+
+                    
+
+                    if ($request->hasFile('documents_and_records')) {
+                        // Upload the new image
+                        $image = $request->file('documents_and_records');
+                        $name_gen = hexdec(uniqid());
+                        $img_ext = strtolower($image->getClientOriginalExtension());
+                        $img_name = $name_gen . '.' . $img_ext;
+                        $uplocation = 'images/warehouse/documents/';
+                        $last_img = $uplocation . $img_name;
+                        $image->storeAs($uplocation, $img_name, 'public');
+                    }else{
+                        $last_img = "";
+                    }
+
+                    if ($request->hasFile('layout')) {
+                        // Upload the new image
+                        $image = $request->file('layout');
+                        $name_gen = hexdec(uniqid());
+                        $img_ext = strtolower($image->getClientOriginalExtension());
+                        $img_name = $name_gen . '.' . $img_ext;
+                        $uplocation = 'images/warehouse/layout/';
+                        $doc_img = $uplocation . $img_name;
+                        $image->storeAs($uplocation, $img_name, 'public');
+                    }else{
+                        $doc_img = "";
+                    }
+
+
                     // Retrieve the supplier from the database
                     WM::insert([
+                        "warehouse_id"=> $request->warehouse_id,
                         "warehouse_name"=> $request->warehouse_name,
-                        "location"=> $request->location,
+                        "warehouse_manager"=> $request->warehouse_manager,
+                        "address"=> $request->address,
+                        "city"=> $request->city,
+                        "state"=> $request->state,
+                        "pincode"=> $request->pincode,
                         "capacity"=> $request->capacity,
+                        "layout"=> $doc_img,
+                        "storage_zone"=> $request->storage_zone,
+                        "shelf_number"=> $request->shelf_number,
+                        "inventory_allocation"=> $request->inventory_allocation,
+                        "inventory_movement"=> $request->inventory_movement,
+                        "inventory_levels"=> $request->inventory_levels,
+                        "picking_and_packing"=> $request->picking_and_packing,
+                        "loading_and_unloading"=> $request->loading_and_unloading,
+                        "safety_and_security"=> $request->safety_and_security,
+                        "maintenance_and_sheduling"=> $request->maintenance_and_sheduling,
+                        "temprature_and_climate_control"=> $request->temprature_and_climate_control,
+                        "emergency_procedures"=> $request->emergency_procedures,
+                        "inventory_audits"=> $request->inventory_audits,
+                        "documents_and_records"=> $last_img,
+                        "integration_with_ims"=> $request->integration_with_ims,
                         'created_at' => Carbon::now()
                     ]);
 
@@ -88,12 +153,65 @@ class WMController extends Controller
             ]);
             // Decrypt the encrypted ID to get the actual supplier ID
             $id = decrypt($encryptedId);
+
+            $warehouse = WM::findOrFail('id',$id);
+            $oldDoc = $warehouse->documents_and_records;
+            $oldlayout = $warehouse->layout;
+
+            
+            if ($request->hasFile('documents_and_records')) {
+                Storage::disk('public')->delete($oldDoc);
+                // Upload the new image
+                $image = $request->file('documents_and_records');
+                $name_gen = hexdec(uniqid());
+                $img_ext = strtolower($image->getClientOriginalExtension());
+                $img_name = $name_gen . '.' . $img_ext;
+                $uplocation = 'images/warehouse/documents/';
+                $last_img = $uplocation . $img_name;
+                $image->storeAs($uplocation, $img_name, 'public');
+            }else{
+                $last_img = $oldDoc;
+            }
+
+            if ($request->hasFile('layout')) {
+                Storage::disk('public')->delete($oldlayout);
+                // Upload the new image
+                $image = $request->file('layout');
+                $name_gen = hexdec(uniqid());
+                $img_ext = strtolower($image->getClientOriginalExtension());
+                $img_name = $name_gen . '.' . $img_ext;
+                $uplocation = 'images/warehouse/layout/';
+                $doc_img = $uplocation . $img_name;
+                $image->storeAs($uplocation, $img_name, 'public');
+            }else{
+                $doc_img = $oldlayout;
+            }
             
                 // Retrieve the supplier from the database
                 WM::where('id',$id)->update([
+                    "warehouse_id"=> $request->warehouse_id,
                     "warehouse_name"=> $request->warehouse_name,
-                    "location"=> $request->location,
+                    "warehouse_manager"=> $request->warehouse_manager,
+                    "address"=> $request->address,
+                    "city"=> $request->city,
+                    "state"=> $request->state,
+                    "pincode"=> $request->pincode,
                     "capacity"=> $request->capacity,
+                    "layout"=> $doc_img,
+                    "storage_zone"=> $request->storage_zone,
+                    "shelf_number"=> $request->shelf_number,
+                    "inventory_allocation"=> $request->inventory_allocation,
+                    "inventory_movement"=> $request->inventory_movement,
+                    "inventory_levels"=> $request->inventory_levels,
+                    "picking_and_packing"=> $request->picking_and_packing,
+                    "loading_and_unloading"=> $request->loading_and_unloading,
+                    "safety_and_security"=> $request->safety_and_security,
+                    "maintenance_and_sheduling"=> $request->maintenance_and_sheduling,
+                    "temprature_and_climate_control"=> $request->temprature_and_climate_control,
+                    "emergency_procedures"=> $request->emergency_procedures,
+                    "inventory_audits"=> $request->inventory_audits,
+                    "documents_and_records"=> $last_img,
+                    "integration_with_ims"=> $request->integration_with_ims,
                 ]);
 
             // Update supplier details with the data from the request
@@ -129,11 +247,15 @@ class WMController extends Controller
             // Decrypt the encrypted ID to get the actual supplier ID
             $id = decrypt($encryptedId);
             
-            // Find the supplier by its ID
-            $wm = WM::findOrFail($id);
+            $warehouse = WM::findOrFail($id);
+            $oldDoc = $warehouse->documents_and_records;
+            $oldlayout = $warehouse->layout;
+
+            Storage::disk('public')->delete([$oldDoc,$oldlayout]);
+
 
             // Delete the supplier
-            $wm->delete();
+            $warehouse->delete();
 
             // Redirect back with a success message
             return redirect()->back()->with('delete',' deleted successfully');
@@ -149,4 +271,143 @@ class WMController extends Controller
         }
 
     }
+
+
+
+
+    public function WMQRCode(Request $request){
+        $id = $request->input('id');
+
+        $warehouse = WM::where('id',$id)->first();
+
+        // Check if the part exists
+        if (!$warehouse) {
+            return response()->json(['error' => 'Part not found',
+        'id'=>$id
+        ], 404);
+        }
+
+        // Get the barcode data from the form input
+        $barcodeData = [
+            "warehouse_id"=> $warehouse->warehouse_id,
+            "warehouse_name"=> $warehouse->warehouse_name,
+            "warehouse_manager"=> $warehouse->warehouse_manager,
+            "address"=> $warehouse->address,
+            "city"=> $warehouse->city,
+            "state"=> $warehouse->state,
+            "pincode"=> $warehouse->pincode,
+            "capacity"=> $warehouse->capacity,
+            "storage_zone"=> $warehouse->storage_zone,
+            "shelf_number"=> $warehouse->shelf_number,
+            "inventory_allocation"=> $warehouse->inventory_allocation,
+            "inventory_movement"=> $warehouse->inventory_movement,
+            "inventory_levels"=> $warehouse->inventory_levels,
+            "picking_and_packing"=> $warehouse->picking_and_packing,
+            "loading_and_unloading"=> $warehouse->loading_and_unloading,
+            "safety_and_security"=> $warehouse->safety_and_security,
+            "maintenance_and_sheduling"=> $warehouse->maintenance_and_sheduling,
+            "temprature_and_climate_control"=> $warehouse->temprature_and_climate_control,
+            "emergency_procedures"=> $warehouse->emergency_procedures,
+            "inventory_audits"=> $warehouse->inventory_audits,
+            "integration_with_ims"=> $warehouse->integration_with_ims,
+            "documents_and_records"=> 'http://127.0.0.1:8000/Storage/'.$warehouse->documents_and_records,
+            "layout"=> 'http://127.0.0.1:8000/Storage/'.$warehouse->layout,
+            ];
+            
+        $table = implode("\n", $barcodeData); 
+        // Generate the QR code
+        $qrCode = QrCode::size(300)->generate($table);
+
+        // Define the path to save the QR code image
+        $qrCodePath = 'images/warehouse/qrcodes/qrcode_' .  uniqid()  .'.svg';
+
+        // Store the QR code image in the public disk
+        Storage::disk('public')->put($qrCodePath, $qrCode);
+
+        // Update the part record with the QR code image path
+        WM::where('id', $id)->update([
+            'qrcode' => $qrCodePath
+        ]);
+
+
+                // Return the QR code path and the table HTML
+                return response()->json([
+                    'qr_code_path' => $qrCodePath,
+                    'barcode_data_table' => $table
+                ]);
+            }
+
+
+            public function WMBARCode(Request $request){
+                $id = $request->input('id');
+
+                $warehouse = WM::where('id',$id)->first();
+
+                // Check if the part exists
+                if (!$warehouse) {
+                    return response()->json(['error' => 'Part not found',
+                'id'=>$id
+                ], 404);
+                }
+                // Get the barcode data from the form input
+                $barcodeData = [
+                    "warehouse_id"=> $warehouse->warehouse_id,
+                    "warehouse_name"=> $warehouse->warehouse_name,
+                    "warehouse_manager"=> $warehouse->warehouse_manager,
+                    "address"=> $warehouse->address,
+                    "city"=> $warehouse->city,
+                    "state"=> $warehouse->state,
+                    "pincode"=> $warehouse->pincode,
+                    "capacity"=> $warehouse->capacity,
+                    "storage_zone"=> $warehouse->storage_zone,
+                    "shelf_number"=> $warehouse->shelf_number,
+                    "inventory_allocation"=> $warehouse->inventory_allocation,
+                    "inventory_movement"=> $warehouse->inventory_movement,
+                    "inventory_levels"=> $warehouse->inventory_levels,
+                    "picking_and_packing"=> $warehouse->picking_and_packing,
+                    "loading_and_unloading"=> $warehouse->loading_and_unloading,
+                    "safety_and_security"=> $warehouse->safety_and_security,
+                    "maintenance_and_sheduling"=> $warehouse->maintenance_and_sheduling,
+                    "temprature_and_climate_control"=> $warehouse->temprature_and_climate_control,
+                    "emergency_procedures"=> $warehouse->emergency_procedures,
+                    "inventory_audits"=> $warehouse->inventory_audits,
+                    "integration_with_ims"=> $warehouse->integration_with_ims,
+                    "documents_and_records"=> 'http://127.0.0.1:8000/Storage/'.$warehouse->documents_and_records,
+                    "layout"=> 'http://127.0.0.1:8000/Storage/'.$warehouse->layout,
+                ];
+            
+                // Convert the data array to a JSON string
+                $barcodeString = json_encode($barcodeData, JSON_UNESCAPED_UNICODE);
+            
+                // Generate the barcode image
+                $generator = new BarcodeGeneratorPNG();
+                $barcodeImage = $generator->getBarcode($barcodeString, $generator::TYPE_CODE_128, 2, 40);
+            
+                // Define the directory to save the barcode image
+                $barcodeImagePath = 'images/warehouse/barcode/';
+                // Define a unique filename for the barcode image
+                $barcodeImageFileName = 'barcode_' . uniqid() . '.png';
+            
+                // Store the barcode image as a file
+                Storage::disk('public')->put($barcodeImagePath . $barcodeImageFileName, $barcodeImage);
+            
+                // Update the database record with the path to the barcode image file
+                WM::where('id', $id)->update([
+                    'barcode'=> $barcodeImagePath . $barcodeImageFileName
+                ]);
+            
+                // Return the response with barcode table, image path, and content
+                return response()->json([
+                    'barcode_table' => $barcodeData,
+                    'barcode_image_path' => asset('storage/' . $barcodeImagePath . $barcodeImageFileName),
+                    'content' => base64_encode($barcodeImage) // Base64 encoded image data
+                ]);
+            }
+
+
+
+
+
+
+
 }

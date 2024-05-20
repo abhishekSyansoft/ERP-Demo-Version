@@ -6,9 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Products;
 use App\Models\OrderItem;
 use App\Models\OrderHeader;
-use App\Models\Dealer;
+use App\Models\supplier\supplier;
 use Carbon\Carbon;
 use Auth;
+use App\Models\Inventory\Parts;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -71,7 +72,7 @@ class OrderItemController extends Controller
         $products = Products::get();
         $order_id = uniqid();
         $order_items = OrderItem::get();
-        $dealers = Dealer::get();
+        $dealers = supplier::get();
         // OrderHeader::insert([
         //     'order_id'=> $order_id,
         // ]);
@@ -110,9 +111,9 @@ class OrderItemController extends Controller
         $orderHeader = OrderHeader::where('id', 8)->first(); // Filter records by order ID = 1
         if ($orderHeader) {
             return response()->json([
-'success'=> true,
-'order_header'=> $orderHeader
-            ]);
+            'success'=> true,
+            'order_header'=> $orderHeader
+                        ]);
         } else {
             return response()->json([
                 'success' => false,

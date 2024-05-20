@@ -54,7 +54,7 @@
                                 <label for="dealer" class="form-control-label"><b>Select Dealer : <sup style="color:red;font-size:15px;">*</sup></b></label>
                                 <select name="dealer" id="dealer" class="form-control p-3">
                                   @foreach($dealers as $dealer)
-                                    <option value="{{$dealer->id}}">{{$dealer->dealership_name}}</option>
+                                    <option value="{{$dealer->supplier_id}}">{{$dealer->supplier_name}}</option>
                                   @endforeach
                                 </select>
                                 @error('dealer')

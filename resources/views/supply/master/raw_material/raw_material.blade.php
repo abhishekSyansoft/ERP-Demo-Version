@@ -45,43 +45,83 @@
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
                     </div>
                     <div class="table-wrapper">
-                        <table class="table">
+                        <table class="table table-bordered border-primary">
+
                             <tr>
                                 
-                                <th>S No.</th>
-                                <!-- <th>Module Id</th> -->
-                                <th>Material Name</th>
-                                <th>Material Description</th>
-                                <th>Unit Of Measure</th>
-                                <th>Lead Time</th>
-                                <th>Safety Stock</th>
-                                <th>Storage Condition</th>
-                                <th>Shelf Life</th>
-                                <th>Supplier</th>
-                                <th>Cost_per_unit</th>
-                                <th>Action</th>
+                                <th rowspan="2">S No.</th>
+                                <th rowspan="2">Product</th>
+                                <th rowspan="2">Item Name</th>
+                                <th rowspan="2">Item Description</th>
+                                <th rowspan="2">Cost Per Unit</th>
+                                <th rowspan="2">Storage condition</th>
+                                <th rowspan="2">Shelf Life</th>
+                                <th rowspan="2">Size</th>
+                                <th rowspan="2">Unit</th>
+                                <th rowspan="2">Supplier Name</th>
+                                <th rowspan="1" colspan="2">Safety Stock</th>
+                                <th rowspan="1" colspan="2">Current Month Stock</th>
+                                <!-- <th>Safety Stock</th> -->
+                                <th rowspan="1" colspan="2">Stock entering Warehouse in current month</th>
+                                <th rowspan="1" colspan="2">Stock out Of Warehouse in current Month</th>
+                                <th rowspan="1" colspan="2">Current Month Stock</th>
+                                <th rowspan="2">Remarks</th>
+                                <th rowspan="2">Action</th>
                             </tr>
+                            <tr>
+                                
+                                <!-- <th></th> -->
+                                <!-- <th>Module Id</th> -->
+                                <!-- <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th> -->
+                                <th rowspan="1" colspan="1">Quantity</th>
+                                <th rowspan="1" colspan="1">Amount</th>
+                                <th rowspan="1" colspan="1">Quantity</th>
+                                <th rowspan="1" colspan="1">Amount</th>
+                                <!-- <th>Safety Stock</th> -->
+                                <th rowspan="1" colspan="1">Quantity</th>
+                                <th rowspan="1" colspan="1">Amount</th>
+                                <th rowspan="1" colspan="1">Quantity</th>
+                                <th rowspan="1" colspan="1">Amount</th>
+                                <th rowspan="1" colspan="1">Quantity</th>
+                                <th rowspan="1" colspan="1">Amount</th>
+                                <!-- <th></th> -->
+                                <!-- <th></th> -->
+                               
+                            </tr>
+
                             @php($i=1)
                             @foreach($rawmaterial as $material)
-                            @for($a=0;$a<8;$a++)
                             <tr>
-                                <td>{{$i++}}</td>
-                                <td>{{$material->material_name}}</td>
-                                <td>{{$material->material_description}}</td>
-                                <td>{{$material->unit_of_measure}}</td>
-                                <td>{{$material->lead_time}}</td>
-                                <td>{{$material->safety_stock}}</td>
-                                <td>{{$material->storage_condition}}</td>
-                                <td>{{$material->shelf_life}}</td>
-                                <td>{{$material->supplier_name}}</td>
-                                <td>{{$material->cost_per_unit}}</td>
-                                @php($encryptedId = encrypt($material->id)) 
+                              <td>{{$i++}}</td>
+                              <td>{{$material->material_name}}</td>
+                              <td>{{$material->item}}</td>
+                              <td>{{$material->material_description}}</td>
+                              <td>{{$material->cost_per_unit}}</td>
+                              <td>{{$material->storage_condition}}</td>
+                              <td>{{$material->shelf_life}}</td>
+                              <td>{{$material->size}}</td>
+                              <td>{{$material->unit}}</td>
+                              <td>{{$material->supplier_name}}</td>
+                              <td>{{$material->safety_stock_quantity}}</td>
+                              <td>{{$material->safety_stock_amount}}</td>
+                              <td>{{$material->current_month_stock_quantity}}</td>
+                              <td>{{$material->current_month_stock_amount}}</td>
+                              <td>{{$material->current_month_stock_quantity_entering_warehouse}}</td>
+                              <td>{{$material->current_month_stock_amount_entering_warehouse}}</td>
+                              <td>{{$material->current_month_stock_quantity_out_warehouse}}</td>
+                              <td>{{$material->current_month_stock_amount_out_warehouse}}</td>
+                              <td>{{$material->last_month_stock_quantity}}</td>
+                              <td>{{$material->last_month_stock_amount}}</td>
+                              <td>{{$material->remarks}}</td>
+                              @php($encryptedId = encrypt($material->id)) 
                                 <td>
                                     <a href="{{url('edit-material/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
                                     <a href="{{url('delete-material/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
-                            @endfor
                             @endforeach
                         </table>
                   </div>
@@ -103,33 +143,47 @@
       </div>
       <div class="modal-body">
         <!-- Supplier Form -->
-                <form method="POST" action="{{ route('materials.store') }}" class="row">
+                <form method="POST" action="{{ route('materials.store') }}" class="row" id="rawMaterialForm">
                         @csrf
 
+                        <hr>
+                        <h4>Material detail's :</h4>
+                        <hr>
                         <div class="mb-3 col-md-6">
-                            <label for="material_name" class="form-label">{{ __('Material Name') }}</label>
-                            <input id="material_name" type="text" class="form-control" name="material_name" placeholder="Name of the raw material" required autofocus>
+                            <label for="material_name" class="form-label">{{ __('Product') }}</label>
+                            <select id="material_name" class="form-control p-3" name="material_name" required autofocus>
+                              <option value="">--Select--</option>
+                              @foreach($categories as $category)
+                                  <option value="{{$category->category_name}}">{{$category->category_name}}</option>
+                              @endforeach
+                            </select>
                         </div>
 
                         <div class="mb-3 col-md-6">
-                            <label for="material_description" class="form-label">{{ __('Material Description') }}</label>
+                            <label for="item" class="form-label">{{ __('Item') }}</label>
+                            <select id="item" class="form-control p-3" name="item" required autofocus>
+                              <option value="">--Select--</option>
+                              @foreach($products as $product)
+                              <option value="{{$product->product_name}}">{{$product->product_name}}</option>
+                              @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3 col-md-6">
+                            <label for="material_description" class="form-label">{{ __('Item Description') }}</label>
                             <textarea id="material_description" class="form-control" name="material_description" placeholder="Description or additional details about the raw material" required></textarea>
                         </div>
 
                         <div class="mb-3 col-md-6">
-                            <label for="unit_of_measure" class="form-label">{{ __('Unit of Measure') }}</label>
-                            <input id="unit_of_measure" type="text" class="form-control" name="unit_of_measure" placeholder="Unit of measure for the raw material (e.g., kg, liter)" required>
+                            <label for="size" class="form-label">{{ __('Size') }}</label>
+                            <input id="size" type="text" class="form-control" name="size" placeholder="Size of the raw material in number" required>
                         </div>
 
                         <div class="mb-3 col-md-6">
-                            <label for="lead_time" class="form-label">{{ __('Lead Time') }}</label>
-                            <input id="lead_time" type="text" class="form-control" name="lead_time" placeholder="Lead time for ordering the raw material (in days)" required>
+                            <label for="unit_of_measure" class="form-label">{{ __('Unit') }}</label>
+                            <input id="unit_of_measure" type="text" class="form-control" name="unit_of_measure" placeholder="Unit of measure for the raw material (e.g., kg, liter, meter)" required>
                         </div>
 
-                        <div class="mb-3 col-md-6">
-                            <label for="safety_stock" class="form-label">{{ __('Safety Stock') }}</label>
-                            <input id="safety_stock" type="text" class="form-control" name="safety_stock" placeholder="Safety stock level for the raw material" required>
-                        </div>
 
                         <div class="mb-3 col-md-6">
                             <label for="storage_condition" class="form-label">{{ __('Storage Condition') }}</label>
@@ -140,6 +194,8 @@
                             <label for="shelf_life" class="form-label">{{ __('Shelf Life') }}</label>
                             <input id="shelf_life" type="text" class="form-control" name="shelf_life" placeholder="Shelf life of the raw material (in days)" required>
                         </div>
+
+                        
 
                         <div class="mb-3 col-md-6">
                             <label for="supplier_id" class="form-label">{{ __('Supplier') }}</label>
@@ -156,6 +212,93 @@
                             <input id="cost_per_unit" type="text" class="form-control" name="cost_per_unit" placeholder="Cost per unit of the raw material" required>
                         </div>
 
+
+                        <div class="mb-3 col-md-6">
+                            <label for="remarks" class="form-label">{{ __('Remarks') }}</label>
+                            <input id="remarks" type="text" class="form-control" name="remarks" placeholder="Enter remark for this material" required>
+                        </div>
+
+                        <hr>
+                        <h4>Stock detail's :</h4>
+                        <hr>
+
+                        <div class="mb-3 col-md-6 border-primary">
+                            <label class="form-label"><strong>{{ __('Safety Stock :') }}</strong></label>
+                            <div class="form-group row">
+                              <div class="col-md-6">
+                                <label for="safety_stock_quantity">Quantity</label>
+                                <input type="text" name="safety_stock_quantity" id="safety_stock_quantity" placeholder="Enter safety stock quantity" class="form-control">
+                              </div>
+                              <div class="col-md-6">
+                                <label for="safety_stock_amount">Amount</label>
+                                <input type="text" name="safety_stock_amount" id="safety_stock_amount" placeholder="Enter safety stock Amount" class="form-control">
+
+                              </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 col-md-6 border-primary">
+                            <label class="form-label"><strong>{{ __('Last Month Stock :') }}</strong></label>
+                            <div class="form-group row">
+                              <div class="col-md-6">
+                                <label for="this_month_stock_quantity">Quantity</label>
+                                <input type="text" name="this_month_stock_quantity" id="this_month_stock_quantity" placeholder="Enter last month stock quantity" class="form-control">
+                              </div>
+                              <div class="col-md-6">
+                                <label for="this_month_stock_amount">Amount</label>
+                                <input type="text" name="this_month_stock_amount" id="this_month_stock_amount" placeholder="Enter last month stock Amount" class="form-control">
+
+                              </div>
+                            </div>
+                        </div>
+
+
+                        <div class="mb-3 col-md-6 border-primary">
+                            <label class="form-label"><strong>{{ __('Entering Warehouse This Month Stock :') }}</strong></label>
+                            <div class="form-group row">
+                              <div class="col-md-6">
+                                <label for="entering_warehouse_this_month_stock_quantity">Quantity</label>
+                                <input type="text" name="entering_warehouse_this_month_stock_quantity" id="entering_warehouse_this_month_stock_quantity" placeholder="Enter this month stock quantity entering warehouse" class="form-control">
+                              </div>
+                              <div class="col-md-6">
+                                <label for="entering_warehouse_this_month_stock_amount">Amount</label>
+                                <input type="text" name="entering_warehouse_this_month_stock_amount" id="entering_warehouse_this_month_stock_amount" placeholder="Enter this month stock Amount entering warehouse" class="form-control">
+
+                              </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 col-md-6 border-primary">
+                            <label class="form-label"><strong>{{ __('Out of Warehouse This Month Stock :') }}</strong></label>
+                            <div class="form-group row">
+                              <div class="col-md-6">
+                                <label for="out_of_warehouse_this_month_stock_quantity">Quantity</label>
+                                <input type="text" name="out_of_warehouse_this_month_stock_quantity" id="out_of_warehouse_this_month_stock_quantity" placeholder="Enter this month stock quantity out of warehouse" class="form-control">
+                              </div>
+                              <div class="col-md-6">
+                                <label for="out_of_warehouse_this_month_stock_amount">Amount</label>
+                                <input type="text" name="out_of_warehouse_this_month_stock_amount" id="out_of_warehouse_this_month_stock_amount" placeholder="Enter this month stock Amount out of warehouse" class="form-control">
+
+                              </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 col-md-6 border-primary">
+                            <label class="form-label"><strong>{{ __('Last Month Stock :') }}</strong></label>
+                            <div class="form-group row">
+                              <div class="col-md-6">
+                                <label for="last_month_stock_quantity">Quantity</label>
+                                <input type="text" name="last_month_stock_quantity" id="last_month_stock_quantity" placeholder="Enter this month stock quantity" class="form-control">
+                              </div>
+                              <div class="col-md-6">
+                                <label for="last_month_stock_amount">Amount</label>
+                                <input type="text" name="last_month_stock_amount" id="last_month_stock_amount" placeholder="Enter this month stock Amount" class="form-control">
+
+                              </div>
+                            </div>
+                        </div>
+
+                       
                         <div class="form-group">
                         <button type="submit" class="btn btn-primary">
                             {{ __('Submit') }}

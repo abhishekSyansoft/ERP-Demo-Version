@@ -14,7 +14,10 @@ class moduleController extends Controller
     // ----------------------------------------------------------------------------------------------
     // main module page whict consist of all modules data
     public function AllModules(){
-        $modules = DB::table('module_masters')->paginate(5);
+        $modules = DB::table('module_masters')
+        ->join('parent_modules', 'module_masters.parent_id', '=', 'parent_modules.id')
+        ->select('module_masters.*', 'parent_modules.parent_module as head_module')
+        ->paginate(5);
         return view("module",compact("modules"));
     }
     //End main module page whict consist of all modules data
@@ -24,7 +27,8 @@ class moduleController extends Controller
     // -----------------------------------------------------------------------------------------------
     public function AddModule(){
         $parents = ParentModules::get();
-        return view("modules.create",compact('parents'));
+        $module = moduleMaster::get();
+        return view("modules.create",compact('parents','module'));
     }
     //End redirect function to create a module page where end user can create a module
     // -----------------------------------------------------------------------------------------------
@@ -41,11 +45,20 @@ class moduleController extends Controller
             'order'=> 'required',
         ]);
 
+        if($request->module_name){
+            $module_name = $request->module_name;
+        }else{
+            $module_name = 0; 
+        }
+
+        $modname =
+
         $module = ModuleMaster::insert([
             'name'=> $request->name,
             'parent_id'=> $request->parent_module,
             'url'=> $request->url,
             'mdi_icon'=> $request->mdi_icon,
+            'module_name'=> $request->module_name,
             'order'=> $request->order,
             "created_at"=> Carbon::now(),
         ]);
@@ -69,10 +82,12 @@ class moduleController extends Controller
 
     // http request to edit last module 
     // -------------------------------------------------------------------------------------------
-    public function EditModule($id){
+    public function EditModule($encryptedID){
+        $id = decrypt($encryptedID);
         $parents = ParentModules::get();
         $module = ModuleMaster::findOrFail($id);
-        return view('modules.edit',compact('module','parents'));
+        $modules = moduleMaster::get();
+        return view('modules.edit',compact('module','parents','modules'));
     }
     //End http request to edit last module 
     // -------------------------------------------------------------------------------------------
@@ -80,7 +95,8 @@ class moduleController extends Controller
 
     // Update Module Http request (we request all fields vis post medthod an dfind the row using id we are getting fron the url)
     // -------------------------------------------------------------------------------------------
-    public function UpdateModule(Request $request,$id){
+    public function UpdateModule(Request $request,$encryptedID){
+        $id = decrypt($encryptedID);
         $validateData = $request->validate([
             'name'=> 'required',
             'parent_module'=> 'required',
@@ -88,9 +104,18 @@ class moduleController extends Controller
             'mdi_icon'=> 'required',
             'order'=> 'required',
         ]);
+
+        if($request->module_name !== ''){
+            $module_name = $request->module_name;
+        }else{
+            $module_name = 0; 
+        }
+
+
         $module = ModuleMaster::find($id)->update([
             'name'=> $request->name,
             'parent_id'=> $request->parent_module,
+            'module_name'=> $module_name,
             'url'=> $request->url,
             'mdi_icon'=> $request->mdi_icon,
             'order'=> $request->order,

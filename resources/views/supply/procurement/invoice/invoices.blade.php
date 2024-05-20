@@ -62,7 +62,7 @@
                             @for($a=0;$a<6;$a++)
                                 <tr>
                                     <td>{{$i++}}</td>
-                                    <td><a href="https://www.projectmanager.com/wp-content/uploads/2021/01/RFQ-Screenshot-600x508.jpg" style="background-image:linear-gradient(to right, #283b96, #96a1d6);color:white;border-radius:5px;" class="btn mdi mdi-eye p-2 mt-2 mb-2"></a></td>
+                                    <td><a href="https://th.bing.com/th/id/OIP.222CChQ6R4OTHDSezh324wAAAA?pid=ImgDet&w=208&h=269&c=7&dpr=1.5" style="background-image:linear-gradient(to right, #283b96, #96a1d6);color:white;border-radius:5px;" class="btn mdi mdi-eye p-2 mt-2 mb-2"></a></td>
                                    
                                     <td>RFQ{{mt_rand(1000, 9999)}}</td>
                                     <td>VEN{{mt_rand(1000, 9999)}}</td>
@@ -79,7 +79,7 @@
                                    
                                     <td>Rs. {{$data->invoice_total}}</td>
                                     <td>{{$data->invoice_date}}</td>
-                                    <td>Approved</td>
+                                    <td style="color:{{$i % 2 == 0 ? 'Red' : 'Green'}}">Approved</td>
                                     <!-- <td><h1><a  style="color:red;" href="{{asset('Storage/'.$data->attachment)}}" class="mdi mdi-file"></a></h1></td> -->
                                     @php($encryptedId = encrypt($data->id)) 
                                     @if(Auth::user()->admin == 3)
@@ -89,9 +89,9 @@
                                     </td>
                                     @else
                                     <td>
-                                    <a type="button" class="btn btn-primary createInvoice" data-bs-toggle="modal" data-bs-target="#downloadInvoiceModal">
-                                      Create Invoice
-                                    </a>                                        
+                                    <!-- <a type="button" class="btn btn-primary createInvoice" data-bs-toggle="modal" data-bs-target="#downloadInvoiceModal"> -->
+                                      <!-- Create Invoice
+                                    </a>                                         -->
                                     <a  class="btn btn-danger">Send</a>
                                     </td>
                                     @endif

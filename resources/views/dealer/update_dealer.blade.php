@@ -29,7 +29,8 @@
             <div id="dealer" class="tabcontent">
                 <!-- <h3>Update Dealer</h3> -->
                 <!-- form starting  -->
-                <form action="{{url('dealers/update/'.$dealer->id)}}" method="POST" class="row">
+                @php($encryptedId = encrypt($dealer->id)) 
+                <form action="{{url('dealers/update/'.$encryptedId)}}" method="POST" class="row">
                     @csrf
                     <!-- Dealership name  -->
                     <div class="form-group col-md-6">

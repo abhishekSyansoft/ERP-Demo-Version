@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
             ->leftjoin('parent_modules', 'parent_modules.id', '=', 'module_masters.parent_id')
             ->where('users.id', Auth::user()->id)
             ->orderBy('module_masters.order')
-            ->get(['module_masters.name','module_masters.url','module_masters.mdi_icon','module_masters.order','parent_modules.parent_module as parent','parent_modules.id as parent_id'])
+            ->get(['module_masters.name','module_masters.url','module_masters.mdi_icon','module_masters.order','module_masters.module_name as module_name','parent_modules.parent_module as parent','parent_modules.id as parent_id'])
         );
          });
 

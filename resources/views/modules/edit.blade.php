@@ -21,13 +21,14 @@
                         <!-- <div> -->
                         <!-- <div> -->
     <div class="row">
-      <div class="col-lg-12 m-0 p-0">
+      <div class="col-lg-12">
         <div class="card">
           <div class="card-body">
             <h4 class="card-title">Edit created module</h4>
             <!-- <p class="card-description"> Add class <code>.table</code>
             </p> -->
-                <form method="POST" action="{{ url('modules/update/'.$module->id) }}">
+                @php($encryptedID = encrypt($module->id))
+                <form method="POST" action="{{ url('modules/update/'.$encryptedID) }}">
                 @csrf
                 <div class="row">
                     <div class="col-md-12 row">
@@ -51,10 +52,21 @@
                                 <label for="parent_module" class="form-check-label"> Select Parent Module: </label>
                                 <select name="parent_module" id="parent_module" class="form-control p-3" placeholder="Select parent module">
                                     @foreach($parents as $mod)
-                                      <option value="{{$mod->id}}">{{$mod->parent_module}}</option>
+                                      <option value="{{$mod->id}}"{{$mod->id == $module->parent_id ? 'Selected' : ''}}>{{$mod->parent_module}}</option>
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="form-group col-lg-6">
+                                <label for="module_name" class="form-check-label"> Select Module</label>
+                                <select name="module_name" id="module_name" class="form-control p-3" placeholder="Select module">
+                                  <option value="">--Select--</option>
+                                    @foreach($modules as $mode)
+                                      <option value="{{$mode->id}}"{{$mode->id == $module->module_name ? 'Selected' : ''}}>{{$mode->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                         <div class="col-lg-12">
                         <button class="btn btn-primary btn-md">Update</button>
                         <a href="{{route('back')}}" class="btn btn-success btn-md">Back</a>

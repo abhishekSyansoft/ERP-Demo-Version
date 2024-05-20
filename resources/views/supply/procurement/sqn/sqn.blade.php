@@ -29,9 +29,9 @@
                         </div>
                          <!-- Button to open the modal -->
                         <div class="col-md-6">
-                        <!-- <button style="float:right;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                        <button style="float:right;" type="button" class="btn btn-primary animated-button" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
-                        </button>   -->
+                        </button>  
                         </div>
                         <!-- <hr>   -->
                       </div>     
@@ -49,7 +49,7 @@
                         <table class="table mx-auto" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
-                               
+                                <th>Compare</th>
                                 <th>View</th>
                                 <!-- <th>Create</th> -->
                                 <th>Req No.</th>
@@ -77,10 +77,12 @@
                             @foreach($sqn as $data)
                                 <tr>
                                     <td>{{$i++}}</td>
-                                    
+                                  
+                                    <td><input type="checkbox" class="mdi md-compare"></td>
                                     <td><a href="https://www.projectmanager.com/wp-content/uploads/2021/01/RFQ-Screenshot-600x508.jpg" style="background-image:linear-gradient(to right, #283b96, #96a1d6);color:white;border-radius:5px;" class="btn mdi mdi-eye p-2"></a></td>
                                     <td>PR{{mt_rand(1000, 9999)}}</td>
                                     <td>RFQ{{mt_rand(1000, 9999)}}</td>
+                                    <td>QUT{{mt_rand(1000, 9999)}}</td>
                                     <td>VEN{{mt_rand(1000, 9999)}}</td>
                                     <td>Abhishek Kumar</td>
                                     <td>Bike</td>
@@ -108,7 +110,7 @@
                                     </td>
                                   
                                     <td><h3><a style="color:red;" href="https://i.pinimg.com/originals/d5/eb/40/d5eb400220228d1ad2f285563e9ef221.jpg" class="mdi mdi-file"></a></h3></td>
-                                    <td><a class="btn btn-success appr">Send</a></td>
+                                    <td><a class=" {{$i % 2 == 0 ? '' : 'btn btn-success'}} appr">{{ $i % 2 == 0 ? '' : 'Send' }}</a></td>
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
                                         <a href="{{url('edit-sqn/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
@@ -118,8 +120,9 @@
                             @endforeach
                             @endfor
                         </table>
+                        <a data-bs-toggle="modal" class="btn btn-primary mt-4" data-bs-target="#staticBackdrop">Compare Quotation</a>
                     </div>
-                </div>
+                                  </div>
               </div>
             </div>
           </div>

@@ -29,6 +29,10 @@ use App\Http\Controllers\Procurement\GRNController;
 use App\Http\Controllers\Procurement\POController;
 use App\Http\Controllers\Procurement\SQNController;
 use App\Http\Controllers\Procurement\InvoicesCont;
+use App\Http\Controllers\Inventory\PartsController;
+use App\Http\Controllers\Inventory\VehiclesController;
+use App\Http\Controllers\Inventory\trackingController;
+use App\Http\Controllers\Inventory\SRAController;
 use App\Http\Controllers\Inventory\IOController;
 use App\Http\Controllers\Inventory\IVController;
 use App\Http\Controllers\Inventory\SCController;
@@ -37,6 +41,7 @@ use App\Http\Controllers\logistics\DNController;
 use App\Http\Controllers\logistics\IOLController;
 use App\Http\Controllers\logistics\OFController;
 use App\Http\Controllers\logistics\TMController;
+use App\Http\Controllers\BOM\MainAssemblyController;
 use App\Http\Controllers\DPF\DCController;
 use App\Http\Controllers\DPF\DFController;
 use App\Http\Controllers\DPF\SOPController;
@@ -69,8 +74,21 @@ route::get('modules',[moduleController::class , 'AllModules'])->name('modules');
 route::get('modules/Add',[moduleController::class ,'AddModule'])->name('add.module');
 route::post('modules/Add',[moduleController::class ,'StoreModule'])->name('store.module');
 route::get('modules/delete/{id}',[moduleController::class ,'DeleteModule']);
-route::get('modules/edit/{id}',[moduleController::class ,'EditModule']);
-route::post('modules/update/{id}',[moduleController::class ,'UpdateModule']);
+route::get('modules/edit/{encryptedID}',[moduleController::class ,'EditModule']);
+route::post('modules/update/{encryptedID}',[moduleController::class ,'UpdateModule']);
+
+//End Modules HTTP requests 
+
+//Start Modules HTTP requests 
+route::get('bike_parts',[MainAssemblyController::class , 'BikeParts'])->name('bike_parts');
+route::POST('bike_parts/add_cat',[MainAssemblyController::class ,'AddPartCat'])->name('add.cat');
+route::get('invoice_validation',[MainAssemblyController::class ,'Validation'])->name('invoice_validation');
+route::get('payment_initiation',[MainAssemblyController::class ,'Initiate'])->name('payment_initiation');
+route::get('payment_tracking',[MainAssemblyController::class ,'TrackingPayment'])->name('payment_tracking');
+route::get('supplier_profile',[MainAssemblyController::class ,'SupplierProfile'])->name('supplier_profile');
+
+// route::get('modules/edit/{id}',[moduleController::class ,'EditModule']);
+// route::post('modules/update/{id}',[moduleController::class ,'UpdateModule']);
 
 //End Modules HTTP requests 
 
@@ -78,7 +96,8 @@ route::post('modules/update/{id}',[moduleController::class ,'UpdateModule']);
 
 //Start Parent Modules HTTP requests 
 route::get('parent_map',[ParentController::class , 'ParentModules'])->name('parent_map');
-route::post('store/data',[ParentController::class ,'StoreData'])->name('store.data');// route::post('modules/Add',[moduleController::class ,'StoreModule'])->name('store.module');
+route::post('store/data',[ParentController::class ,'StoreData'])->name('store.data');
+// route::post('modules/Add',[moduleController::class ,'StoreModule'])->name('store.module');
 route::get('delete/parent/{encryptedID}',[ParentController::class ,'DeleteParent']);
 route::get('edit/parent/{encryptedID}',[ParentController::class ,'EditParent']);
 route::post('update/parent/{encryptedID}',[ParentController::class ,'UpdateParent']);
@@ -164,9 +183,9 @@ route::get('unauthorized',[ModuleMapping::class ,'Access404']);
 route::get('dealers',[DealerController::class , 'Dealer'])->name('dealers');
 route::get('dealers/add',[DealerController::class , 'AddDealer'])->name('dealers.create');
 route::post('dealers/store',[DealerController::class , 'StoreDealer']);
-route::get('dealers/delete/{id}',[DealerController::class , 'DeleteDealer']);
-route::get('dealers/edit/{id}',[DealerController::class , 'EditDealer']);
-route::post('dealers/update/{id}',[DealerController::class , 'UpdateDealer']);
+route::get('dealers/delete/{encryptedId}',[DealerController::class , 'DeleteDealer']);
+route::get('dealers/edit/{encryptedId}',[DealerController::class , 'EditDealer']);
+route::post('dealers/update/{encryptedId}',[DealerController::class , 'UpdateDealer']);
 //End Dealer management http requests 
 
 
@@ -296,6 +315,11 @@ route::post('pr/store',[PRController::class ,'PRAdd'])->name('pr.store');
 route::get('edit-pr/{encryptedId}',[PRController::class ,'PREdit']);
 route::post('pr/update/{encryptedId}',[PRController::class ,'PRUpdate']);
 route::get('delete-pr/{encryptedId}',[PRController::class ,'PRDelete']);
+route::POST('fetch-supplier-details',[PRController::class ,'Supplier']);
+route::POST('fetch-requisitioner-details',[PRController::class ,'Requisitioner']);
+route::POST('view_pr_item_lists',[PRController::class ,'ItemListiewPR']);
+route::POST('view_pr',[PRController::class ,'PRView']);
+
 // End Purchase Requisition Management
 
 
@@ -329,6 +353,10 @@ route::post('po/store',[POController::class ,'POAdd'])->name('po.store');
 route::get('edit-po/{encryptedId}',[POController::class ,'POEdit']);
 route::post('po/update/{encryptedId}',[POController::class ,'POUpdate']);
 route::get('delete-po/{encryptedId}',[POController::class ,'PODelete']);
+route::post('fetch_item_lists_po',[POController::class ,'Fetch']);
+route::post('fetch_supplier_for_po',[POController::class ,'FetchSupplier']);
+route::post('save_item_lists',[POController::class ,'SaveItems']);
+route::get('/view_po',[POController::class ,'ViewPO']);
 //End Purchase Orders Management
 
 
@@ -359,10 +387,10 @@ route::get('delete-sqrf/{encryptedId}',[SendRFQController::class ,'SRFQDelete'])
 
 // Completed Lists Management 
 route::get('completed',[CompListController::class ,'CSRF'])->name('completed');
-route::post('grn/store',[CompListController::class ,'GRNAdd'])->name('grn.store');
-route::get('edit-grn/{encryptedId}',[CompListController::class ,'GRNEdit']);
-route::post('grn/update/{encryptedId}',[CompListController::class ,'GRNUpdate']);
-route::get('delete-grn/{encryptedId}',[CompListController::class ,'GRNDelete']);
+// route::post('grn/store',[CompListController::class ,'GRNAdd'])->name('grn.store');
+// route::get('edit-grn/{encryptedId}',[CompListController::class ,'GRNEdit']);
+// route::post('grn/update/{encryptedId}',[CompListController::class ,'GRNUpdate']);
+// route::get('delete-grn/{encryptedId}',[CompListController::class ,'GRNDelete']);
 // Completed Lists Management
 
 // -------------------------------------------------------------------------------------------------------------------------------------------
@@ -375,6 +403,29 @@ route::get('delete-grn/{encryptedId}',[CompListController::class ,'GRNDelete']);
 // Inventory Management
 // -------------------------------------------------------------------------------------------------------------------------------------------
 
+
+// parts Inventory Management 
+route::get('parts-inventory-management',[PartsController::class ,'PartsInv'])->name('parts-inventory-management');
+route::post('partsinv/store',[PartsController::class ,'PartsInvAdd'])->name('partsinv.store');
+route::get('edit-partsinv/{encryptedId}',[PartsController::class ,'PartsInvEdit']);
+route::post('partsinv/update/{encryptedId}',[PartsController::class ,'PartsInvUpdate']);
+route::get('delete-partsinv/{encryptedId}',[PartsController::class ,'PartsInvDelete']);
+route::POST('/generate_qrcode',[PartsController::class ,'PartsInvQRCode']);
+route::POST('/generate_barcode',[PartsController::class ,'PartsInvBARCode']);
+// End parts Inventory Management
+
+
+// Vehicles Inventory Management 
+route::get('vehicles-inventory-management',[VehiclesController::class ,'VInv'])->name('vehicles-inventory-management');
+route::post('vinv/store',[VehiclesController::class ,'VInvAdd'])->name('vinv.store');
+route::get('edit-vinv/{encryptedId}',[VehiclesController::class ,'VInvEdit']);
+route::post('vinv/update/{encryptedId}',[VehiclesController::class ,'VInvUpdate']);
+route::get('delete-vinv/{encryptedId}',[VehiclesController::class ,'VInvDelete']);
+route::POST('/generate_qrcode_vehicle',[VehiclesController::class ,'VInvQRCode']);
+route::POST('/generate_barcode_vehicle',[VehiclesController::class ,'VInvBARCode']);
+// End Vehicles Management
+
+
 // Stock control Management 
 route::get('stock-control',[SCController::class ,'SC'])->name('stock-control');
 route::post('sc/store',[SCController::class ,'SCAdd'])->name('sc.store');
@@ -384,13 +435,39 @@ route::get('delete-sc/{encryptedId}',[SCController::class ,'SCDelete']);
 // End Stock control Management
 
 
-// Supplier Quotation Negotiation Management 
+// Warehouse Management 
 route::get('warehouse-management',[WMController::class ,'WM'])->name('warehouse-management');
 route::post('wm/store',[WMController::class ,'WMAdd'])->name('wm.store');
 route::get('edit-wm/{encryptedId}',[WMController::class ,'WMEdit']);
 route::post('wm/update/{encryptedId}',[WMController::class ,'WMUpdate']);
 route::get('delete-wm/{encryptedId}',[WMController::class ,'WMDelete']);
-// End Supplier Quotation Negotiation Management
+route::POST('/generate_qrcode_warehouse',[WMController::class ,'WMQRCode']);
+route::POST('/generate_barcode_warehouse',[WMController::class ,'WMBARCode']);
+// End Warehouse Management
+
+// Tarcking and Control Management 
+route::get('tracking_and_control',[trackingController::class ,'TAC'])->name('tracking_and_control');
+route::post('tac/store',[trackingController::class ,'TACAdd'])->name('tac.store');
+route::get('edit-tac/{encryptedId}',[trackingController::class ,'TACEdit']);
+route::post('tac/update/{encryptedId}',[trackingController::class ,'TACUpdate']);
+route::get('delete-tac/{encryptedId}',[trackingController::class ,'TACDelete']);
+route::POST('/generate_qrcode_tac',[trackingController::class ,'TACQRCode']);
+route::POST('/generate_barcode_tac',[trackingController::class ,'TACBARCode']);
+route::POST('/fetch-part-details',[trackingController::class ,'FetchDetails']);
+
+// End Tarcking and Control Management
+
+// Stock Replensihment and allocatiom Management 
+route::get('stock_replenishment_&_allocation',[SRAController::class ,'SRA'])->name('stock_replenishment_&_allocation');
+route::post('sra/store',[SRAController::class ,'SRAAdd'])->name('sra.store');
+route::get('edit-sra/{encryptedId}',[SRAController::class ,'SRAEdit']);
+route::post('sra/update/{encryptedId}',[SRAController::class ,'SRAUpdate']);
+route::get('delete-sra/{encryptedId}',[SRAController::class ,'SRADelete']);
+// route::POST('/generate_qrcode_tac',[trackingController::class ,'SRAQRCode']);
+// route::POST('/generate_barcode_tac',[trackingController::class ,'SRABARCode']);
+// route::POST('/fetch-part-details',[trackingController::class ,'FetchDetails']);
+
+// End Stock Replensihment and allocatiom Management
 
 // Inventory Optimizaton Management 
 route::get('inventry-optimization',[IOController::class ,'IO'])->name('inventry-optimization');
@@ -555,16 +632,6 @@ route::get('delete-predictive/{encryptedId}',[PreddictiveController::class ,'Pre
 // -------------------------------------------------------------------------------------------------------------------------------------------
 // End Supply Chain Analytics and Reporting Management
 
-
-
-
-
-
-
-
-
-
-
 // --------------------------------------------------------------------------------------------------------------------------------------------
 
 // End Supply Chain Management 
@@ -585,10 +652,13 @@ route::get('delete-sqn/{encryptedId}',[SQNController::class ,'SQNDelete']);
 
 // Purchase Orders Management 
 route::get('purchase-order',[POController::class ,'PO'])->name('purchase-order');
-route::post('po/store',[POController::class ,'POAdd'])->name('po.store');
+route::post('po/add',[POController::class ,'POAdd'])->name('po.add');
 route::get('edit-po/{encryptedId}',[POController::class ,'POEdit']);
 route::post('po/update/{encryptedId}',[POController::class ,'POUpdate']);
 route::get('delete-po/{encryptedId}',[POController::class ,'PODelete']);
+route::post('/fetch_order_item_lists',[POController::class ,'FetchOrderItem']);
+route::post('/fetch_order_item_data',[POController::class ,'FetchOrderItem']);
+
 //End Purchase Orders Management
 
 

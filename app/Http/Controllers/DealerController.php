@@ -90,7 +90,8 @@ class DealerController extends Controller
 
 // -----------------------------------------------------------------------------------------------------------------------------------
     //delete delaer data get http request through id from the database
-    public function DeleteDealer($id){
+    public function DeleteDealer($encryptedId){
+        $id = decrypt($encryptedId);
         $dealer = Dealer::findOrFail($id);
         $name = $dealer->name;
         $dealer->delete();
@@ -100,7 +101,8 @@ class DealerController extends Controller
 // -----------------------------------------------------------------------------------------------------------------------------------
 // -----------------------------------------------------------------------------------------------------------------------------------
     // get http request from dealer details page via edit button which get an id usefull for select data from data base where id == get ID
-    public function EditDealer($id){
+    public function EditDealer($encryptedId){
+        $id = decrypt($encryptedId);
         $dealer = Dealer::findOrFail($id);
         return view('dealer.update_dealer', compact('dealer'));
     }
@@ -109,7 +111,8 @@ class DealerController extends Controller
 
 // ------------------------------------------------------------------------------------------------------------------------------------
 // Update http request by post methods consisting of reqested elements and and id for select particular row
-    public function UpdateDealer(Request $request,$id){
+    public function UpdateDealer(Request $request,$encryptedId){
+        $id = decrypt($encryptedId);
         $validateData = $request->validate([
             "dealer_name"=> "required",
             "contact_person"=> "required",

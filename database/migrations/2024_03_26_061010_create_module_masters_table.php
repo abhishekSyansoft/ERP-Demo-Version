@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('parent_id');
+            $table->string('module_name');
             $table->string('url');
             $table->string('mdi_icon');
             $table->integer('order');

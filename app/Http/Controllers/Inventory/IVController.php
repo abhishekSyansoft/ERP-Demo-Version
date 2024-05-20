@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Models\Inventory\IV;
+use App\Models\Inventory\Parts;
 use DB;
 use Carbon\Carbon;
 
@@ -22,16 +23,17 @@ class IVController extends Controller
             try {
 
                 $iv = DB::table('i_v_s')
-                ->join('products', 'products.id', '=', 'i_v_s.product_id')
-                ->select('i_v_s.*', 'products.product_name as product')
+                // ->join('products', 'products.id', '=', 'i_v_s.product_id')
+                ->select('i_v_s.*')
                 ->get();
 
                 // Retrieve all resources from the databases
                 
                 $products = Products::all();
+                $parts = Parts::all();
 
                 // Return the view with the list of suppliers
-                return view("supply.inventory.iv.iv",compact('products','iv'));
+                return view("supply.inventory.iv.iv",compact('products','iv','parts'));
             } catch (\Exception $e) {
                 // Log the error or handle it in any other appropriate way
                 // For example, you can return an error view or redirect with an error message
@@ -52,15 +54,35 @@ class IVController extends Controller
                 // Validate the incoming request data
                
                     $validatData = $request->validate([
-                        "product_id"=> "required",
-                        "unit_cost"=> "required",
-                        "total_value"=> "required",
+                        "inventory_id" => 'required',
+                        "part_number" => 'required',
+                        "unit_cost" => 'required',
+                        "vehicle" => 'required',
+                        "qty_on_hand" => 'required',
+                        "total_cost" => 'required',
                     ]);
                     // Retrieve the supplier from the database
                     IV::insert([
-                        "product_id"=> $request->product_id,
-                        "unit_cost"=> $request->unit_cost,
-                        "total_value"=> $request->total_value,
+                        "inventory_id" => $request->inventory_id,
+                        "part_number" => $request->part_number,
+                        "description" => $request->part_description,
+                        "unit_cost" => $request->unit_cost,
+                        "vehicle" => $request->vehicle,
+                        "qty_on_hand" => $request->qty_on_hand,
+                        "total_cost" => $request->total_cost,
+                        "valuation_method" => $request->valuation_method,
+                        "valuation_date" => $request->valuation_date,
+                        "inventory_value" => $request->inventory_value,
+                        "inventory_turnover" => $request->inventory_turnover,
+                        "stock_aging" => $request->stock_aging,
+                        "financial_metrics" => $request->financial_metrics,
+                        "inventory_adjustments" => $request->inventory_adjustments,
+                        "inventory_reserves" => $request->inventory_reserves,
+                        "inventory_analysis" => $request->inventory_analysis,
+                        "inventory_reports" => $request->inventory_reports,
+                        "comparison_metrics" => $request->comparison_metrics,
+                        "compliance" => $request->comlpiance,
+                        "audit_trials" => $request->audit_trials,
                         'created_at' => Carbon::now()
                     ]);
 

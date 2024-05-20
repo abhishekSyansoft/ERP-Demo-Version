@@ -22,6 +22,7 @@
 
     <!-- Include jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Layout styles -->
     <link rel="stylesheet" href="{{asset('backend/css/style.css')}}">
@@ -30,22 +31,275 @@
   </head>
 
  <style>
+  
+.checkout {
+  display: flex;
+  margin: 3rem 0;
+  padding-right: 0;
+  padding-top: var(--abel-height);
+  text-align: center;
+  list-style: none;
+}
+
+  .step {
+    flex: 1 1 100%;
+    height: var(--icon-size);
+    position: relative;
+}
+
+    .step::before,
+    .step::after {
+      position: absolute;
+      content: '';
+      top: 50%;
+      transform: translateY(-1* var(--line-width) / 2);
+      border-bottom: var(--line-width) solid  var(--line-color);
+      z-index: -1;
+    }
+
+    .step::before {
+      left: 50%;
+      right: 0;
+    }
+
+    .step::after {
+      left: 0;
+      right: 50%;
+    }
+
+    .step:first-child::before { right: 50%; }
+    .step:last-child::after { left: 50%; }
+
+  .step-icon {
+    display: inline-block;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    background: var(--icon-color-unchecked);
+    border-radius: 50%;
+    border: 2px solid var(--line-color);
+    position: relative;
+  }
+
+  .step.active .step-icon::after {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+     -ms-transform: scale(0.5, 0.5); /* IE 9 */
+  -webkit-transform: scale(0.5, 0.5); /* Safari */
+  transform: scale(0.5, 0.5);
+    background: var(--icon-color-current);
+    border-radius: 50%;
+  }
+
+  .step.completed::after,
+  .step.completed + li::before {
+    border-color: var(--line-color-completed);
+  }
+
+  .step.completed .step-icon {
+    background: var(--icon-color-checked);
+    border-color: var(--icon-color-checked);
+}
+
+    .step.completed .step-icon::after {
+      position: absolute;
+      content: '';
+      top: 45%;
+      width: 60%;
+      height: 35%;
+      transform: translate(50%, -50%) rotate(-45deg);
+      background: transparent;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+    }
+
+
+
+  .step.reject .step-icon {
+    border-color: var(--icon-color-reject);
+}
+
+    .step.reject .step-icon::after {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+     -ms-transform: scale(0.5, 0.5); /* IE 9 */
+  -webkit-transform: scale(0.5, 0.5); /* Safari */
+  transform: scale(0.5, 0.5);
+    border-radius: 50%;
+    background: var(--icon-color-reject);
+    }
+
+  .step.reviow::after,
+  .step.reviow + li::before {
+    border-color: var(--line-color-reviow);
+  }
+
+  .step.reviow .step-icon {
+   border-color: var(--icon-color-reviow);
+}
+
+    .step.reviow .step-icon::after {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    -ms-transform: scale(0.5, 0.5); /* IE 9 */
+  -webkit-transform: scale(0.5, 0.5); /* Safari */
+  transform: scale(0.5, 0.5);
+    border-radius: 50%;
+    background: var(--icon-color-reviow);
+    }
+
+  .step.skip::after,
+  .step.skip + li::before {
+    border-color: var(--line-color-skip);
+  }
+
+  .step.skip .step-icon {
+    border-color: var(--icon-color-skip);
+}
+
+    .step.skip .step-icon::after {
+     position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    -ms-transform: scale(0.5, 0.5); /* IE 9 */
+  -webkit-transform: scale(0.5, 0.5); /* Safari */
+  transform: scale(0.5, 0.5);
+    border-radius: 50%;
+    background: var(--icon-color-skip);
+    }
+
+  .step-label {
+    position: absolute;
+    top: var(--label-height);
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--label-color-inactive);
+    font-weight: normal;
+    text-transform: uppercase;
+    white-space: nowrap;
+    visibility: hidden;
+  }
+
+.step-label-odd {
+    top: var(--label-height-odd);  
+  }
+.step-label-even {
+    top: var(--label-height-even);  
+  }
+
+  .step.active .step-label {
+    color: var(--label-color-active);
+    font-weight: bold;
+    visibility: visible;
+  }
+
+  .step:not(.active) .step-label {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media screen and (min-width: 768px) {
+    .step-label {
+      visibility: visible;
+    }
+  }
+
+
+  @media print {
+  /* Set the scale to 70% */
+  .printable-content {
+    transform: scale(0.7);
+    transform-origin: top left;
+  }
+}
+/* Ensure borders are visible when printing */
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+  .toast-red {
+      background-color: #dd2e30 !important; /* Set the background color to red */
+  }
+  .toast-green {
+      background-color: #38a776 !important; /* Set the background color to red */
+  }
+  .scrollable-placeholder::-webkit-input-placeholder {
+    /* WebKit browsers */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-mask-image: linear-gradient(to right, #000 50%, transparent 100%);
+}
+
+.scrollable-placeholder::-moz-placeholder {
+    /* Firefox 19+ */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-mask-image: linear-gradient(to right, #000 50%, transparent 100%);
+}
+
+.scrollable-placeholder:-ms-input-placeholder {
+    /* Internet Explorer 10+ */
+    white-space: nowrap !important;
+    overflow: hidden !important;;
+    text-overflow: ellipsis !important;;
+    -webkit-mask-image: linear-gradient(to right, #000 50%, transparent 100%) !important;;
+}
+
+.scrollable-placeholder:-moz-placeholder {
+    /* Firefox 4 - 18 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-mask-image: linear-gradient(to right, #000 50%, transparent 100%);
+}
+
+.scrollable-placeholder::placeholder {
+    /* Most modern browsers */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-mask-image: linear-gradient(to right, #000 50%, transparent 100%);
+}
+
+   th {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2 !important;
+  }
   .table-wrapper{
     overflow-x: auto !important;
-    overflow-y: hidden !important;
+    overflow-y: auto !important;
+    height: 400px;
     margin:30px !important;
   }
 
   #editBackdrop .card, .previewModalForm .card{
     overflow-x: auto !important;
-    overflow-y: hidden !important;
+    overflow-y: auto !important;
+    height: 400px;
     /* margin:auto !important; */
   }
 
 
   #edit_order_form  .table-wrapper, .accordion-body .card {
     overflow-x: auto !important;
-    overflow-y: hidden !important;
+    overflow-y: auto !important;
     margin:30px !important;
   }
 
@@ -57,9 +311,9 @@
     height:100vh;
   } */
   .card-body:not(.main-panel-dashboard .card-body) {
-    height: 100vh;
+    /* height:100vh; */
     box-shadow: 0 0 53px 10px rgba(0, 0, 0, 0.6);
-}
+  }
 
 .main-panel-dashboard .card-body{
     /* box-shadow: 0 0 14px 1px rgba(0, 0, 0, 0.6); */
@@ -74,9 +328,36 @@
   } */
   /* Hide scrollbar by default */
   ::-webkit-scrollbar {
-        background-color: #0081bb;
+        background-color: gray;
+        height:5px;
+        width:5px;
+        border-radius:10px;
         display:none;
       }
+
+      .form-control::-webkit-input-placeholder {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .form-control::-moz-placeholder {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .form-control:-ms-input-placeholder {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .form-control::placeholder {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
 
 
   .main-panel .content-wrapper .page-header:not(.main-panel-dashboard .page-header){
@@ -92,7 +373,7 @@
     color:white !important;
     }
 
-    .sidebar-item a:hover {
+    .sidebar-item a:hover .menu-icon {
     color: white !important;
     }
 
@@ -132,6 +413,10 @@
     padding-bottom:20px !important;
   }
 
+  .btn-primary{
+    background-image:linear-gradient(to right, #273a96, #74b6d1) !important;
+  }
+
     .accordion-button[aria-expanded="true"] {
       background-image: linear-gradient(to right, #273a96, #74b6d1) !important;
       color:white !important;
@@ -140,7 +425,7 @@
 
 
   @media (min-width: 992px) {
-    .modal-xl {
+    .modal-lg {
       max-width: 1200px; /* Define extra-large width for larger screens */
     }
   }
@@ -394,21 +679,10 @@
             </li>
 
             <li class="nav-item sidebar-item" style="padding-left:10px;padding-right:10px;">
-              <a class="nav-link sidebar-link" style="padding-left:10px;padding-right:10px;" href="{{route('dashboard')}}"><b>Dashboard</b>  <i class="mdi mdi-view-dashboard menu-icon"></i></a>
+              <a class="nav-link sidebar-link" style="padding-left:10px;padding-right:10px;" href="{{route('dashboard')}}"><span class="menu-title"><b>Dashboard</b></span><i class="mdi mdi-view-dashboard menu-icon"></i></a>
             </li>
 
-            @if(Auth::user()->admin == 2)
-              @foreach($modules as $mod)
-              @if($mod->name !== "Role's" && $mod->name !== 'Mapping')
-              <li class="nav-item sidebar-item pl-2">
-                    <a class="nav-link sidebar-link" href="http://127.0.0.1:8000/{{ $mod->url }}">
-                        <span><i class="mdi {{ $mod->mdi_icon }} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        <b>{{ $mod->name !== "Complete Lists" ? ($mod->name === 'RFQ' ? 'RFQ' : $mod->name) : 'RFQ' }}</b>
-                    </a>
-                </li>               
-              @endif
-              @endforeach
-            @endif
+           
             @foreach($parents as $parent)
             <li class="nav-item sidebar-item" style="padding-left:10px;padding-right:10px;">
               <a class="nav-link sidebar-link" style="padding-left:10px;padding-right:10px;" data-bs-toggle="collapse" href="#R{{$parent->id}}" aria-expanded="false" aria-controls="R{{$parent->id}}">
@@ -419,15 +693,29 @@
               </a>
               <div class="collapse" id="R{{$parent->id}}">
                 <ul class="nav flex-column sub-menu">
-                @foreach($modules as $mod)
-                  @if($mod->parent_id == $parent->id)
-                  <li class="nav-item sidebar-item"> <a class="nav-link sidebar-link" href="http://127.0.0.1:8000/{{$mod->url}}"> <span><i class="mdi {{$mod->mdi_icon}} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span><b>{{$mod->name}}</b></a></li>
-                  @endif
+                  @foreach($modules as $mod)
+                    @if(($mod->parent_id == $parent->id))
+                      <li class="nav-item sidebar-item"> <a class="nav-link sidebar-link" href="http://127.0.0.1:8000/{{$mod->url}}"> <span><i class="mdi {{$mod->mdi_icon}} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span><b>{{$mod->name}}</b></a> </li>
+
+                    @endif
                   @endforeach
                 </ul>
               </div>
             </li>
             @endforeach
+            @if(Auth::user()->admin == 2)
+              @foreach($modules as $mod)
+              @if($mod->name !== "Role's" && $mod->name !== 'Mapping')
+              <li class="nav-item sidebar-item sub-menu m-0" style="padding-left:10px;padding-right:6px;">
+                    <a class="nav-link sidebar-link" style="padding-left:10px;" href="http://127.0.0.1:8000/{{ $mod->url }}">
+                        
+                        <span class="menu-title"> <b>{{ $mod->name !== "Complete Lists" ? ($mod->name === 'RFQ' ? 'RFQ' : $mod->name) : 'RFQ' }}</b></span>  
+                       <i class="mdi {{ $mod->mdi_icon }} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                    </a>
+                </li>               
+              @endif
+              @endforeach
+            @endif
            
           </ul>
         </nav>

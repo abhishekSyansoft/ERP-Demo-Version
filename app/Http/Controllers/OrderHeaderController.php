@@ -6,24 +6,26 @@ use App\Models\Dealer;
 use App\Models\OrderHeader;
 use App\Models\OrderItem;
 use App\Models\Products;
+// use App\Models\supplier;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use Storage;
+use App\Models\supplier\supplier;
 use Illuminate\Support\Facades\Validator;
 
 class OrderHeaderController extends Controller
 {
     public function OrderHeader(){
-        $orderheader = OrderHeader::join('dealers', 'dealers.id', '=', 'order_headers.dealer_id')
-              ->select(['dealers.dealership_name as dealername', 'order_headers.*'])->paginate(10);
-        // $orderheader = OrderHeader::get();
+        $orderheader = OrderHeader::join('suppliers', 'suppliers.id', '=', 'order_headers.dealer_id')
+        ->select(['suppliers.supplier_name as dealername', 'order_headers.*'])
+        ->paginate(10);
         return view("order-header",compact("orderheader"));
     }
 
     public function OrderHeaderAdd(){
-        $dealers = Dealer::get();
+        $suppliers = DB::table('suppliers')->all();
         return view("order.add_order_header", compact("dealers"));
     }
 
@@ -142,15 +144,15 @@ class OrderHeaderController extends Controller
             $orderItem = OrderItem::get();
             $orderHeader = OrderHeader::get();
 
-            return response()->json([
-                'success'=>true,
-                'message' => 'Order created successfully',
-                'orderItems' => $orderItem,
-                'order_header'=>$orderHeader,
-            ], 200);
+            // return response()->json([
+            //     'success'=>true,
+            //     'message' => 'Order created successfully',
+            //     'orderItems' => $orderItem,
+            //     'order_header'=>$orderHeader,
+            // ], 200);
             
     
-        //    return redirect()->back()->with('success','Order Created successfully');
+           return redirect()->back()->with('success','Order Created successfully');
         } catch (\Exception $e) {
             // Handle any exceptions that occur during the process
             return redirect()->back()->with('error', 'Error uploading data: ' . $e->getMessage());

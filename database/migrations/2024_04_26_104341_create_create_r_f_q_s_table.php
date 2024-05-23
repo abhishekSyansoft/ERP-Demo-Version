@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('create_r_f_q_s', function (Blueprint $table) {
             $table->id();
+            $table->string('pr_num');
+            $table->string('rfq_num');
+            $table->integer('rfq_status');
+            $table->integer('send');
+            $table->date('date');
+            $table->integer('status');
             $table->timestamps();
         });
     }

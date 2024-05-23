@@ -830,9 +830,886 @@
 
 
 
+
+
+
+
+                $('#quotationCreateForm').on('submit',function(event){
+                    event.preventDefault(); // Prevent default form submission
+                    // Serialize form data
+                     // Serialize form data
+                    var formData = $(this).serialize();
+                   
+                    var dataToSend = [];
+
+                        // Loop through each row of the table
+                        $("#quotationCreateForm #itemlistsQUT tr").each(function() {
+                            var rowData = {};
+
+                            // Loop through each cell of the current row
+                            $(this).find("td").each(function() {
+                                // Get the column name from the table header
+                                var columnName = $(this).closest('table').find('th').eq($(this).index()).text().trim();
+                                
+                                // Get the text content of the cell
+                                var cellData = $(this).text().trim();
+                                
+                                // Add cell data to rowData with column name as key
+                                rowData[columnName] = cellData;
+                            });
+
+                            // Push the rowData object to dataToSend array
+                            dataToSend.push(rowData);
+                        });
+
+                        // Send data to server via AJAX
+                        sendDataToQUTItemLists(dataToSend);
+
+                        console.log(dataToSend);
+                    // AJAX request
+                    $.ajax({
+                        url: '{{ route("quotation.store") }}',
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: formData,
+                        success: function(response) {
+
+                            // location.reload();
+                            // console.log(response);
+                            // Handle success response from the server
+                            $('#updateQuotation').modal('hide');
+
+
+                            toastr.options = {
+                                "timeOut": "3000",
+                                "toastClass": "toast-green",
+                                "extendedTimeOut": "2000",
+                                "progressBar": true,
+                                "closeButton": true,
+                                "positionClass": "toast-top-right",
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut",
+                                "progressBarBgColor": "#ff0000",
+                                "preventDuplicates": true,
+                                "onHidden": function() {
+                                    window.location.reload(); // Reload the page when the toastr is hidden
+                                }
+
+                            };
+                            toastr.success('Quotation Created Successfully');
+                           
+
+                        },
+                        error: function(xhr, status, error) {
+                             // Handle error response from the server
+                                console.error('Error:', error);
+
+                           // Show validation errors in a toaster
+                            var errorMessage = 'Oops! Some fields are missing';
+                            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                errorMessage = '<ul>'; // Start the unordered list
+                                $.each(xhr.responseJSON.errors, function(key, value) {
+                                    errorMessage += '<li>' + value.join('</li><li>') + '</li>'; // Add each error message as a list item
+                                });
+                                errorMessage += '</ul>'; // End the unordered list
+                            }
+
+
+                            toastr.error(errorMessage, 'Validation Error', {
+                                    "timeOut": "5000", // Set the time the notification stays visible (in milliseconds)
+                                    "toastClass": "toast-red", // Add custom class to the notification
+                                    "extendedTimeOut": "2000", // Set the duration of the extended timeout for mouse hover (in milliseconds)
+                                    "progressBar": true, // Show a progress bar for timing of the notification
+                                    "closeButton": true, // Show a close button for the notification
+                                    "positionClass": "toast-top-right", // Set the position of the notification
+                                    "showDuration": "300", // Set the duration of the show animation (in milliseconds)
+                                    "hideDuration": "1000", // Set the duration of the hide animation (in milliseconds)
+                                    "showEasing": "swing", // Set the easing of the show animation
+                                    "hideEasing": "linear", // Set the easing of the hide animation
+                                    "showMethod": "fadeIn", // Set the method of showing the notification
+                                    "hideMethod": "fadeOut", // Set the method of hiding the notification
+                                    "progressBarBgColor": "#ff0000", // Set the background color of the progress bar
+                                    "preventDuplicates": true // Prevent duplicate notifications from being shown
+                                });
+                        }
+                    });
+
+                    });
+
+
+
+
+                        // Set up AJAX to include the CSRF token
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                }
+                            });
+
+                            $('#CompareQutBTN').on('click', function(event) {
+                                event.preventDefault();
+                                var checkedIds = [];
+                                $('#VendorQuotationsLists .compareCheckBox:checked').each(function() {
+                                    checkedIds.push($(this).data('id'));
+                                });
+
+                                if (checkedIds.length > 0) {
+                                    $.ajax({
+                                        url: '/select_quotation_to_compare',
+                                        type: 'POST',
+                                        data: JSON.stringify({ ids: checkedIds }),
+                                        contentType: 'application/json; charset=utf-8',
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                        },
+                                        success: function(response) {
+                                            console.log(response);
+
+                                            var tableBody = '';
+                                            // Define the number formatter
+                                const numberFormatter = new Intl.NumberFormat('en-US', {
+                                    style: 'decimal',
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                });
+                                    // Initialize an array to store grouped content
+                                                    var groupedContent = [];
+
+                                                    // Add headings as the first entry in the groupedContent array
+                                                    var headings = ["Details", "Qut_number", "Total", "Tax", "Others", "Final Amount", "Delivery Time <b>(week)</b>", "Payment Terms <b>(Days)</b>", "Quality", "Customer Service"];
+                                                    groupedContent.push(headings);
+
+
+                                                    var tableBody1 = '';
+                                    
+                                                        $.each(response.data, function(index, item) {
+                                                            tableBody1 += '<tr>';
+                                                            tableBody1 += '<td>' + (index + 1) + '</td>';
+                                                            tableBody1 += '<td>' + item.supplierName + '</td>';
+                                                            tableBody1 += '<td>' + item.qut_num + '</td>';
+                                                            if(item.QutApproval == 1){
+                                                            tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                                            }else{
+                                                                tableBody1 += '<td class="text-center"><a class="btn btn-success text-center SApprovalQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Approval </a></td>'; 
+                                                            }
+
+                                                            if(item.QutNego == 1){
+                                                            tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                                            }else{
+                                                                tableBody1 += '<td class="text-center"><a class="btn btn-primary text-center SNegoQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Negotiation </a></td>';
+                                                            }
+                                                            tableBody1 += '</tr>';
+                                                        });
+
+                                                    $('#actionOnCompQuot').html(tableBody1);
+
+
+
+
+                                                    // Group the content of each item
+                                                    $.each(response.data, function(index, item) {
+                                                        // Push the content of each item into the groupedContent array
+                                                        var quality = 'Good';
+                                                        var rating = 'Excellent';
+                                                        var others = 3000;
+                                                         // Calculate the final amount including tax and fixed amount
+                                                        var totalAmount = parseFloat(item.total_amount);
+                                                        var taxAmount = parseFloat(0.18 * totalAmount);
+                                                        var finalAmount = totalAmount + taxAmount + 3000;
+                                                        groupedContent.push([
+                                                            item.supplierName,
+                                                            item.qut_num,
+                                                            item.total_amount,
+                                                            taxAmount,
+                                                            others,
+                                                            finalAmount,
+                                                            item.lead_time,
+                                                            item.payment_terms,
+                                                            quality,
+                                                            rating
+                                                        ]);
+                                                    });
+
+                                                    
+                                                      // Generate HTML for the grouped content
+                                                        var tableBody = '';
+                                                        for (var i = 0; i < groupedContent[0].length; i++) {
+                                                            tableBody += '<tr>';
+                                                            for (var j = 0; j < groupedContent.length; j++) {
+                                                                if (j === 0) {
+                                                                    tableBody += '<th style="color: darkblue;" class="text-center">' + groupedContent[j][i] + '</th>';
+                                                                } else {
+                                                                    var cellValue = groupedContent[j][i];
+                                                                    var isNumeric = !isNaN(parseFloat(cellValue)) && isFinite(cellValue); // Check if the cell value is numeric
+
+                                                                    // Check if the cell value is numeric and convert it to float for comparison
+                                                                    if (isNumeric) {
+                                                                        cellValue = parseFloat(cellValue);
+                                                                    }
+
+                                                                    // Compare the cell value with the greatest value in the column
+                                                                    var greatestValue = null;
+                                                                    if (i !== 0 && i !== 1 && i !== 9 && i !== 8) { // Exclude columns 0, 1, 7, and 8 from comparison
+                                                                        groupedContent.forEach(function(row, rowIndex) {
+                                                                            if (rowIndex !== 0) {
+                                                                                var value = row[i];
+                                                                                if (!isNaN(parseFloat(value)) && isFinite(value)) {
+                                                                                    value = parseFloat(value);
+                                                                                }
+                                                                                if (value < greatestValue || greatestValue === null) {
+                                                                                    greatestValue = value;
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+
+                                                                    // Apply green background color to the cell if it's the greatest value (excluding specific columns)
+                                                                    if (greatestValue !== null && cellValue === greatestValue) {
+                                                                        if((i == 2) || (i == 3) || (i == 4) || (i == 5)){
+                                                                        tableBody += '<td style="background-color: #90ee90;" class="m-1 text-center"">' + numberFormatter.format(cellValue) + '</td>';
+                                                                        }else{
+                                                                            tableBody += '<td style="background-color: #90ee90;" class="m-1 text-center">' + cellValue + '</td>'; 
+                                                                        }
+                                                                    } else {
+                                                                        if( i == 0){
+                                                                            tableBody += '<th style="color:darkblue;" class="text-center">' + cellValue + '</th>';
+                                                                        }else{
+                                                                            if((i == 2) || (i == 3) || (i == 4) || (i == 5)){
+                                                                            tableBody += '<td class="text-center">' + numberFormatter.format(cellValue) + '</td>';
+                                                                            }else{
+                                                                                tableBody += '<td class="text-center">' + cellValue + '</td>';
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                            tableBody += '</tr>';
+                                                        }
+                                                        // Display the HTML in the table body
+                                                        $('#CompSupplierList').html(tableBody);
+
+                                               $('#staticBackdrop').modal('show');
+
+                              
+
+
+                                        },
+                                        error: function(xhr, status, error) {
+                                            alert("Error: " + xhr.responseText);
+                                        }
+                                    });
+                                } else {
+                                    alert("No quotations selected.");
+                                }
+                            });
+
+
+
+
+                            
+                    $('.SApprovalQut').on('click',function(event){
+                        event.preventDefault();
+
+                        var qutnum = $(this).data('qutnum');
+                         // Get the CSRF token value from the meta tag
+                         var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                            // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/send_quotation_for_approval',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: qutnum,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // Handle the AJAX response here
+                                   if(response.success){
+                                            toastr.options = {
+                                            "timeOut": "1000",
+                                            "toastClass": "toast-green",
+                                            "extendedTimeOut": "1000",
+                                            "progressBar": true,
+                                            "closeButton": true,
+                                            "positionClass": "toast-top-right",
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut",
+                                            "preventDuplicates": true,
+                                            "onHidden": function() {
+                                                window.location.reload(); // Reload the page when the toastr is hidden
+                                            }
+                                        }
+
+                                        toastr.success(response.message);
+                                }
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                        })
+
+
+
+                        $('.compare').on('click','.SApprovalQutFromModal',function(){
+                        // event.preventDefault();
+
+                        var qutnum = $(this).data('qutnum');
+                         // Get the CSRF token value from the meta tag
+                         var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                            // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/send_quotation_for_approval',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: qutnum,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // Handle the AJAX response here
+                                   if(response.success){
+                                            toastr.options = {
+                                            "timeOut": "1000",
+                                            "toastClass": "toast-green",
+                                            "extendedTimeOut": "1000",
+                                            "progressBar": true,
+                                            "closeButton": true,
+                                            "positionClass": "toast-top-right",
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut",
+                                            "preventDuplicates": true,
+                                            "onHidden": function() {
+                                                window.location.reload(); // Reload the page when the toastr is hidden
+                                            }
+                                        }
+
+                                        toastr.success(response.message);
+                                }
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                        })
+
+
+
+
+
+
+
+
+                    $('.SNegoQut').on('click',function(event){
+                        event.preventDefault();
+
+                        var qutnum = $(this).data('qutnum');
+                         // Get the CSRF token value from the meta tag
+                         var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                            // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/send_quotation_for_negotiation',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: qutnum,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // Handle the AJAX response here
+                                   if(response.success){
+                                            toastr.options = {
+                                            "timeOut": "1000",
+                                            "toastClass": "toast-green",
+                                            "extendedTimeOut": "1000",
+                                            "progressBar": true,
+                                            "closeButton": true,
+                                            "positionClass": "toast-top-right",
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut",
+                                            "preventDuplicates": true,
+                                            "onHidden": function() {
+                                                window.location.reload(); // Reload the page when the toastr is hidden
+                                            }
+                                        }
+
+                                        toastr.success(response.message);
+
+
+                                }
+
+
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
+
+                    })
+
+
+
+
+                    $('.compare').on('click','.SNegoQutFromModal',function(){
+                        // event.preventDefault();
+
+                        var qutnum = $(this).data('qutnum');
+                         // Get the CSRF token value from the meta tag
+                         var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                            // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/send_quotation_for_negotiation',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: qutnum,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // Handle the AJAX response here
+                                   if(response.success){
+                                            toastr.options = {
+                                            "timeOut": "1000",
+                                            "toastClass": "toast-green",
+                                            "extendedTimeOut": "1000",
+                                            "progressBar": true,
+                                            "closeButton": true,
+                                            "positionClass": "toast-top-right",
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut",
+                                            "preventDuplicates": true,
+                                            "onHidden": function() {
+                                                window.location.reload(); // Reload the page when the toastr is hidden
+                                            }
+                                        }
+
+                                        toastr.success(response.message);
+
+
+                                }
+
+
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
+
+                    })
+
+
+
+
+                    $('.rfqView').click('click',function(event){
+                        event.preventDefault();
+                          // Get the order ID from the data attribute
+                    var id = $(this).data('prnum');
+
+                        // alert(id);
+                        // Get the CSRF token value from the meta tag
+                        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                        // Make AJAX call with the id and CSRF token
+                        $.ajax({
+                            url: '/view_pr',
+                            type: 'POST', // or 'GET', depending on your server endpoint
+                            data: {
+                                id: id,
+                                _token: csrfToken // Include the CSRF token in the data
+                            },
+                            success: function(response) {
+                                // Handle the AJAX response here
+                                console.log(response);
+
+
+                                var prDetails = response.prDetails;
+                                var rfqDetails = response.rfq;
+                                $('#rfqViewModal #req_name').html(prDetails.req_name);
+                                $('#rfqViewModal #rfq_num').html(rfqDetails.rfq_num);
+                                $('#rfqViewModal #lead_time').html(rfqDetails.lead_time);
+                                $('#rfqViewModal #pr_num').html(prDetails.pr_num);
+                                $('#rfqViewModal #req_phone').html(prDetails.req_phone);
+                                $('#rfqViewModal #req_email').html(prDetails.req_email);
+                                $('#rfqViewModal #req_desig').html(prDetails.req_desig);
+
+                                $('#rfqViewModal #street_address').html(prDetails.del_addr);
+                                $('#rfqViewModal #del_city').html(prDetails.del_city);
+                                $('#rfqViewModal #del_state').html(prDetails.del_state);
+                                $('#rfqViewModal #del_date').html(prDetails.del_date);
+                                $('#rfqViewModal #pr_number').html(prDetails.pr_num);
+                                $('#rfqViewModal #vendorName').html(prDetails.supplier);
+                                $('#rfqViewModal #vendorPhone').html(prDetails.supplier_phone);
+                                $('#rfqViewModal #vendorEmail').html(prDetails.supplier_email);
+                                $('#rfqViewModal #contactPerson').html(prDetails.supplier_person);
+                                $('#rfqViewModal #req_depatment').html(prDetails.department);
+
+                                var tableBody = '';
+                                    
+                                    $.each(response.prItems, function(index, item) {
+                                        tableBody += '<tr>';
+                                        tableBody += '<td>' + (index + 1) + '</td>';
+                                        tableBody += '<td>' + item.item_type + '</td>';
+                                        tableBody += '<td>' + item.item_des + '</td>';
+                                        tableBody += '<td>' + item.quantity + '</td>';
+                                        tableBody += '<td>' + item.item_feature + '</td>';
+                                        tableBody += '</tr>';
+                                    });
+
+                                $('.prItemViewAllList').html(tableBody);
+
+                                $('#rfqViewModal').modal('show');
+
+                            },
+                            error: function(xhr, status, error) {
+                                // Handle AJAX errors here
+                                console.error(xhr.responseText);
+                            }
+                        });
+
+                    })
+
+
+                $('.sendQut').on('click',function(event){
+                    event.preventDefault();
+                    var qut_num = $(this).data('qutnum');
+                       // Get the CSRF token value from the meta tag
+                       var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                            // Make AJAX call
+                            $.ajax({
+                                url: '/send_quotation', // Specify your endpoint URL
+                                type: 'POST', // Or 'GET' depending on your server route
+                                data: {
+                                        id: qut_num,
+                                        _token: csrfToken // Include the CSRF token in the data
+                                    }, // Send the order ID in the request
+                                success: function(response) {
+
+                                   console.log(response);
+                                   
+                                   if (response.success) {
+                                        toastr.options = {
+                                            "timeOut": "5000",
+                                            "toastClass": "toast-green",
+                                            "extendedTimeOut": "2000",
+                                            "progressBar": true,
+                                            "closeButton": true,
+                                            "positionClass": "toast-top-right",
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut",
+                                            "preventDuplicates": true,
+                                            "onHidden": function() {
+                                                window.location.reload(); // Reload the page when the toastr is hidden
+                                            }
+                                        };
+                                        toastr.success('Quotation sent successfully');
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle any errors
+                                    console.error('Error:', error);
+                                }
+                            });
+                        })
+
+
+
+
+
+
+
+
+
+                $('.qutbtn').on('click',function(event){
+                    event.preventDefault();
+
+                    var id = $(this).data('qutnum');
+                    // alert(id);
+
+                     // Get the CSRF token value from the meta tag
+                     var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                     // Make AJAX call
+                     $.ajax({
+                            url: '/fetch-quotation-details', // Specify your endpoint URL
+                            type: 'POST', // Or 'GET' depending on your server route
+                            data: {
+                                    id: id,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                }, // Send the order ID in the request
+                            success: function(response) {
+
+                                console.log(response);
+
+                                var qut = response.qut_details;
+
+                                $('#rfqQUT #qut_num').text(qut.qut_num);
+                                $('#rfqQUT #pr_num').text(qut.pr_num);
+                                $('#rfqQUT #rfq_num').text(qut.rfq_num);
+                                $('#rfqQUT #qut_date').text(qut.qut_date);
+                                $('#rfqQUT #lead_time').text(qut.lead_time);
+                                $('#rfqQUT #payment_terms').text(qut.payment_terms);
+
+                                // Define the number formatter
+                                const numberFormatter = new Intl.NumberFormat('en-US', {
+                                    style: 'decimal',
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                });
+
+
+                                var tableBody = '';
+                            
+                                    $.each(response.items, function(index, item) {
+                                        // Append each part_number value to the element with class .item_code
+                                            tableBody += '<tr>';
+                                            tableBody += '<td>' + (index + 1) + '</td>';
+                                            tableBody += '<td>' + item.item_name + '</td>';
+                                            tableBody += '<td>' + item.features + '</td>';
+                                            tableBody += '<td>' + numberFormatter.format(item.quantity) + '</td>';
+                                            tableBody += '<td>' + numberFormatter.format(item.unitprice) + '</td>';
+                                            tableBody += '<td>' + numberFormatter.format(item.total) + '</td>';
+                                            tableBody += '</tr>';
+                                    });
+
+                                    var total_amount =  numberFormatter.format(qut.total_amount);
+                                    var tax_rate = 18;
+                                    var cgst_rate = tax_rate/2;
+                                    var sgst_rate = tax_rate/2;
+
+                                    var cgst_calc = qut.total_amount * (cgst_rate/100);
+                                    var sgst_calc = qut.total_amount * (sgst_rate/100);
+
+                                    var cgst = numberFormatter.format(cgst_calc);
+                                    var sgst = numberFormatter.format(sgst_calc);
+
+                                    var others = numberFormatter.format(3000);
+
+
+                                    let sub_total = parseFloat(qut.total_amount);
+                                    let cgst_calc1 = parseFloat(cgst_calc);
+                                    let sgst_calc1 = parseFloat(sgst_calc);
+                                    let others1 = 3000;
+
+                                    // Perform the addition
+                                    let finalAmount = sub_total + cgst_calc1 + sgst_calc1 + others1;
+
+                                    var overall_amount = numberFormatter.format(finalAmount);
+
+
+
+                                    // var overall_amount = qut.total_amount + cgst_calc + sgst_calc + others;
+
+
+                                    $('#rfqQUT #sub_total').html(total_amount);
+                                    $('#rfqQUT #cgst').html(cgst);
+                                    $('#rfqQUT #sgst').html(sgst);
+                                    $('#rfqQUT #others').html(others);
+                                    $('#rfqQUT #total_amount').html(overall_amount);
+
+                                    $('#QUTItemViewAllList').html(tableBody);
+
+
+                                $('#rfqQUT').modal('show');
+
+                            },
+                            error: function(xhr, status, error) {
+                                // Handle any errors
+                                console.error('Error:', error);
+                            }
+                        });
+                   
+                })
+
+
+
+
+
+
+
+
+
+
+
+
+                $('.createQuotation').on('click', function(event){
+                    event.preventDefault();
+
+                    var pr_num = $(this).data('prnum');
+                    var rfq_num = $(this).data('rfqnum');
+                    // alert(pr_num);
+
+                    $('#pr_num').val(pr_num);
+                    $('#rfq_num').val(rfq_num);
+
+
+
+                        // Get the CSRF token value from the meta tag
+                        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                        // Make AJAX call
+                        $.ajax({
+                            url: '/fetch-item-name', // Specify your endpoint URL
+                            type: 'POST', // Or 'GET' depending on your server route
+                            data: {
+                                    id: pr_num,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                }, // Send the order ID in the request
+                            success: function(response) {
+
+                                // console.lo
+
+                                $.each(response.items, function(index, item) {
+                                    // Create a new option element
+                                    var option = $('<option></option>')
+                                        .attr('value', item.id) // assuming item_id is the value you want to use
+                                        .text(item.item_des); // assuming item_des is the text you want to display
+
+                                    // Append the option to the select element
+                                    $('#item_name').append(option);
+                                });
+                                
+                                // var requisitioner = response.requisitioner;
+                                // $('#PRAddModalForm #req_phone').val(requisitioner.phone);
+                                // $('#PRAddModalForm #req_email').val(requisitioner.email);
+                                // $('#PRAddModalForm #req_desig').val(requisitioner.designation);
+
+                            },
+                            error: function(xhr, status, error) {
+                                // Handle any errors
+                                console.error('Error:', error);
+                            }
+                        });
+                    $('#updateQuotation').modal('show');
+                })
+
+
+
+                $('#quotationCreateForm #item_name').on('change',function(){
+                    var id = $(this).children('option:selected').val();
+                     // Get the CSRF token value from the meta tag
+                     var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                        // Make AJAX call
+                        $.ajax({
+                            url: '/fetch-item-details-for-quotation', // Specify your endpoint URL
+                            type: 'POST', // Or 'GET' depending on your server route
+                            data: {
+                                    id: id,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                }, // Send the order ID in the request
+                            success: function(response) {
+
+                                // console.log(response);
+
+                                var details = response.details;
+                                $('#quotationCreateForm #quantity').val(details.quantity);
+                                $('#quotationCreateForm #feature').val(details.item_feature);
+                                // $('#quotationCreateForm #req_desig').val(requisitioner.designation);
+
+                            },
+                            error: function(xhr, status, error) {
+                                // Handle any errors
+                                console.error('Error:', error);
+                            }
+                        });
+                    });
+
+
+                        $('#add_item_qut').on('click', function(){
+                            var item_name = $('#quotationCreateForm #item_name').children('option:selected').html();
+                            var qty = $('#quotationCreateForm #quantity').val();
+                            var features = $('#quotationCreateForm #feature').val();
+                            var unitprice = $('#quotationCreateForm #unitprice').val();
+                            var pr_num = $('#quotationCreateForm #pr_num').val();
+                            var rfq_num = $('#quotationCreateForm #rfq_num').val();
+                            var qut_num = $('#quotationCreateForm #qut_num').val();
+
+                            var total_price = qty * unitprice;
+
+                            var tableBody = '';  
+
+                            tableBody += '<tr>';
+                            tableBody += '<td>' + qut_num + '</td>';
+                            tableBody += '<td>' + pr_num + '</td>';
+                            tableBody += '<td>' + rfq_num + '</td>';
+                            tableBody += '<td>' + item_name + '</td>';
+                            tableBody += '<td>' + features + '</td>';
+                            tableBody += '<td>' + qty + '</td>';
+                            tableBody += '<td>' + unitprice + '</td>';
+                            tableBody += '<td>' + total_price + '</td>';
+                            // tableBody += '<td><a class="delete-link-po btn btn-primary" style="color:white;"><i class="mdi mdi-delete"></i></a>';
+                            // tableBody += '</td>';
+                            tableBody += '</tr>';   
+                            $('#quotationCreateForm #itemlistsQUT').append(tableBody);
+
+
+                            toastr.options = {
+                                    "timeOut": "5000",
+                                    "toastClass": "toast-green",
+                                    "extendedTimeOut": "2000",
+                                    "progressBar": true,
+                                    "closeButton": true,
+                                    "positionClass": "toast-top-right",
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut",
+                                    "progressBarBgColor": "#ff0000",
+                                    "preventDuplicates": true,
+                                };
+                                toastr.success('Item Updated Successfully');
+                           $('#quotationCreateForm #item_name').val('');
+                           $('#quotationCreateForm #quantity').val('');
+                           $('#quotationCreateForm #feature').val('');
+                           $('#quotationCreateForm #unitprice').val('');
+                        });
+
+
+                $('#quotationCreateForm .delete-link-po').on('click', function(event) {
+                    event.preventDefault(); // Prevent default action if necessary
+                    $(this).closest('tr').remove(); // Find the closest tr and remove it
+                });
+
+
+
+
                     $('#addSuppliersRFQ').on('click',function(){
 
                         var pr_num = $('#createRFQModalForm #pr_num').val();
+                        var rfq_num = $('#createRFQModalForm #rfq_num').val();
                         var supplier = $('#createRFQModalForm #supplier').val();
                         var phone = $('#createRFQModalForm #supplier_phone').val();
                         var email = $('#createRFQModalForm #supplier_email').val();
@@ -842,6 +1719,7 @@
 
                         tableBody += '<tr>';
                         tableBody += '<td>' + pr_num + '</td>';
+                        tableBody += '<td>' + rfq_num + '</td>';
                         tableBody += '<td>' + supplier + '</td>';
                         tableBody += '<td>' + phone + '</td>';
                         tableBody += '<td>' + email + '</td>';
@@ -856,6 +1734,222 @@
                         var email = $('#createRFQModalForm #supplier_email').val('');
                         var person = $('#createRFQModalForm #supplier_person').val('');
                     })
+
+                    $('.setVisibility').on('click',function(event){
+                        event.preventDefault();
+
+                        var id = $(this).data('rfq');
+                       
+                        // Get CSRF token value from meta tag
+                        var csrfToken = $('meta[name="csrf-token"]').attr('content'); // Get CSRF token
+                       // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/set_pr_visibility',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: id,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // Handle the AJAX response here
+                                    console.log(response);
+
+
+                                    toastr.options = {
+                                    "timeOut": "5000",
+                                    "toastClass": "toast-green",
+                                    "extendedTimeOut": "2000",
+                                    "progressBar": true,
+                                    "closeButton": true,
+                                    "positionClass": "toast-top-right",
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut",
+                                    "progressBarBgColor": "#ff0000",
+                                    "preventDuplicates": true,
+                                    "onHidden": function() {
+                                        window.location.reload(); // Reload the page when the toastr is hidden
+                                    }
+
+                                };
+                                toastr.success('RFQ sent to the selected suppliers');
+
+                                    // $('#staticBackdrop').on('hidden.bs.modal', function (e) {
+                                        // Reload the page when the modal is closed
+                                        // window.location.reload();
+                                    // });
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                    })
+
+
+
+                    $('.suppliersListsForRFQ').on('click', function(){
+                        var rfq = $(this).data('rfq');
+
+                        // Get CSRF token value from meta tag
+                        var csrfToken = $('meta[name="csrf-token"]').attr('content'); // Get CSRF token
+                       // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/view_rfq_suppliers_lists',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: rfq,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // Handle the AJAX response here
+                                    console.log(response);
+                                    // Optionally, you can redirect the user to a success page or perform any other actions
+                                        var tableBody = '';
+                                        
+                                        $.each(response.suppliers, function(index, item) {
+                                            tableBody += '<tr>';
+                                            tableBody += '<td>' + (index + 1) + '</td>';
+                                            tableBody += '<td>' + item.supplier + '</td>';
+                                            tableBody += '<td>' + item.phone + '</td>';
+                                            tableBody += '<td>' + item.email + '</td>';
+                                            tableBody += '<td>' + item.person + '</td>';
+                                            tableBody += '</tr>';
+                                        });
+
+                                    $('#supplierTableBody').html(tableBody);
+                                    $('#suppliersModal').modal('show');
+                                    // $('#staticBackdrop').on('hidden.bs.modal', function (e) {
+                                        // Reload the page when the modal is closed
+                                        // window.location.reload();
+                                    // });
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                 
+                        });
+
+
+
+
+                    $('#createRFQModalForm').on('submit',function(event){
+                    event.preventDefault(); // Prevent default form submission
+                    // Serialize form data
+                     // Serialize form data
+                    var formData = $(this).serialize();
+                   console.log(formData);
+                    // console.log(formData);
+                    var dataToSend = [];
+
+                    // Loop through each row of the table
+                    $("#suppliersLists tr").each(function() {
+                        var rowData = {};
+
+                        // Loop through each cell of the current row
+                        $(this).find("td").each(function() {
+                            // Get the column name from the table header
+                            var columnName = $(this).closest('table').find('th').eq($(this).index()).text().trim();
+                            
+                            // Get the text content of the cell
+                            var cellData = $(this).text().trim();
+                            
+                            // Add cell data to rowData with column name as key
+                            rowData[columnName] = cellData;
+                        });
+
+                        // Push the rowData object to dataToSend array
+                        dataToSend.push(rowData);
+                    });
+
+                      // Send data to server via AJAX
+                      sendDataToPrSupplierLists(dataToSend);
+
+                    // Get CSRF token value from meta tag
+                    var csrfToken = $('meta[name="csrf-token"]').attr('content'); // Get CSRF token
+
+                    // AJAX request
+                    $.ajax({
+                        url: '{{ route("crfq.store") }}',
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: formData,
+                        // dataType: 'json',
+                        success: function(response) {
+
+                            // location.reload();
+                            console.log(response);
+                            // Handle success response from the server
+                            toastr.options = {
+                                    "timeOut": "5000",
+                                    "toastClass": "toast-green",
+                                    "extendedTimeOut": "2000",
+                                    "progressBar": true,
+                                    "closeButton": true,
+                                    "positionClass": "toast-top-right",
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut",
+                                    "progressBarBgColor": "#ff0000",
+                                    "preventDuplicates": true,
+                                    "onHidden": function() {
+                                        window.location.reload(); // Reload the page when the toastr is hidden
+                                    }
+                                };
+
+                                toastr.success('RFQ Created Successfully');
+
+                                $('.modal').modal('hide');
+
+                        },
+                        error: function(xhr, status, error) {
+                             // Handle error response from the server
+                                console.error('Error:', error);
+
+                           // Show validation errors in a toaster
+                            var errorMessage = 'Oops! Some fields are missing';
+                            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                errorMessage = '<ul>'; // Start the unordered list
+                                $.each(xhr.responseJSON.errors, function(key, value) {
+                                    errorMessage += '<li>' + value.join('</li><li>') + '</li>'; // Add each error message as a list item
+                                });
+                                errorMessage += '</ul>'; // End the unordered list
+                            }
+
+
+                            toastr.error(errorMessage, 'Validation Error', {
+                                    "timeOut": "5000", // Set the time the notification stays visible (in milliseconds)
+                                    "toastClass": "toast-red", // Add custom class to the notification
+                                    "extendedTimeOut": "2000", // Set the duration of the extended timeout for mouse hover (in milliseconds)
+                                    "progressBar": true, // Show a progress bar for timing of the notification
+                                    "closeButton": true, // Show a close button for the notification
+                                    "positionClass": "toast-top-right", // Set the position of the notification
+                                    "showDuration": "300", // Set the duration of the show animation (in milliseconds)
+                                    "hideDuration": "1000", // Set the duration of the hide animation (in milliseconds)
+                                    "showEasing": "swing", // Set the easing of the show animation
+                                    "hideEasing": "linear", // Set the easing of the hide animation
+                                    "showMethod": "fadeIn", // Set the method of showing the notification
+                                    "hideMethod": "fadeOut", // Set the method of hiding the notification
+                                    "progressBarBgColor": "#ff0000", // Set the background color of the progress bar
+                                    "preventDuplicates": true // Prevent duplicate notifications from being shown
+                                });
+                        }
+                    });
+
+                    });
+
+
+                    
 
 
 
@@ -884,6 +1978,7 @@
 
 
                             var prDetails = response.prDetails;
+                           
                             $('#rfqPR #req_name').html(prDetails.req_name);
                             $('#rfqPR #req_phone').html(prDetails.req_phone);
                             $('#rfqPR #req_email').html(prDetails.req_email);
@@ -1017,7 +2112,7 @@
                                     tableBody += '</tr>';
                                 });
 
-                            $('#prItemViewAll').html(tableBody);
+                            $('.prItemViewAllList').html(tableBody);
 
                             $('#rfqPR').modal('show');
 
@@ -1311,7 +2406,7 @@
                     });
 
                       // Send data to server via AJAX
-                      sendDataToItemLists(dataToSend);
+                      sendDataToPRItemLists(dataToSend);
                       console.log(dataToSend);
 
                     // Get CSRF token value from meta tag
@@ -1454,6 +2549,62 @@
                 });
 
 
+
+
+                function sendDataToQUTItemLists(data) {
+                    // Send data via AJAX to a Laravel route that maps to a controller function
+                    // Replace 'your-route' with the actual route name in your Laravel routes file
+                    // Replace 'your-controller-method' with the actual method name in your controller
+                    
+                    $.ajax({
+                        url: '/save_these_qut_item_data',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        dataType: 'json', // Specify that you're expecting JSON data in the response
+                        data: JSON.stringify({ data: data }),
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            console.log('Data sent successfully:', response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error sending data:', error);
+                        }
+                    });
+
+                    }
+
+
+
+                function sendDataToPrSupplierLists(data) {
+                    // Send data via AJAX to a Laravel route that maps to a controller function
+                    // Replace 'your-route' with the actual route name in your Laravel routes file
+                    // Replace 'your-controller-method' with the actual method name in your controller
+                    
+                    $.ajax({
+                        url: '/save_these_supplier_data',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        dataType: 'json', // Specify that you're expecting JSON data in the response
+                        data: JSON.stringify({ data: data }),
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            // console.log('Data sent successfully:', response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error sending data:', error);
+                        }
+                    });
+
+                    }
+
+
+
+
+
                 $('.createInvoice').on('click',function(){
                     alert('Invoice Created Successfully.');
                 });
@@ -1499,6 +2650,53 @@
                     });
 
                     }
+
+
+
+                    function sendDataToPRItemLists(data) {
+                    // Send data via AJAX to a Laravel route that maps to a controller function
+                    // Replace 'your-route' with the actual route name in your Laravel routes file
+                    // Replace 'your-controller-method' with the actual method name in your controller
+                    
+                    $.ajax({
+                        url: '/save_item_lists_pr',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        dataType: 'json', // Specify that you're expecting JSON data in the response
+                        data: JSON.stringify({ data: data }),
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            // console.log('Data sent successfully:', response);
+                        },
+                        error: function(xhr, status, error) {
+                                // Check if the response JSON contains errors
+                                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                // Clear the existing content of the errorList element
+                                $('#errorList').empty();
+                                
+                                // Initialize an empty string to store HTML markup for error messages
+                                var errorMessageList = '';
+                                
+                                // Loop through each error and handle them
+                                $.each(xhr.responseJSON.errors, function(key, value) {
+                                    // Generate HTML markup for the error message and append it to errorMessageList
+                                    errorMessageList += '<p class="alert text-danger p-0">' + value[0] + '</p>';
+                                });
+
+                                // Append the HTML markup for error messages to the errorList element
+                                $('#errorList').html(errorMessageList);
+                                
+                                // Show the modal containing error messages
+                                $('#errorsModal').modal('show');
+                            }
+
+                        }
+                    });
+
+                    }
+
 
 
                     

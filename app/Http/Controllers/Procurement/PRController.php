@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Inventory\Parts;
 use App\Models\OrderHeader;
 use App\Models\Procurement\ItemLists;
+use App\Models\RFQ\CreateRFQ;
 use App\Models\supplier;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -130,6 +131,11 @@ class PRController extends Controller
                             'created_at' => Carbon::now()
                     ]);
 
+                    CreateRFQ::insert([
+                        'pr_num' => $request->pr_num,
+                        'created_at' => Carbon::now()
+                ]);
+
                 // Redirect back with success message if successful
                 return redirect()->back()->with("success","Purchase requisition added successfully");
             } catch (\Exception $e) {
@@ -167,13 +173,15 @@ class PRController extends Controller
 
             $pr = PR::where('pr_num',$id)->first();
             $pr_num = $pr->pr_num;
+            $rfq = CreateRFQ::where('pr_num',$pr_num)->first();
 
             $ItemLists = ItemLists::where('pr_num',$pr_num)->get();
 
             return response()->json([
                 'success' => true,
                 'prDetails' => $pr,
-                'prItems' => $ItemLists
+                'prItems' => $ItemLists,
+                'rfq' => $rfq
             ]);
 
         }

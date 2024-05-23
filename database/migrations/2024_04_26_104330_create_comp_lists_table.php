@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('comp_lists', function (Blueprint $table) {
             $table->id();
+            $table->string('pr_num');
+            $table->string('rfq_num');
+            $table->string('qut_num');
+            $table->string('payment_terms');
+            $table->string('lead_time');
+            $table->date('qut_date');
+            $table->integer('status');
+            $table->integer('total_amount');
+            $table->date('dos');
+            $table->string('quotation');
             $table->timestamps();
         });
     }

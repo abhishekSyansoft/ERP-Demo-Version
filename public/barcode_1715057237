@@ -1,1 +1,24 @@
-iVBORw0KGgoAAAANSUhEUgAAAMoAAAAeAQMAAABXBBPSAAAABlBMVEX///8AAABVwtN+AAAAAXRSTlMAQObYZgAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAC1JREFUKJFj+Mx/2Maeh+eDPbPNB57D9ufPH7YxsD/zwd74AMOo1KjUqBRMCgBS6GBUqpqy9wAAAABJRU5ErkJggg==
+var dataToSend = [];
+
+                    // Loop through each row of the table
+                    $("#itemlistsQUT tr").each(function() {
+                        var rowData = {};
+
+                        // Loop through each cell of the current row
+                        $(this).find("td").each(function() {
+                            // Get the column name from the table header
+                            var columnName = $(this).closest('table').find('th').eq($(this).index()).text().trim();
+                            
+                            // Get the text content of the cell
+                            var cellData = $(this).text().trim();
+                            
+                            // Add cell data to rowData with column name as key
+                            rowData[columnName] = cellData;
+                        });
+
+                        // Push the rowData object to dataToSend array
+                        dataToSend.push(rowData);
+                    });
+
+                      // Send data to server via AJAX
+                      sendDataToQUTItemLists(dataToSend);

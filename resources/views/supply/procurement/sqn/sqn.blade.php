@@ -25,13 +25,13 @@
                     <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
                       <div class="row">
                         <div class="col-md-6 m-0">
-                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Supplier Quotation/Negotiation Lists</h4>
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Vendor Quotations</h4>
                         </div>
                          <!-- Button to open the modal -->
                         <div class="col-md-6">
-                        <button style="float:right;" type="button" class="btn btn-primary animated-button" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                        <!-- <button style="float:right;" type="button" class="btn btn-primary animated-button" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
-                        </button>  
+                        </button>   -->
                         </div>
                         <!-- <hr>   -->
                       </div>     
@@ -49,85 +49,226 @@
                         <table class="table mx-auto" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
-                                <th>Compare</th>
-                                <th>View</th>
-                                <!-- <th>Create</th> -->
-                                <th>Req No.</th>
+                                <th>Select to Compare</th>
+                                <th>Qut Number</th>
+                                <th>View Quotation</th>
                                 <th>RFQ No.</th>
-                                <th>QUT No.</th>
+                                <th>PR No.</th>
                                 <th>Vendor Name.</th>
-                                <th>Product</th>
-                                <th>Sub Category</th>
-                                <th>Category</th>
-                                <th>Item</th>
-                                <th>Quantity</th>
-                                <th>Number</th>
-                                <th>Vendor Name</th>
-                                <th>Price</th>
-                                <th>Delivery Date</th>
-                                <!-- <th>Neq Price</th>
-                                <th>Neq Date</th> -->
+                                <th>Total Amount</th>
                                 <th>Status</th>
-                                <th>Quotation PDF</th>
-                                <th>Approval</th>
+                                <th>Send for Approval</th>
+                                <th>Send for Negotiation</th>
                                 <th>Action</th>
                             </tr>
+                            <tbody id="VendorQuotationsLists">
                             @php($i=1)
-                            @for($a=0;$a<6;$a++)
                             @foreach($sqn as $data)
-                                <tr>
-                                    <td>{{$i++}}</td>
-                                  
-                                    <td><input type="checkbox" class="mdi md-compare"></td>
-                                    <td><a href="https://www.projectmanager.com/wp-content/uploads/2021/01/RFQ-Screenshot-600x508.jpg" style="background-image:linear-gradient(to right, #283b96, #96a1d6);color:white;border-radius:5px;" class="btn mdi mdi-eye p-2"></a></td>
-                                    <td>PR{{mt_rand(1000, 9999)}}</td>
-                                    <td>RFQ{{mt_rand(1000, 9999)}}</td>
-                                    <td>QUT{{mt_rand(1000, 9999)}}</td>
-                                    <td>VEN{{mt_rand(1000, 9999)}}</td>
-                                    <td>Abhishek Kumar</td>
-                                    <td>Bike</td>
-                                    <td></td>
-                                    <td>Vehicle</td>
-                                    <td>Item</td>
-                                    <td>21</td>
-                                    <td>28</td>
-                                   
-                                    <td>{{$data->supplier}}</td>
-                                    <td>Rs. {{mt_rand(1000, 9999)}}</td>
-                                    <td>{{$data->valid_until}}</td>
-                                    <!-- <td>Rs. {{mt_rand(1000, 9999)}}</td>
-                                    <td>{{$data->valid_until}}</td> -->
-                                    <td>
-                                      <div class="dropdown">
-                                        <a class="dropbtn" style="background-color:transparent;text-decoration:none;color:black;color:{{ $i % 2 == 0 ? 'Green' : 'Red' }}" onclick="toggleDropdown()">{{ $i % 2 == 0 ? 'Approved' : 'Rejected' }}</a>
-                                        <div id="dropdownContent" class="dropdown-content">
-                                          <a href="#" onclick="selectOption('Approved')">Approved</a>
-                                          <a href="#" onclick="selectOption('Rejected')">Rejected</a>
-                                          <a href="#" onclick="selectOption('Pending')">Pending</a>
-                                          <!-- Add more options as needed -->
-                                        </div>
-                                      </div>
-                                    </td>
-                                  
-                                    <td><h3><a style="color:red;" href="https://i.pinimg.com/originals/d5/eb/40/d5eb400220228d1ad2f285563e9ef221.jpg" class="mdi mdi-file"></a></h3></td>
-                                    <td><a class=" {{$i % 2 == 0 ? '' : 'btn btn-success'}} appr">{{ $i % 2 == 0 ? '' : 'Send' }}</a></td>
-                                    @php($encryptedId = encrypt($data->id)) 
-                                    <td>
-                                        <a href="{{url('edit-sqn/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
-                                        <a href="{{url('delete-sqn/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
-                                    </td>
-                                </tr>
+                              <tr>
+                                <td>{{$i++}}</td>
+                                <td><input type="checkbox" class="compareCheckBox" data-id="{{$data->qut_num}}"></td>
+                                <td>{{$data->qut_num}}</td>
+                                <td><a class="mdi mdi-eye btn btn-primary qutbtn" data-qutnum="{{$data->qut_num}}"></a></td>
+                                <td>{{$data->rfq_num}}</td>
+                                <td>{{$data->pr_num}}</td>
+                                <td>{{$data->supplier}}</td>
+                                <td>{{number_format(($data->finalAmount)+((18/100)*$data->finalAmount)+3000)}}</td>
+                                <td><i class="text-success"></i></td>
+                                @if($data->approval == 1)
+                                <td><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>
+                                @else
+                                <td><a class="btn btn-primary SApprovalQut" data-qutnum="{{$data->qut_num}}">Send For approval</a></td>
+                                @endif
+                                @if($data->negotiation == 1)
+                                <td><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>
+                                @else
+                                <td><a class="btn btn-primary SNegoQut" data-qutnum="{{$data->qut_num}}">Send For Negotiation</a></td>
+                                @endif
+                                <td>
+                                  <a class="btn btn-primary">Edit</a>
+                                  <a class="btn btn-danger">Delete</a>
+                                </td>
+                              </tr>
                             @endforeach
-                            @endfor
+                            </tbody>
                         </table>
-                        <a data-bs-toggle="modal" class="btn btn-primary mt-4" data-bs-target="#staticBackdrop">Compare Quotation</a>
                     </div>
-                                  </div>
+                    <a class="btn btn-primary m-4" id="CompareQutBTN">Compare Quotation</a>
+                    <!-- <a data-bs-toggle="modal" data-bs-target="#staticBackdrop">preview</a> -->
+                  </div>
               </div>
             </div>
           </div>
         </div>
 
+
+        <!-- Modal -->
+        <div class="modal fade" id="rfqQUT" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="rfqQUTLabel" aria-hidden="true">
+                  <div class="modal-dialog  modal-lg mx-auto">
+                    <div class="modal-content card mx-auto">
+                      <div class="modal-header">
+                        <h3 class="modal-title" id="rfqQUTLabel"><b>Quotation</b></h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      
+                      <div class="modal-body">
+                      <div class="container row mx-auto p-2" style="border:1px solid black;">
+
+
+                      <div class="col-12 row mt-4">
+                            <div class="col-6">
+                              <h2 style="color:green;">Akash EnterPrises</h2>
+                            </div>
+                            <div class="col-6">
+                              <h2 style="float:right;">Quotation</h2>
+                            </div>
+                      </div>
+
+                      <div class="col-12 row mb-2">
+                          <p>D-136, Vipul World, Sec-48, Gurugram, Haryana, 122001</p>
+                          <div class="col-4"><b>Phone:&nbsp;&nbsp;</b><span>+91-6202074551</span></div>
+                          <div class="col-4"><b>GSTIN:&nbsp;&nbsp;</b><span>08AALCR2857A1ZD</span></div>
+                          <div class="col-4"><b>PAN Number:&nbsp;&nbsp;&nbsp;</b><span>FSZPK9748D</span></div>
+                      </div>
+
+
+                      <div class="col-12 row mb-2 mx-auto">
+                          <hr class="p-1 mb-0" style="background-color:#fa3033;">
+                          <div class="col-12 row mx-auto p-2" style="background-color:#ccf0e6;">
+                                <div class="col-6"><b>QUT Number :&nbsp;&nbsp;&nbsp;</b><span id="qut_num"> QUT_664c9e11d8caf</span></div>
+                                <div class="col-6 text-end"><b>QUT Date :&nbsp;&nbsp;&nbsp;</b><span id="qut_date"> 2024-05-06</span></div>
+                          </div>
+                      </div>
+
+
+                      
+                        <div id="details" class="row mb-3">
+                          <div class="col-md-6">
+                            <div><h4><b>Quotation To: </b></h4></div>
+                            <div class="mb-1"><b>SyanSoft Pvt. Ltd.</b></div>
+                            <div class="mb-1">Unit No. 306, Tower B4, Spaze I-Tech Park, Badshahpur Sohna Rd Hwy, Sector 49, Gurugram, Haryana 122018</div>
+                            <div class="mb-1"><b>Phone:&nbsp;&nbsp;&nbsp;</b><span id="phone">+91 8130874884</span></div>
+                            <div class="mb-1"><b>GSTIN:&nbsp;&nbsp;&nbsp;</b><span id="gstin">06ABGCS2293D1ZF</span></div>
+                            <div class="mb-1"><b>Pan Number:&nbsp;&nbsp;&nbsp;</b><span id="pan_no">FSZPK9748D</span></div>
+                          </div>
+                          <div class="col-md-2"></div>
+                          <div class="col-md-4">
+                            <div><h4><b></b></h4></div>
+                            <!-- <div class="mb-1"><b>PR Number:&nbsp;&nbsp;&nbsp;</b><span id="pr_num">+91 6202074551</span></div> -->
+                            <div class="mb-1"><b>RFQ Number:&nbsp;&nbsp;&nbsp;</b><span id="rfq_num">08AALCR2857A1ZD</span></div>
+                            <div class="mb-1"><b>Lead Time:&nbsp;&nbsp;&nbsp;</b><span id="lead_time"></span>&nbsp;&nbsp;weeks</div>
+                            <div class="mb-1"><b>Payment Terms:&nbsp;&nbsp;&nbsp;</b><span id="payment_terms"></span>&nbsp;&nbsp;days</div>
+                          </div>
+                        </div>
+
+
+                        <!-- <br><br>
+                        <h5><b>Item Lists</b></h5> -->
+                       <div class="table-wrapper" style="height:auto;margin:0px !important;">
+                       <table class="table" style="border:0px !important;">
+                          <thead>
+                            <th style="background-color:#9d98c3 !important;">S No.</th>
+                            <th style="background-color:#9d98c3 !important;">Item Name</th>
+                            <th style="background-color:#9d98c3 !important;">Feature</th>
+                            <th style="background-color:#9d98c3 !important;">Quantity</th>
+                            <th style="background-color:#9d98c3 !important;">Unit Price</th>
+                            <th style="background-color:#9d98c3 !important;">Total</th>
+                          </thead>
+                          <tbody id="QUTItemViewAllList">
+                            <tr>
+                              <td>1</td>
+                              <td>Laptop</td>
+                              <td>NA</td>
+                              <td>3</td>
+                              <td>2000</td>
+                              <td>6000</td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>Laptop</td>
+                              <td>NA</td>
+                              <td>3</td>
+                              <td>2000</td>
+                              <td>6000</td>
+                            </tr>
+                            <tr>
+                              <td>3</td>
+                              <td>Laptop</td>
+                              <td>NA</td>
+                              <td>3</td>
+                              <td>2000</td>
+                              <td>6000</td>
+                            </tr>
+
+                          </tbody>
+                        </table>
+                       </div>
+
+                      <div class="col-12 row mx-auto">
+                        <div class="col-7 mt-3 p-0">
+                        <div class="col-12">
+                       <div><b> Note's: </b></div>
+                       <ul>
+                         <li>No Return Deal</li>
+                       </ul>
+                       </div>
+
+                       <div class="col-12">
+                       <div><b>Terms & Condition's: </b></div>
+                       <ul>
+                         <li>Customer will pay the GST</li>
+                         <li>Customer will pay the Delivery Chargers</li>
+                         <li>Pay due amount within 15 days</li>
+                       </ul>
+                       </div>
+
+                          </div>
+                        <div class="col-5 mt-3 p-0">
+                          
+                         <table class="table">
+                          <!-- <tbody style="float:right;"> -->
+                            <tr>
+                              <th style="background-color:#9d98c3 !important;">Sub Total</th>
+                              <td id="sub_total">Rs. 555.00</td>
+                            </tr>
+                            <tr>
+                              <th style="background-color:#9d98c3 !important;">CGST</th>
+                              <td id="cgst">Rs. 55.00</td>
+                            </tr>
+                            <tr>
+                              <th style="background-color:#9d98c3 !important;">SGST</th>
+                              <td id="sgst">Rs. 55.00</td>
+                            </tr>
+                            <tr>
+                              <th style="background-color:#9d98c3 !important;">Others</th>
+                              <td id="others">Rs. 5.00</td>
+                            </tr>
+                            <tr>
+                              <th style="background-color:#9d98c3 !important;">Total</th>
+                              <td id="total_amount">Rs. 670.00</td>
+                            </tr>
+                          <!-- </tbody> -->
+                         </table>
+
+                        </div>
+                      </div>
+                        <br><br>
+
+                       <div class="col-12">
+                        <p><b>Signature :</b><i class="mdi mdi-check-circle" style="color:green;font-size:20px;">Digitally Verified Signature</i></p>
+                       </div>
+
+                       <div class="col-12">
+                        <p style="float:right;"><b>Thank you for your business!</b></p>
+                       </div>
+                        
+                      </div>
+                      
+                        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
           
 <!-- Add Supplier Modal -->
@@ -198,82 +339,29 @@
 
                      <center> <h2>Quotation Comparison</h2></center>
 
-                        <table class="table table-bordered table-hover">
-                            <tr>
-                              <th>Details</th>
-                              <th>Quotation A</th>
-                              <th>Quotation B</th>
-                              <th>Quotation C</th>
-                            </tr>
-                            <tr>
-                              <td>Price</td>
-                              <td>$1000</td>
-                              <td>$1200</td>
-                              <td>$1100</td>
-                            </tr>
-                            <tr>
-                              <td>Delivery Time</td>
-                              <td>2 weeks</td>
-                              <td>1 week</td>
-                              <td>3 weeks</td>
-                            </tr>
-                            <tr>
-                              <td>Quality</td>
-                              <td>High</td>
-                              <td>Medium</td>
-                              <td>High</td>
-                            </tr>
-                            <tr>
-                              <td>Payment Terms</td>
-                              <td>50% advance, 50% on delivery</td>
-                              <td>Full payment on delivery</td>
-                              <td>30% advance, 70% on delivery</td>
-                            </tr>
-                            <tr>
-                              <td>Customer Service</td>
-                              <td>Excellent</td>
-                              <td>Good</td>
-                              <td>Average</td>
-                            </tr>
-                          <!-- Add more rows for other details -->
-                        </table>
+                        <div class="table-wrapper" style="height:auto !important;">
+                          <table class="table table-bordered border-primary">
 
+                            <tbody id="CompSupplierList">
+                            </tbody>
+                          </table>
+                        </div>
+
+                        <div class="table-wrapper" style="height:auto !important;">
                         <table class="table table-bordered mt-2">
-                          <tr>
-                            <th>Serial Number</th>
-                            <th>Quotation Number</th>
-                            <th>Quotation Name</th>
-                            <th>Action</th>
-                          </tr>
-                          <tr>
-                            <td>1</td>
-                            <td>{{uniqid().uniqid()}}</td>
-                            <td>Quotation 1</td>
-                            <td>
-                              <a class="btn btn-success appr">Send for Approval</a>
-                              <a class="btn btn-info nego">Negotiation</a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>2</td>
-                            <td>{{uniqid().uniqid()}}</td>
-                            <td>Quotation 2</td>
-                            <td>
-                              <a class="btn btn-success appr">Send for Approval</a>
-                              <a class="btn btn-info nego">Negotiation</a>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>3</td>
-                            <td>{{uniqid().uniqid()}}</td>
-                            <td>Quotation 3</td>
-                            <td>
-                              <a class="btn btn-success appr">Send for Approval</a>
-                              <a class="btn btn-info nego">Negotiation</a>
-                            </td>
-                          </tr>
-
+                          <thead>
+                              <tr>
+                                <th>Serial No</th>
+                                <th>Vendor Name</th>
+                                <th>Quotation Number</th>
+                                <th class="text-center">Send For Approval</th>
+                                <th class="text-center">Send For Negotiation</th>
+                              </tr>
+                          </thead>
+                        <tbody id="actionOnCompQuot">
+                        </tbody>
                         </table>
+                        </div>
                         <div class="form-group mt-2">
                           <!-- <button type="submit" class="btn btn-success">Check one to edit</button> -->
                            <!-- <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">

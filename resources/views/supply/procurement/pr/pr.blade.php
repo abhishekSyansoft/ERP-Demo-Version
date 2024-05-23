@@ -303,7 +303,7 @@
 
                           
                         <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="part_number" class="form-label">{{ __('Supplier') }}<sup class="text-danger">*</sup></label>
+                            <label for="part_number" class="form-label">{{ __('Supplier') }}</label>
                             <input list="supplier_list" id="supplier" class="form-control" name="supplier" placeholder="Supplier name if any for this PR" required>
                             <datalist id="supplier_list">
                                 @foreach($suppliers as $supplier)

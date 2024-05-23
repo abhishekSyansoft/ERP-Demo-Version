@@ -24,14 +24,14 @@
                     <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
                       <div class="row">
                         <div class="col-md-6 m-0">
-                        <h4 class="card-title float-left m-0 p-0" style="color:white;"> Create RFQ</h4>
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Request For Quotation</h4>
                         </div>
                          <!-- Button to open the modal -->
                         <div class="col-md-6">
    
-                        <!-- <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                        <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createRFQModal">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
-                        </button>   -->
+                        </button>  
                        
                         </div>
                         <!-- <hr>   -->
@@ -58,28 +58,53 @@
                                 <th>QUT No.</th> -->
                                 
                                 <th>RFQ Number</th>
-                                <th>RFQ Status</th>
+                                <th>RFQ View</th>
+                                <th>Send For Quotation</th>
                                 <th>Suppliers Lists</th>
                                 <th>Last Date Of submission</th>
                                <th>Action</th>
                             </tr>
                             @php($a=1)
                             @foreach($prs as $pr)
+                           
                               <tr>
                                 <td>{{$a++}}</td>
-                                <td><a class="btn btn-primary createRfq" data-prnum="{{$pr->pr_num}}">Create</a></td>
+                                @if($pr->rfq_num)
+                                <td><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>
+                                @else
+                                <td><a class="btn btn-primary createRfq" data-prnum="{{$pr->pr_num}}">create</a></td>
+                                @endif
                                 <td>{{$pr->pr_num}}</td>
                                 <td>
                                   <a class="btn btn-primary mdi mdi-eye rfqPRView" data-prnum="{{$pr->pr_num}}"></a>
                                 </td>
-                                <td></td>
-                                <td></td>
+                                  <td>{{$pr->rfq_num}}</td>
+                                  @if($pr->rfq_status == 1)
+                                  <td><a class="btn btn-primary mdi mdi-eye rfqView" data-prnum="{{$pr->pr_num}}"></a></td>
+                                  @else
+                                  <td></td>
+                                  @endif
+                                  @if($pr->rfq_num)
+                                  @if($pr->status == 1)
+                                  <td><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>
+                                  @else
+                                  <td><a class="btn btn-success setVisibility" data-rfq="{{$pr->rfq_num}}">Send</a></td>
+                                  @endif
+                                  @else
+                                  <td></td>
+                                  @endif
+                                  @if(!$pr->rfq_num)
+                                  <td></td>
+                                  @else
+                                  <td><a class="btn btn-primary mdi mdi-eye suppliersListsForRFQ" data-rfq="{{$pr->rfq_num}}"></a></td>
+                                  @endif
+                                <td>{{$pr->date}}</td>
                                 <td>
-                                  <!-- <a class="btn btn-primary mdi mdi-eye"></a>\ -->
+                                  <a class="btn btn-primary">Edit</a>
+                                  <a class="btn btn-danger">Delete</a>
                                 </td>
-                                <td></td>
-                                <td></td>
                               </tr>
+                             
                             @endforeach 
                         </table>
                   </div>
@@ -88,6 +113,102 @@
             </div>
           </div>
         </div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="suppliersModal" tabindex="-1" aria-labelledby="suppliersModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="background-color:white;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="suppliersModalLabel">Supplier List</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h5>Supplier List</h5>
+        <table class="table table-bordered border-primary">
+          <thead>
+            <tr>
+              <th>S. Number</th>
+              <th>Supplier Name</th>
+              <th>Phone Number</th>
+              <th>Email</th>
+              <th>Contact Person</th>
+            </tr>
+          </thead>
+          <tbody id="supplierTableBody">
+            <!-- Supplier list will be dynamically populated here -->
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="rfqViewModal" tabindex="-1" aria-labelledby="rfqViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:white;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rfqViewModalLabel">RFQ Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <div class="container p-3" style="border:1px solid black;">
+                        <h2 class="text-center">SyanSoft Private Limited</h2>
+                        <!-- <h1 class="text-center text-primary">**************************</h1> -->
+                        <h4 class="text-center">Solutioning For Innovator, An IT Company</h4>
+                        <h6 class="text-center">Unit No. 306, Tower B4, Spaze I-Tech Park, Badshahpur Sohna Rd Hwy, Sector 49, Gurugram, Haryana 122018</h6>
+                        <h6 class="text-center">Phone #+91 6202074551 Fax #309-278-0186 Toll Free #+91 9570191426 </h6>
+                        <h6 class="text-center">Email Address <span class="text-primary">#abhishek.kumar@syansoft.in</span></h6>
+                        <!-- <div><b>PR No. </b><span id="pr_num">    </span></div> -->
+                        <div><b>RFQ No. </b><span id="rfq_num">    </span></div>
+                        <div><b>Delivery: </b><span id="del_date">  </span><b>(on or before) </b></div><br><br>
+
+                        <h2 class="text-center"><b>REQUEST FOR QUOTE FORM</b></h2>
+                        <!-- <h5><b>Item Lists</b></h5> -->
+                       <div class="table-wrapper" style="height:auto;">
+                       <table class="table table-bordered border-primary">
+                          <!-- <thead> -->
+                            <th>S No.</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Features</th>
+                          <!-- </thead> -->
+                          <tbody class="prItemViewAllList">
+
+                          </tbody>
+                        </table>
+
+                       </div>
+
+                       <h6>Lead time on above material is : <span id="lead_time"></span></h6>
+                       <h4 class="text-center mt-4">This quote is prepared by : SyanSoft Private Limited Established in 1998. </h4>
+                   
+                      </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
           
 <!-- Add Supplier Modal -->
 <div class="modal fade" id="createRFQModal" tabindex="-1" aria-labelledby="createRFQModalLabel" aria-hidden="true">
@@ -99,7 +220,7 @@
       </div>
       <div class="modal-body">
         <!-- Rescource Form -->
-                <form method="POST" action="{{route('mrp.store')}}" class="row mx-auto" id="createRFQModalForm">
+                <form method="POST" class="row mx-auto" id="createRFQModalForm">
                         @csrf
                         
 
@@ -110,12 +231,12 @@
 
                         <div class="mb-3 col-md-6 col-lg-4">
                             <label for="pr_num" class="form-label">{{ __('PR Number') }}</label>
-                            <input type="text" id="pr_num" class="form-control" name="pr_num" placeholder="PR Number to create RFQ" disabled>
+                            <input type="text" id="pr_num" class="form-control" name="pr_num" placeholder="PR Number to create RFQ">
                         </div>
 
                         <div class="mb-3 col-md-6 col-lg-4">
                             <label for="rfq_num" class="form-label">{{ __('RFQ Number') }}</label>
-                            <input type="text" id="rfq_num" class="form-control" name="rfq_num" value="RFQ_{{uniqid()}}" placeholder="RFQ Number to create RFQ" disabled>
+                            <input type="text" id="rfq_num" class="form-control" name="rfq_num" value="RFQ_{{uniqid()}}" placeholder="RFQ Number to create RFQ">
                         </div>
 
                         <div class="mb-3 col-md-6 col-lg-4">
@@ -156,7 +277,7 @@
 
                         <div class="mb-3 col-md-6 col-lg-3">
                             <label for="part_number" class="form-label">{{ __('Supplier') }}<sup class="text-danger">*</sup></label>
-                            <input list="supplier_list" id="supplier" class="form-control" name="supplier" placeholder="Supplier name if any for this PR" required>
+                            <input list="supplier_list" id="supplier" class="form-control" name="supplier" placeholder="Supplier name if any for this PR">
                             <datalist id="supplier_list">
                                 @foreach($suppliers as $supplier)
                                     <option value="{{$supplier->supplier_name}}">
@@ -190,6 +311,7 @@
                             <table class="table table-bordered border-primary">
                               <thead>
                                 <th>PR Number</th>
+                                <th>RFQ Number</th>
                                 <th>Supplier Name</th>
                                 <th>Phone Number</th>
                                 <th>Email</th>
@@ -267,7 +389,7 @@
                             <th>Quantity</th>
                             <th>Features</th>
                           <!-- </thead> -->
-                          <tbody id="prItemViewAll">
+                          <tbody class="prItemViewAllList">
 
                           </tbody>
                         </table>
@@ -276,6 +398,8 @@
                         <br><br>
                         <br>
 
+
+                        
 
                         <h5><b>Vendor Details</b></h5>
                         <div class="table-wrapper" style="height:auto;">
@@ -287,7 +411,7 @@
                             <th>Contact Email</th>
                             <th>Contact Person</th>
                           <!-- </thead> -->
-                          <tbody id="prVendorList">
+                          <tbody class="prVendorList">
                             <tr>
                               <td id="vendorName">Abhishek Kumar</td>
                               <td id="vendorPhone">+91 6202074551</td>

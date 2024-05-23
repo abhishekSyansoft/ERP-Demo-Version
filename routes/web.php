@@ -329,6 +329,12 @@ route::post('sqn/store',[SQNController::class ,'SQNAdd'])->name('sqn.store');
 route::get('edit-sqn/{encryptedId}',[SQNController::class ,'SQNEdit']);
 route::post('sqn/update/{encryptedId}',[SQNController::class ,'SQNUpdate']);
 route::get('delete-sqn/{encryptedId}',[SQNController::class ,'SQNDelete']);
+route::post('/send_quotation_for_approval',[SQNController::class ,'AppQuotSend']);
+route::post('/send_quotation_for_negotiation',[SQNController::class ,'NegoQuotSend']);
+route::post('/select_quotation_to_compare',[SQNController::class ,'CompQuot']);
+
+
+
 // End Supplier Quotation Negotiation Management
 
 // Goods Receieving Notes Management 
@@ -356,6 +362,7 @@ route::get('delete-po/{encryptedId}',[POController::class ,'PODelete']);
 route::post('fetch_item_lists_po',[POController::class ,'Fetch']);
 route::post('fetch_supplier_for_po',[POController::class ,'FetchSupplier']);
 route::post('save_item_lists',[POController::class ,'SaveItems']);
+route::post('save_item_lists_pr',[POController::class ,'SaveItemsPR']);
 route::get('/view_po',[POController::class ,'ViewPO']);
 //End Purchase Orders Management
 
@@ -374,6 +381,9 @@ route::post('crfq/store',[CreateRFQController::class ,'CRFQAdd'])->name('crfq.st
 route::get('edit-crfq/{encryptedId}',[CreateRFQController::class ,'CRFQEdit']);
 route::post('crfq/update/{encryptedId}',[CreateRFQController::class ,'CRFQUpdate']);
 route::get('delete-crfq/{encryptedId}',[CreateRFQController::class ,'CRFQDelete']);
+route::POST('/save_these_supplier_data',[CreateRFQController::class ,'SaveSupplierData']);
+route::POST('/view_rfq_suppliers_lists',[CreateRFQController::class ,'FetchSupplierData']);
+route::POST('/set_pr_visibility',[CreateRFQController::class ,'PRVisibility']);
 // End Create RFQ Management
 
 
@@ -387,10 +397,15 @@ route::get('delete-sqrf/{encryptedId}',[SendRFQController::class ,'SRFQDelete'])
 
 // Completed Lists Management 
 route::get('completed',[CompListController::class ,'CSRF'])->name('completed');
-// route::post('grn/store',[CompListController::class ,'GRNAdd'])->name('grn.store');
+route::post('/quotation/store',[CompListController::class ,'QuotAdd'])->name('quotation.store');
 // route::get('edit-grn/{encryptedId}',[CompListController::class ,'GRNEdit']);
 // route::post('grn/update/{encryptedId}',[CompListController::class ,'GRNUpdate']);
 // route::get('delete-grn/{encryptedId}',[CompListController::class ,'GRNDelete']);
+ route::post('/fetch-item-name',[CompListController::class ,'ItemNames']);
+ route::post('/fetch-item-details-for-quotation',[CompListController::class ,'ItemAllDetails']);
+ route::post('/save_these_qut_item_data',[CompListController::class ,'SaveQUTItem']);
+ route::post('/fetch-quotation-details',[CompListController::class ,'QUTDetails']);
+ route::post('/send_quotation',[CompListController::class ,'SendQuot']);
 // Completed Lists Management
 
 // -------------------------------------------------------------------------------------------------------------------------------------------

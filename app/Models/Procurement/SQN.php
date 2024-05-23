@@ -9,6 +9,10 @@ class SQN extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'pr_num',
+        'rfq_num',
+        'qut_num',
+        'visibility',
         'supplier_id',
         'item_id',
         'price',

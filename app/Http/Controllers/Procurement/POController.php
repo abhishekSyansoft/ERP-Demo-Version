@@ -177,26 +177,54 @@ class POController extends Controller
               
                 public function SaveItems(Request $request)
                 {
-                    // Validate the incoming JSON data
-                    $validator = Validator::make($request->json()->all(), [
-                        // 'Category.*' => 'required|string',
-                        // 'Item Code.*' => 'required|string',
-                        // 'Item Name.*' => 'required|string',
-                        // 'PO Number.*' => 'required|string',
-                        // 'Quantity.*' => 'required|integer|min:1',
-                        // 'Total Price.*' => 'required|numeric|min:0',
-                        // 'Unitprice.*' => 'required|numeric|min:0',
-                        // 'Vehicle.*' => 'required|string',
-                    ]);
                 
-                    // If validation fails, return a response with validation errors
-                    if ($validator->fails()) {
+                    // If validation passes, proceed with processing the data
+                    try {
+                        // Retrieve JSON data from the request
+                        $jsonData = $request->json()->all();
+                        
+                
+                        // Iterate over each data item and create records in the database
+                        foreach ($jsonData as $data) {
+                            foreach($data as $processData){
+                            ItemLists::create([
+                                'order_id' => $processData['PO Number'],
+                                'part_number' => $processData['Item Code'],
+                                'vehicle' => $processData['Vehicle'],
+                                'part_name' => $processData['Item Name'],
+                                'unit_price' => $processData['Unitprice'],
+                                'quantity' => $processData['Quantity'],
+                                'total_price' => $processData['Total Price'],
+                                'category' => $processData['Category'],
+                                // 'pr_num' => $processData['PR Number'],
+                                // 'item_type' => $processData['Type'],
+                                // 'item_des' => $processData['Item Description'],
+                                // 'item_feature' => $processData['Feature'],
+                            ]);
+                        }
+                        }
+                
+                        // Return a success response
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'Data processed successfully',
+                            'data' => $processData,
+                        ]);
+                    } catch (\Exception $e) {
+                        // Return a response with an error message if an exception occurs
                         return response()->json([
                             'success' => false,
-                            'message' => 'Validation error',
-                            'errors' => $validator->errors(),
-                        ], 422);
+                            'message' => 'An error occurred while processing the data',
+                            'error' => $e->getMessage(),
+                        ], 500);
                     }
+                }
+
+
+
+
+                public function SaveItemsPR(Request $request)
+                {
                 
                     // If validation passes, proceed with processing the data
                     try {

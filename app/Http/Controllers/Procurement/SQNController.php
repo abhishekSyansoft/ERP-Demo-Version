@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Models\Procurement\SQN;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class SQNController extends Controller
@@ -24,10 +24,11 @@ class SQNController extends Controller
 
                 // Retrieve all resources from the database
                 $sqn = DB::table('s_q_n_s')
-                ->join('suppliers', 'suppliers.id', '=', 's_q_n_s.supplier_id')
-                ->join('products', 'products.id', '=', 's_q_n_s.item_id')
-                ->select('s_q_n_s.*', 'suppliers.supplier_name as supplier','products.product_name as product')
+                ->join('rfq_supplier_lists', DB::raw('BINARY s_q_n_s.qut_num'), '=', DB::raw('BINARY rfq_supplier_lists.qut_num'))
+                ->join('quotations', DB::raw('BINARY quotations.qut_num'), '=', DB::raw('BINARY rfq_supplier_lists.qut_num'))
+                ->select('s_q_n_s.*', 'rfq_supplier_lists.supplier as supplier','quotations.total_amount as finalAmount')
                 ->get();
+            
                 $products = Products::all();
                 $suppliers = supplier::all();
 
@@ -39,6 +40,78 @@ class SQNController extends Controller
                 return view("error")->with("error", "Failed to fetch resources: ".$e->getMessage());
             }
         }
+
+
+        public function CompQuot(Request $request){
+            // Validate the incoming request data
+            $request->validate([
+                'ids' => 'required|array',
+                'ids.*' => 'string'
+            ]);
+
+            // Retrieve the array of IDs
+            $ids = $request->input('ids');
+
+            // Fetch the quotations from the database
+                $quotations = DB::table('quotations')
+                ->join('rfq_supplier_lists', function($join) use ($ids) {
+                    $join->on(DB::raw('BINARY rfq_supplier_lists.qut_num'), '=', DB::raw('BINARY quotations.qut_num'))
+                        ->whereIn('rfq_supplier_lists.qut_num', $ids);
+                })
+                ->join('s_q_n_s', function($join) use ($ids) {
+                    $join->on(DB::raw('BINARY s_q_n_s.qut_num'), '=', DB::raw('BINARY quotations.qut_num'));
+                })
+                ->select(['quotations.*', 'rfq_supplier_lists.supplier as supplierName', 's_q_n_s.approval as QutApproval', 's_q_n_s.negotiation as QutNego'])
+                ->whereIn('quotations.qut_num', $ids)
+                ->get();
+
+
+            // Perform any required operations with the IDs, for example:
+            // $quotations = Quotation::whereIn('id', $ids)->get();
+
+           
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Quotations retrieved successfully',
+                    'ids' => $ids,
+                    'data' => $quotations
+                ]);
+
+        }
+
+
+
+        public function AppQuotSend(Request $request){
+            $qut_num = $request->input('id');
+
+
+            DB::table('s_q_n_s')->where('qut_num',$qut_num)->update([
+                'approval' => 1
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'qut_num' => $qut_num,
+                'message' => 'Quotation sent for approval'
+            ]);
+        }
+
+
+        public function NegoQuotSend(Request $request){
+            $qut_num = $request->input('id');
+
+
+            DB::table('s_q_n_s')->where('qut_num',$qut_num)->update([
+                'negotiation' => 1
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'qut_num' => $qut_num,
+                'message' => 'Quotation sent for Negotiation'
+            ]);
+        }
+        
 
 
 

@@ -1008,10 +1008,6 @@
                                                         });
 
                                                     $('#actionOnCompQuot').html(tableBody1);
-
-
-
-
                                                     // Group the content of each item
                                                     $.each(response.data, function(index, item) {
                                                         // Push the content of each item into the groupedContent array

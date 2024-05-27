@@ -678,7 +678,7 @@ table, th, td {
               </a>
             </li>
 
-            <li class="nav-item sidebar-item" style="padding-left:10px;padding-right:10px;">
+            <li class="nav-item sidebar-item active" style="padding-left:10px;padding-right:10px;">
               <a class="nav-link sidebar-link" style="padding-left:10px;padding-right:10px;" href="{{route('dashboard')}}"><span class="menu-title"><b>Dashboard</b></span><i class="mdi mdi-view-dashboard menu-icon"></i></a>
             </li>
 

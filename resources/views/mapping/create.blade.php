@@ -21,7 +21,7 @@
                         <div> -->
             </div>
             <div class="row">
-              <div class="col-lg-12 m-0 p-0">
+              <div class="col-lg-12">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">New module mapping</h4>
@@ -34,17 +34,17 @@
                         <div class="col-md-12 row">
                             <div class="form-group col-lg-6">
                                 <label for="modules">Module Mapping</label>
-                                <select name="module" class="form-control">
-                                @foreach($module as $module)
-                                        <option value="{{$module->id}}">{{$module->name}}</option>
+                                <select name="module" class="form-control p-3">
+                                @foreach($module as $modules)
+                                        <option value="{{$modules->id}}">{{$modules->name}}</option>
                                      @endforeach 
                                 </select>
                             </div>
                             <div class="form-group col-lg-6">
                                 <label for="role"> Role</label>
-                                <select name="role" class="form-control">
-                                    @foreach($role as $role)
-                                        <option value="{{$role->id}}">{{$role->name}}</option>
+                                <select name="role" class="form-control p-3">
+                                    @foreach($role as $roles)
+                                        <option value="{{$roles->id}}">{{$roles->name}}</option>
                                      @endforeach  
                                 </select>
                             </div>

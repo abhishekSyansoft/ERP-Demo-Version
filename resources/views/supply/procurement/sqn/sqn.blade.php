@@ -72,7 +72,7 @@
                                 <td>{{$data->rfq_num}}</td>
                                 <td>{{$data->pr_num}}</td>
                                 <td>{{$data->supplier}}</td>
-                                <td>{{number_format(($data->finalAmount)+((18/100)*$data->finalAmount)+3000)}}</td>
+                                <td>Rs. {{number_format(($data->finalAmount)+((18/100)*$data->finalAmount)+3000)}}</td>
                                 <td><i class="text-success"></i></td>
                                 @if($data->approval == 1)
                                 <td><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>
@@ -338,6 +338,32 @@
                       <div class="modal-body compare">
 
                      <center> <h2>Quotation Comparison</h2></center>
+                     <hr>
+
+
+      <div style="border:1px solid black;">
+      <div class="row col-4 table-wrapper" style="height:auto !important;">
+                        <h5 class="m-0 p-0 mb-3"><b>Comparison Metrics</b></h5>
+                          <table class="col-6 table table-bordered table-striped">
+                                <tr class="m-1">
+                                  <th>Highest BID</th>
+                                  <td style="background-color: #EB9595;"></td>
+                                </tr>
+                                <tr>
+                                  <th>Lowest BID</th>
+                                  <td style="background-color: #90ee90;margin:10px !important;"></td>
+                                </tr>
+                                <tr>
+                                  <th>All Equal</th>
+                                  <td class="m-1" style="background-color:#F0F396;"></td>
+                                </tr>
+                                <tr>
+                                  <th>Multiple Highest BID</th>
+                                  <td style="background-color:#8BDCF1;"></td>
+                                </tr>
+
+                          </table>
+                        </div>
 
                         <div class="table-wrapper" style="height:auto !important;">
                           <table class="table table-bordered border-primary">
@@ -367,9 +393,11 @@
                            <!-- <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                             Check one to edit
                             </button>   -->
-                          <button type="button" class="btn btn-secondary">Close</button>
                         </div>
-                        </form>
+                        </div>
+                          <button type="button" class="btn btn-secondary mt-2">Close</button>
+                        
+                       
                       </div>
                       
                         <!-- <button type="button" class="btn btn-primary">Understood</button> -->

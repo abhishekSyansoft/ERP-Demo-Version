@@ -982,7 +982,7 @@
                                                     var groupedContent = [];
 
                                                     // Add headings as the first entry in the groupedContent array
-                                                    var headings = ["Details", "Qut_number", "Total", "Tax", "Others", "Final Amount", "Delivery Time <b>(week)</b>", "Payment Terms <b>(Days)</b>", "Quality", "Customer Service"];
+                                                    var headings = ["Details", "Qut_number", "Total (rs.)", "Tax Rate %", "Tax (rs.)", "Others (rs.)", "Final Amount (rs.)", "Delivery Time <b>(week)</b>", "Payment Terms <b>(Days)</b>", "Quality", "Customer Service"];
                                                     groupedContent.push(headings);
 
 
@@ -1018,10 +1018,12 @@
                                                         var totalAmount = parseFloat(item.total_amount);
                                                         var taxAmount = parseFloat(0.18 * totalAmount);
                                                         var finalAmount = totalAmount + taxAmount + 3000;
+                                                        var taxrate = 18;
                                                         groupedContent.push([
                                                             item.supplierName,
                                                             item.qut_num,
                                                             item.total_amount,
+                                                            taxrate,
                                                             taxAmount,
                                                             others,
                                                             finalAmount,
@@ -1035,11 +1037,12 @@
                                                     
                                                       // Generate HTML for the grouped content
                                                         var tableBody = '';
+                                                        var columnRatings = []; // Array to store the ratings for each column
                                                         for (var i = 0; i < groupedContent[0].length; i++) {
                                                             tableBody += '<tr>';
                                                             for (var j = 0; j < groupedContent.length; j++) {
                                                                 if (j === 0) {
-                                                                    tableBody += '<th style="color: darkblue;" class="text-center">' + groupedContent[j][i] + '</th>';
+                                                                    tableBody += '<th style="color:darkblue;" class="text-center">' + groupedContent[j][i] + '</th>';
                                                                 } else {
                                                                     var cellValue = groupedContent[j][i];
                                                                     var isNumeric = !isNaN(parseFloat(cellValue)) && isFinite(cellValue); // Check if the cell value is numeric
@@ -1049,40 +1052,87 @@
                                                                         cellValue = parseFloat(cellValue);
                                                                     }
 
-                                                                    // Compare the cell value with the greatest value in the column
+                                                                    var allValuesEqual = true; // Initialize flag to check if all values in the column are equal
+                                                                    var hasDuplicates = false; // Initialize flag to check for duplicates
+                                                                    var hasMultipleGreatest = false; // Initialize flag to check for multiple greatest values
                                                                     var greatestValue = null;
-                                                                    if (i !== 0 && i !== 1 && i !== 9 && i !== 8) { // Exclude columns 0, 1, 7, and 8 from comparison
-                                                                        groupedContent.forEach(function(row, rowIndex) {
-                                                                            if (rowIndex !== 0) {
-                                                                                var value = row[i];
-                                                                                if (!isNaN(parseFloat(value)) && isFinite(value)) {
-                                                                                    value = parseFloat(value);
-                                                                                }
-                                                                                if (value < greatestValue || greatestValue === null) {
-                                                                                    greatestValue = value;
-                                                                                }
-                                                                            }
-                                                                        });
-                                                                    }
+                                                                    var lowestValue = null;
+                                                                    var valueCounts = {}; // Object to count occurrences of each value
+                                                                    var lowestValueCount = 0; // Count of lowest values in the column
+                                                                    var greatestValueCount = 0; // Count of greatest values in the column
 
-                                                                    // Apply green background color to the cell if it's the greatest value (excluding specific columns)
-                                                                    if (greatestValue !== null && cellValue === greatestValue) {
-                                                                        if((i == 2) || (i == 3) || (i == 4) || (i == 5)){
-                                                                        tableBody += '<td style="background-color: #90ee90;" class="m-1 text-center"">' + numberFormatter.format(cellValue) + '</td>';
-                                                                        }else{
-                                                                            tableBody += '<td style="background-color: #90ee90;" class="m-1 text-center">' + cellValue + '</td>'; 
+
+                                                                        // Determine greatest and lowest values for the column, if the column is not excluded
+                                                                        if (![0, 1, 10, 9].includes(i)) {
+                                                                            for (var k = 1; k < groupedContent.length; k++) {
+                                                                                var value = parseFloat(groupedContent[k][i]);
+                                                                                if (!isNaN(value) && isFinite(value)) {
+                                                                                    if (greatestValue === null || value > greatestValue) {
+                                                                                        greatestValue = value;
+                                                                                    }
+                                                                                    if (lowestValue === null || value < lowestValue) {
+                                                                                        lowestValue = value;
+                                                                                    }
+                                                                                    // Count occurrences of each value
+                                                                                    valueCounts[value] = (valueCounts[value] || 0) + 1;
+                                                                                }
+                                                                            }
+
+                                                                            // Check if all values in the column are equal
+                                                                            for (var m = 1; m < groupedContent.length; m++) {
+                                                                                var value = parseFloat(groupedContent[m][i]);
+                                                                                if (!isNaN(value) && isFinite(value)) {
+                                                                                    if (value !== greatestValue || value !== lowestValue) {
+                                                                                        allValuesEqual = false;
+                                                                                    }
+                                                                                    if (value === greatestValue && valueCounts[value] > 1) {
+                                                                                        hasMultipleGreatest = true;
+                                                                                    }
+                                                                                    if (valueCounts[value] > 1 && value !== greatestValue) {
+                                                                                        hasDuplicates = true;
+                                                                                    }
+                                                                                }
+                                                                            }
+    // }
                                                                         }
-                                                                    } else {
-                                                                        if( i == 0){
-                                                                            tableBody += '<th style="color:darkblue;" class="text-center">' + cellValue + '</th>';
-                                                                        }else{
-                                                                            if((i == 2) || (i == 3) || (i == 4) || (i == 5)){
-                                                                            tableBody += '<td class="text-center">' + numberFormatter.format(cellValue) + '</td>';
+                                                                   
+                                                                       
+                                                                        // Set background color based on the conditions
+                                                                        if (allValuesEqual && ![0, 1, 9, 7, 10].includes(i)) {
+                                                                            if ([0, 1, 5, 9, 7].includes(i)) {
+                                                                            tableBody += '<td style="background-color: #F0F396;" class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
                                                                             }else{
-                                                                                tableBody += '<td class="text-center">' + cellValue + '</td>';
+                                                                                tableBody += '<td style="background-color: #F0F396;" class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
+
+                                                                            }
+                                                                        } else if (cellValue === lowestValue) {
+                                                                            if ([0, 1, 8, 5, 3, 9, 7].includes(i)) {
+                                                                                tableBody += '<td style="background-color: #90ee90;" class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
+                                                                            } else {
+                                                                                tableBody += '<td style="background-color: #90ee90;" class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
+                                                                            }
+                                                                        } else if (hasMultipleGreatest && cellValue === greatestValue && !allValuesEqual && ![0, 1, 3, 10, 9].includes(i)) {
+                                                                            tableBody += '<td style="background-color: #8BDCF1;" class="text-center">' + groupedContent[j][i] + '</td>';
+                                                                        } else if (cellValue === greatestValue) {
+                                                                            if ([0, 1, 8, 5, 3, 9, 7].includes(i)) {
+                                                                                tableBody += '<td style="background-color: #EB9595;" class="text-center">' + groupedContent[j][i] + '</td>';
+                                                                            } else {
+                                                                                tableBody += '<td style="background-color: #EB9595;" class="text-center">' + numberFormatter.format(groupedContent[j][i]) + '</td>';
+                                                                            }
+                                                                        } else {
+                                                                            if ([0, 1, 8, 9, 5, 3, 10, 7].includes(i)) {
+                                                                                if ([0].includes(i)) {
+                                                                                    tableBody += '<th class="text-center" style="color:darkblue;">' + groupedContent[j][i] + '</th>';
+                                                                                } else {
+                                                                                    tableBody += '<td class="text-center">' + groupedContent[j][i] + '</td>';
+                                                                                }
+                                                                            } else {
+                                                                                tableBody += '<td class="text-center">' + numberFormatter.format(groupedContent[j][i]) + '</td>';
                                                                             }
                                                                         }
-                                                                    }
+
+
+                                                                    // }
                                                                 }
                                                             }
                                                             tableBody += '</tr>';

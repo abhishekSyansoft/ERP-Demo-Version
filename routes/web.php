@@ -41,6 +41,7 @@ use App\Http\Controllers\logistics\DNController;
 use App\Http\Controllers\logistics\IOLController;
 use App\Http\Controllers\logistics\OFController;
 use App\Http\Controllers\logistics\TMController;
+use App\Http\Controllers\ERP\EauctionController;
 use App\Http\Controllers\BOM\MainAssemblyController;
 use App\Http\Controllers\DPF\DCController;
 use App\Http\Controllers\DPF\DFController;
@@ -51,6 +52,7 @@ use App\Http\Controllers\QM\SQController;
 use App\Http\Controllers\SCAR\AnalyticsController;
 use App\Http\Controllers\SCAR\PerformanceController;
 use App\Http\Controllers\SCAR\PreddictiveController;
+use App\Http\Controllers\ERP\GateEntry;
 // use App\Models\Role;
 // use App\Models\Users;
 /*
@@ -67,7 +69,84 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-route::middleware(['role:3,6,2'])->group(function () {
+route::middleware(['role:3,6,2,8,9'])->group(function () {
+
+
+
+// Enterprises Resource Planning
+
+
+
+
+            // Start E-Auction
+            route::get('/initiate_auction', [EauctionController::class, 'EAuction'])->name('initiate_auction');
+            route::get('/scrap_items', [EauctionController::class, 'ScrapItems'])->name('scrap_items');
+            // End E-Auction
+
+
+
+
+
+    // Inventory
+            // Gate Entry
+            route::get('/gate_entry',[GateEntry::class,'GateEntry'])->name('gate_entry');
+            route::get('/initial_inspection',[GateEntry::class,'InitialInspection'])->name('initial_inspection');
+            route::get('/inspection_&_quality',[GateEntry::class,'InspQltCont'])->name('inspection_&_quality');
+            route::get('/return_&_reject',[GateEntry::class,'RetAndRej'])->name('return_&_reject');
+            route::get('/inv_con_mgt',[GateEntry::class,'INVControlPage'])->name('inv_con_mgt');
+            route::get('/barcode_&_rfid_int',[GateEntry::class,'BarcodePage'])->name('barcode_&_rfid_int');
+            route::get('/demand_planning_&_forcasting',[GateEntry::class,'ForecastIninv'])->name('demand_planning_&_forcasting');
+            route::get('/sales_orders',[GateEntry::class,'SalesOrders'])->name('sales_orders');
+            route::get('/audit_&_compliance',[GateEntry::class,'AuditCompliance'])->name('audit_&_compliance');
+            
+            route::post('/fetch-order-details-inv-erp',[GateEntry::class,'Details']);
+            route::post('/fetch-dnn-details-inv-erp',[GateEntry::class,'DetailsDNN']);
+            route::post('/fetch-grn-details-inv-erp',[GateEntry::class,'DetailsGRN']);
+            route::post('/gateentry/store',[GateEntry::class,'DetailsStore'])->name('gateentry.store');
+            route::post('/inspection/store',[GateEntry::class,'InspectionStore'])->name('inspection.store');
+            route::post('/store_inward_data',[GateEntry::class,'SalesStore'])->name('store_inward_data');
+            route::post('/audit/store',[GateEntry::class,'AuditStore'])->name('audit.store');
+            
+            route::post('/create_inv_qr_code',[GateEntry::class,'GenerateQR']);
+            route::post('/create_inv_barcode',[GateEntry::class,'GenerateBarcodeINVData']);
+            route::post('/fetch_order_item_lists_sales',[GateEntry::class,'GetSalesItemDetails']);
+            route::post('/fetch_audit_report',[GateEntry::class,'AuditReportFetch']);
+            
+            
+            
+            
+            
+            
+            
+            
+            // End Gate Entry
+    // End Inventory
+
+//End Enterprises Resource Planning
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //Start Modules HTTP requests 
 route::get('modules',[moduleController::class , 'AllModules'])->name('modules');
@@ -83,6 +162,9 @@ route::post('modules/update/{encryptedID}',[moduleController::class ,'UpdateModu
 route::get('bike_parts',[MainAssemblyController::class , 'BikeParts'])->name('bike_parts');
 route::POST('bike_parts/add_cat',[MainAssemblyController::class ,'AddPartCat'])->name('add.cat');
 route::get('invoice_validation',[MainAssemblyController::class ,'Validation'])->name('invoice_validation');
+route::POST('/reject_invoice',[MainAssemblyController::class ,'RejectInvoiceValidation']);
+route::POST('/approve_invoice',[MainAssemblyController::class ,'ApproveInvoiceValidation']);
+
 route::get('payment_initiation',[MainAssemblyController::class ,'Initiate'])->name('payment_initiation');
 route::get('payment_tracking',[MainAssemblyController::class ,'TrackingPayment'])->name('payment_tracking');
 route::get('supplier_profile',[MainAssemblyController::class ,'SupplierProfile'])->name('supplier_profile');
@@ -364,6 +446,11 @@ route::post('fetch_supplier_for_po',[POController::class ,'FetchSupplier']);
 route::post('save_item_lists',[POController::class ,'SaveItems']);
 route::post('save_item_lists_pr',[POController::class ,'SaveItemsPR']);
 route::get('/view_po',[POController::class ,'ViewPO']);
+route::POST('/generate_invoice',[POController::class ,'GenerateInvoice']);
+route::POST('/fetch_invoice_details',[POController::class ,'ViewInvoice']);
+route::POST('/send_invoice',[POController::class ,'SendInvoice']);
+
+
 //End Purchase Orders Management
 
 
@@ -475,6 +562,8 @@ route::POST('/fetch-part-details',[trackingController::class ,'FetchDetails']);
 // Stock Replensihment and allocatiom Management 
 route::get('stock_replenishment_&_allocation',[SRAController::class ,'SRA'])->name('stock_replenishment_&_allocation');
 route::post('sra/store',[SRAController::class ,'SRAAdd'])->name('sra.store');
+route::post('scrap/item',[SRAController::class ,'ScrapItemData'])->name('scrap.store');
+
 route::get('edit-sra/{encryptedId}',[SRAController::class ,'SRAEdit']);
 route::post('sra/update/{encryptedId}',[SRAController::class ,'SRAUpdate']);
 route::get('delete-sra/{encryptedId}',[SRAController::class ,'SRADelete']);
@@ -654,7 +743,7 @@ route::get('delete-predictive/{encryptedId}',[PreddictiveController::class ,'Pre
 });
 
 
-Route::middleware(['role:2,3'])->group(function () {
+Route::middleware(['role:2,3,8,9'])->group(function () {
 
 // Supplier Quotation Negotiation Management 
 route::get('supplier-quotation',[SQNController::class ,'SQN'])->name('supplier-quotation');
@@ -662,6 +751,7 @@ route::post('sqn/store',[SQNController::class ,'SQNAdd'])->name('sqn.store');
 route::get('edit-sqn/{encryptedId}',[SQNController::class ,'SQNEdit']);
 route::post('sqn/update/{encryptedId}',[SQNController::class ,'SQNUpdate']);
 route::get('delete-sqn/{encryptedId}',[SQNController::class ,'SQNDelete']);
+route::get('/help',[SQNController::class ,'Help']);
 // End Supplier Quotation Negotiation Management
 
 
@@ -673,6 +763,9 @@ route::post('po/update/{encryptedId}',[POController::class ,'POUpdate']);
 route::get('delete-po/{encryptedId}',[POController::class ,'PODelete']);
 route::post('/fetch_order_item_lists',[POController::class ,'FetchOrderItem']);
 route::post('/fetch_order_item_data',[POController::class ,'FetchOrderItem']);
+route::post('/fetch_order_item_data_for_invoice',[POController::class ,'FetchOrderItemInvoice']);
+
+
 
 //End Purchase Orders Management
 
@@ -683,10 +776,12 @@ route::post('invoices/store',[InvoicesCont::class ,'InvoicesAdd'])->name('invoic
 route::get('edit-invoice/{encryptedId}',[InvoicesCont::class ,'InvoicesEdit']);
 route::post('invoices/update/{encryptedId}',[InvoicesCont::class ,'InvoicesUpdate']);
 route::get('delete-invoice/{encryptedId}',[InvoicesCont::class ,'InvoicesDelete']);
+// route::get('delete-invoice/{encryptedId}',[InvoicesCont::class ,'InvoicesDelete']);
+
 //End Invoices Management
 });
 
-Route::middleware(['role:6,3'])->group(function () {
+Route::middleware(['role:6,3,9'])->group(function () {
 // Invoices Management 
 route::get('order',[OrderController::class ,'Order'])->name('order');
 route::post('order/store',[OrderController::class ,'OrderAdd'])->name('order.store');

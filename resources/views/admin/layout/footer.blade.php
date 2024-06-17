@@ -15,7 +15,94 @@
     <!-- endinject -->
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="{{asset('backend/js/jquery.cookie.js')}}" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.tiny.cloud/1/hk0f0e88romq2xcsd198zlsl7nfw00tlegcbx29pr71q77l0/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: 'textarea'
+    });
+</script>
+<script>
+function toggleAccordion(element) {
+    var content = element.nextElementSibling;
+    if (content.style.display === "block") {
+        content.style.display = "none";
+    } else {
+        content.style.display = "block";
+    }
+}
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.body.addEventListener('click', function(event) {
+      var targetId = event.target.id;
+      var element, opt;
+
+      switch(targetId) {
+        case 'printGRN':
+          element = document.querySelector('#GRNiewModal .printContent');
+          opt = {
+            margin: 0.5,
+            filename: 'Goods_Receiving_Note.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'A3', orientation: 'landscape' }
+          };
+          html2pdf().from(element).set(opt).save();
+          break;
+          
+        case 'downloadPO':
+          element = document.querySelector('#viewPOmodal .content-wrapper');
+          opt = {
+            margin: 0.5,
+            filename: 'Purchase_Order.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait' }
+          };
+          html2pdf().from(element).set(opt).save();
+          break;
+          
+        case 'rfqQUTLabel':
+          element = document.querySelector('#rfqQUT .container');
+          opt = {
+            margin: 0.5,
+            filename: 'quotation.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'A3', orientation: 'landscape' }
+          };
+          html2pdf().from(element).set(opt).save();
+          break;
+          
+        case 'rfqViewModalLabel':
+          element = document.querySelector('#rfqViewModal .container');
+          opt = {
+            margin: 0.5,
+            filename: 'RFQ.pdf',
+            image: { type: 'png', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'A4', orientation: 'landscape' }
+          };
+          html2pdf().from(element).set(opt).save();
+          break;
+          
+        default:
+          return; // Exit if no matching ID
+      }
+    });
+  });
+
+  function closeModal() {
+    document.getElementById('viewPOmodal').style.display = 'none';
+  }
+</script>
+
 
 
      {{-- toastr js --}}
@@ -27,12 +114,101 @@
                 <script>
                     // Your jQuery code
                     $(document).ready(function() {
-                        $('#downloadPO').on('click', function() {
+
+
+
+                        $('#addSupplierModal #scraptype').on('change', function(e){
+                        var type = $('#TACForm #scraptype').children('option:selected').val();
+
+                            if( type != "From Inventory" ){
+
+                            }else{
+                                $('#addSupplierModal #grn_number').hide();
+                                $('#addSupplierModal #dnn_number').hide();
+                            }
+                        });
+
+
+                        // $('#downloadPO').on('click', function() {
+                        //     try {
+                        //         // Create a new jsPDF instance
+                        //         const doc = new jsPDF();
+                        //         // Clone the modal content
+                        //         var modalContent = $('#viewPOmodal .content-wrapper').clone();
+
+                        //         // Create a temporary container to hold the cloned content
+                        //         var printableContent = $('<div></div>').append(modalContent);
+
+                        //         // Apply inline styles to printableContent
+                        //         printableContent.find('*').each(function() {
+                        //             $(this).attr('style', $(this).attr('style')); // Copy existing styles to inline styles
+                        //         });
+
+                        //         // Append the temporary container to the body
+                        //         $('body').append(printableContent);
+                                                                    
+                        //                     // Calculate the maximum width for content to fit on one page
+                        //                     var maxWidth = 210; // A4 paper width - margin
+
+                        //             // Check if the modal content width exceeds the maximum width
+                        //             var modalWidth = modalContent.outerWidth();
+                        //             if (modalWidth > maxWidth) {
+                        //                 // Adjust the width of the modal content to fit within one page
+                        //                 modalContent.css('width', maxWidth + 'mm');
+                        //             }
+
+                        //         // Apply styles for printing
+                        //         printableContent.css({
+                        //             'position': 'absolute',
+                        //             'left': '0',
+                        //             'top': '0',
+                        //             'padding': '0',
+                        //             'margin': '0',
+                        //             'background-color': '#ffffff' // Set background color to white
+                        //         });
+
+                        //         html2canvas(printableContent[0], {
+                        //             backgroundColor: 'white' // Set background color to white
+                        //         }).then(function(canvas) {
+                        //             // Create a new jsPDF instance
+                        //             const doc = new jsPDF({
+                        //                 unit: 'mm',
+                        //                 format: [canvas.width * 0.26583, canvas.height * 0.26083] // Convert canvas size from pixels to millimeters
+                        //             });
+
+                        //                 // Save canvas as image
+                        //                 var imgData = canvas.toDataURL('image/jpeg');
+
+                        //                 // Add image to PDF
+                        //                 doc.addImage(imgData, 'JPEG', 0, 0);
+
+                        //               // Generate a random number between 0 and 9999
+                        //             const randomNumber = Math.floor(Math.random() * 10000);
+
+                        //             // Construct the file name with the random number and the ".pdf" extension
+                        //             const fileName = `PO_${randomNumber}.pdf`;
+
+                        //             // Save the PDF file with the random name
+                        //             doc.save(fileName);
+                        //             });
+                        //         // Save the PDF file
+                        //         // doc.save("output.pdf");
+
+                             
+                        //     } catch (error) {
+                        //         console.error('An error occurred while generating PDF:', error);
+                        //     }
+                        // });
+
+
+
+                        $('#downloadInvoiceModal .printInvoice').on('click', function(e) {
                             try {
+                                e.preventDefault();
                                 // Create a new jsPDF instance
                                 const doc = new jsPDF();
                                 // Clone the modal content
-                                var modalContent = $('#viewPOmodal .content-wrapper').clone();
+                                var modalContent = $('#downloadInvoiceModal .content-wrapper').clone();
 
                                 // Create a temporary container to hold the cloned content
                                 var printableContent = $('<div></div>').append(modalContent);
@@ -72,7 +248,7 @@
                                     // Create a new jsPDF instance
                                     const doc = new jsPDF({
                                         unit: 'mm',
-                                        format: [canvas.width * 0.26583, canvas.height * 0.26083] // Convert canvas size from pixels to millimeters
+                                        format: [canvas.width * 0.26583, canvas.height * 0.27083] // Convert canvas size from pixels to millimeters
                                     });
 
                                         // Save canvas as image
@@ -85,7 +261,7 @@
                                     const randomNumber = Math.floor(Math.random() * 10000);
 
                                     // Construct the file name with the random number and the ".pdf" extension
-                                    const fileName = `output_${randomNumber}.pdf`;
+                                    const fileName = `INV_${randomNumber}.pdf`;
 
                                     // Save the PDF file with the random name
                                     doc.save(fileName);
@@ -98,6 +274,7 @@
                                 console.error('An error occurred while generating PDF:', error);
                             }
                         });
+
 
                     });
 
@@ -591,6 +768,106 @@
                 })
              });
 
+             
+             $('.itemListsBTNSales').on('click', function(){
+                // Get the order ID from the data attribute
+                var id = $(this).data('id');
+                // alert(id);
+              
+                // Send the order ID as data in the AJAX request
+                $.ajax({
+                    url: '/fetch_order_item_lists_sales',
+                    method: 'POST',
+                    data: { id: id }, // Pass id as an object
+                    headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    success: function(response) {
+                        // Close all modals on success
+                       console.log(response);
+                        $('#staticBackdrop').modal('show');
+
+                        // Optionally, you can redirect the user to a success page or perform any other actions
+                            var tableBody = '';
+                            
+                            $.each(response.orderitems, function(index, item) {
+                                tableBody += '<tr>';
+                                tableBody += '<td>' + (index + 1) + '</td>';
+                                tableBody += '<td>' + item.vehicle + '</td>';
+                                tableBody += '<td>' + item.category + '</td>';
+                                tableBody += '<td>' + item.part_number + '</td>';
+                                tableBody += '<td>' + item.part_name + '</td>';
+                                tableBody += '<td>' + parseInt(item.unit_price).toLocaleString() + '</td>';
+                                tableBody += '<td>' + parseFloat(item.quantity).toLocaleString() + '</td>';
+                                tableBody += '<td>' + parseFloat(item.total_price).toLocaleString() + '</td>';
+                                tableBody += '</tr>';
+
+                                
+                            });
+
+                            $('#staticBackdrop #OrdereditemlistsPO').html(tableBody);
+
+
+                        // Other actions after successful AJAX call
+                    },
+                    error: function(xhr, status, error) {
+                        // Error handling
+                    }
+                });
+            });
+
+
+
+
+            $('.fileAudit').on('click', function(event){
+                event.preventDefault();
+                var id = $(this).data('id');
+
+                $('#addSupplierModal #inventory_id').val(id);
+                
+                $('#addSupplierModal').modal('show');
+            })
+
+
+
+            $('.viewAuditReport').on('click', function(event){
+                event.preventDefault();
+                var id = $(this).data('id');
+
+                // alert(id);
+
+                 // Send the order ID as data in the AJAX request
+                 $.ajax({
+                    url: '/fetch_audit_report',
+                    method: 'POST',
+                    data: { id: id }, // Pass id as an object
+                    headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    success: function(response) {
+                        // Close all modals on success
+                       console.log(response);
+
+                       $('#staticBackdrop #date').text(response.date);
+                       $('#staticBackdrop #name').text(response.name);
+                        // Set the href attribute of the file link
+                       $('#staticBackdrop #file').attr('href', 'Storage/'+response.file);
+                        $('#staticBackdrop').modal('show');
+
+
+                        // Other actions after successful AJAX call
+                    },
+                    error: function(xhr, status, error) {
+                        // Error handling
+                          // Handle any errors
+                          console.error('Error:', error);
+                    }
+                });
+            });
+
+            // })
+
+
 
 
              $('.itemListsBTN').on('click', function(){
@@ -738,21 +1015,24 @@
                         $('#viewPOmodal #final').text(parseFloat(final).toLocaleString());
                         // Optionally, you can redirect the user to a success page or perform any other actions
                             var tableBody = '';
-                            
-                            $.each(response.orderitems, function(index, item) {
-                                 // Append each part_number value to the element with class .item_code
-                                $('.item_code').append(item.part_number + '<br>');
-                                $('.item_name').append(item.part_name + '<br>');
-                                $('.item_category').append(item.category + '<br>');
-                                $('.item_vehicle').append(item.vehicle + '<br>');
-                                $('.item_unit_price').append(item.unit_price + '<br>');
-                                $('.item_quantity').append(item.quantity + '<br>');
-                                $('.item_total').append(item.total_price + '<br>');
-                            });
 
+                              // Clear previous items
+                                $('.item_code, .item_name, .item_category, .item_vehicle, .item_unit_price, .item_quantity, .item_total').empty();
 
+                                $.each(response.orderitems, function(index, item) {
+                                    var unit_price = parseFloat(item.unit_price).toLocaleString();
+                                    var total_price = parseFloat(item.total_price).toLocaleString();
+                                    $('.item_code').append(item.part_number + '<br>');
+                                    $('.item_name').append(item.part_name + '<br>');
+                                    $('.item_category').append(item.category + '<br>');
+                                    $('.item_vehicle').append(item.vehicle + '<br>');
+                                    $('.item_unit_price').append(unit_price + '<br>');
+                                    $('.item_quantity').append(item.quantity + '<br>');
+                                    $('.item_total').append(total_price + '<br>');
+                                });
 
-                            $('#viewPOmodal #table_items_po_tbl_bdy').html(tableBody);
+                            $('#viewPOmodal #table_items_po #table_items_po_tbl_bdy').append(tableBody);
+                            console.clear();
 
 
                         // Other actions after successful AJAX call
@@ -952,6 +1232,439 @@
                                 }
                             });
 
+
+                            $('#gateEntryForm #po_number').on('keyup', function(event){
+                                event.preventDefault();
+                                var id = $(this).val();
+                                
+                                                    
+                                    // Get the CSRF token value from the meta tag
+                                    var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                                        // Make AJAX call
+                                        $.ajax({
+                                            url: '/fetch-order-details-inv-erp', // Specify your endpoint URL
+                                            type: 'POST', // Or 'GET' depending on your server route
+                                            data: {
+                                                    id: id,
+                                                    _token: csrfToken // Include the CSRF token in the data
+                                                }, // Send the order ID in the request
+                                            success: function(response) {
+
+                                                console.log(response.items);
+                                                
+                                                var order_date = response.order_date;
+                                                $('#gateEntryForm #order_date').val(order_date);
+                                                var partNumbers = [];
+                                                var partNames = [];
+
+                                                $.each(response.items, function(index, item) {
+                                                    partNumbers.push(item.part_number);
+                                                    partNames.push(item.part_name);
+                                                });
+
+                                                $('#gateEntryForm #item_id').val(partNumbers.join(', '));
+                                                $('#gateEntryForm #item_name').val(partNames.join(', '));
+                                            },
+                                            error: function(xhr, status, error) {
+                                                // Handle any errors
+                                                console.error('Error:', error);
+                                            }
+                                        });
+
+                                     })
+
+
+                                     $('#inspectionForm #dnn').on('keyup',function(e){
+                                        e.preventDefault();  //remove any further function from the background
+                                        var id = $(this).val();  //get the DNN number form the form
+                                         // Get the CSRF token value from the meta tag
+                                        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                                            // Make AJAX call
+                                            $.ajax({
+                                                url: '/fetch-dnn-details-inv-erp', // Specify your endpoint URL
+                                                type: 'POST', // Or 'GET' depending on your server route
+                                                data: {
+                                                        id: id,
+                                                        _token: csrfToken // Include the CSRF token in the data
+                                                    }, // Send the order ID in the request
+                                                success: function(response) {
+
+                                                    // console.log(response);
+                                                    $('#inspectionForm #po_num').val(response.po_number);
+                                                    $('#inspectionForm #ordered_qty').val(response.qty_ordered);
+                                                    
+                                                  
+                                                },
+                                                error: function(xhr, status, error) {
+                                                    // Handle any errors
+                                                    console.error('Error:', error);
+                                                }
+                                            });
+
+                                        })
+
+//                                         $('#printGRN').on('click', function(event) {
+//     try {
+//         // Clone the modal content
+//         var modalContent = $('#GRNiewModal .grnModalBdy').clone();
+
+//         // Create a temporary container to hold the cloned content
+//         var printableContent = $('<div></div>').append(modalContent);
+
+//         // Apply inline styles to printableContent
+//         printableContent.find('*').each(function() {
+//             var computedStyle = window.getComputedStyle(this);
+//             for (var i = 0; i < computedStyle.length; i++) {
+//                 $(this).css(computedStyle[i], computedStyle.getPropertyValue(computedStyle[i]));
+//             }
+//         });
+
+//         // Ensure table borders are applied inline and set to black
+//         printableContent.find('table').css({
+//             'border-collapse': 'collapse', // Ensures borders are not doubled
+//             'width': '100%'
+//         });
+
+//         printableContent.find('th, td').css({
+//             'border': '1px solid black', // Set border color to black
+//             'padding': '8px', // Consistent padding for table cells
+//             'text-align': 'left' // Default text alignment for table cells
+//         });
+
+//         // Append the temporary container to the body
+//         $('body').append(printableContent);
+
+//         // Calculate the maximum width for content to fit on one page
+//         var maxWidth = 297; // A4 paper width in landscape orientation (297mm)
+
+//         // Check if the modal content width exceeds the maximum width
+//         var modalWidth = modalContent.outerWidth();
+//         if (modalWidth > maxWidth) {
+//             // Adjust the width of the modal content to fit within one page
+//             modalContent.css('width', maxWidth + 'mm');
+//         }
+
+//         // Apply styles for printing
+//         printableContent.css({
+//             'position': 'absolute',
+//             'left': '0',
+//             'top': '0',
+//             'padding': '0',
+//             'margin': '0',
+//             'background-color': '#ffffff' // Set background color to white
+//         });
+
+//         html2canvas(printableContent[0], {
+//             backgroundColor: 'white' // Set background color to white
+//         }).then(function(canvas) {
+//             // Create a new jsPDF instance with landscape orientation
+//             const doc = new jsPDF('landscape', 'mm', 'a4');
+
+//             // Save canvas as image
+//             var imgData = canvas.toDataURL('image/jpeg');
+
+//             // Add image to PDF
+//             doc.addImage(imgData, 'JPEG', 0, 0, 297, 210); // A4 dimensions in landscape (297x210 mm)
+
+//             // Generate a random number between 0 and 9999
+//             const randomNumber = Math.floor(Math.random() * 10000);
+
+//             // Construct the file name with the random number and the ".pdf" extension
+//             const fileName = `GRN_${randomNumber}.pdf`;
+
+//             // Save the PDF file with the random name
+//             doc.save(fileName);
+
+//             // Remove the temporary container from the body
+//             printableContent.remove();
+//         });
+
+//     } catch (error) {
+//         console.error('An error occurred while generating PDF:', error);
+//     }
+// });
+
+
+
+
+
+
+                                        $('.viewGRN').on('click', function(e) {
+    e.preventDefault();
+    var dnn = $(this).data('dnn');
+    // Get the CSRF token value from the meta tag
+    var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+    // Make AJAX call
+    $.ajax({
+        url: '/fetch-grn-details-inv-erp', // Specify your endpoint URL
+        type: 'POST', // Or 'GET' depending on your server route
+        data: {
+            id: dnn,
+            _token: csrfToken // Include the CSRF token in the data
+        }, // Send the order ID in the request
+        success: function(response) {
+            console.log(response);
+
+            if(response.dnnDetails) {
+                var item = response.dnnDetails
+                $('#GRNiewModal #inspector_name_grn').text(item.inspector_name);
+                $('#GRNiewModal #inspector_id_grn').text(item.inspector_id_signature);
+                $('#GRNiewModal #po_number_grn').text(item.po_number);
+                $('#GRNiewModal #order_date_grn').text(item.order_date);
+                $('#GRNiewModal #delivery_date_grn').text(item.delivery_date);
+                $('#GRNiewModal #delivery_time_grn').text(item.delivery_time);
+                $('#GRNiewModal #vehicle_number_grn').text(item.vehicle_number);
+                $('#GRNiewModal #dnn_grn').text(item.dnn);
+                $('#GRNiewModal #item_code').text(item.item_id);
+                $('#GRNiewModal #item_name').text(item.item_name);
+                $('#GRNiewModal #order_dty').text(item.ordered_qty);
+                $('#GRNiewModal #deliver_qty').text(item.quantity_delivered);
+                $('#GRNiewModal #okTested_qty').text(item.passed_qty);
+                $('#GRNiewModal #rejected_qty').text(item.failed_qty);
+            } else {
+                console.error('No DNN details found in the response');
+            }
+
+            if(response.supplierDetails) {
+                var supplier = response.supplierDetails;
+                $('#GRNiewModal #supplier_name_grn').text(supplier.supplier_name);
+                $('#GRNiewModal #supplier_contact_grn').text(supplier.phone_number);
+            } else {
+                console.error('No supplier details found in the response');
+            }
+
+            $('#GRNiewModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors
+            console.error('Error:', error);
+        }
+    });
+});
+
+
+
+
+                    $('#createSalesform').on('submit', function(event){
+                        event.preventDefault();
+                    // Serialize form data
+                     // Serialize form data
+                    var formData = $(this).serialize();
+                    // console.log(formData);
+                    var dataToSend = [];
+
+                    // Loop through each row of the table
+                    $("#itemlistsPO tr").each(function() {
+                        var rowData = {};
+
+                        // Loop through each cell of the current row
+                        $(this).find("td").each(function() {
+                            // Get the column name from the table header
+                            var columnName = $(this).closest('table').find('th').eq($(this).index()).text().trim();
+                            
+                            // Get the text content of the cell
+                            var cellData = $(this).text().trim();
+                            
+                            // Add cell data to rowData with column name as key
+                            rowData[columnName] = cellData;
+                        });
+
+                        // Push the rowData object to dataToSend array
+                        dataToSend.push(rowData);
+                    });
+
+                      // Send data to server via AJAX
+                      sendDataToItemLists(dataToSend);
+
+                      var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                        // Make AJAX call
+                        $.ajax({
+                            url: '/store_inward_data', // Specify your endpoint URL
+                            method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: formData,
+                        // dataType: 'json',
+                        
+                            success: function(response) {
+
+                            // location.reload();
+                            console.log(response);
+                            // Handle success response from the server
+                            toastr.options = {
+                                    "timeOut": "5000",
+                                    "toastClass": "toast-green",
+                                    "extendedTimeOut": "2000",
+                                    "progressBar": true,
+                                    "closeButton": true,
+                                    "positionClass": "toast-top-right",
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut",
+                                    "progressBarBgColor": "#ff0000",
+                                    "preventDuplicates": true,
+                                    "onHidden": function() {
+                                        window.location.reload(); // Reload the page when the toastr is hidden
+                                    }
+                                };
+
+                                toastr.success(response.message);
+
+                                $('.modal').modal('hide');
+
+                        },
+                        error: function(xhr, status, error) {
+                             // Handle error response from the server
+                                console.error('Error:', error);
+
+                           // Show validation errors in a toaster
+                            var errorMessage = 'Oops! Some fields are missing';
+                            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                                errorMessage = '<ul>'; // Start the unordered list
+                                $.each(xhr.responseJSON.errors, function(key, value) {
+                                    errorMessage += '<li>' + value.join('</li><li>') + '</li>'; // Add each error message as a list item
+                                });
+                                errorMessage += '</ul>'; // End the unordered list
+                            }
+
+
+                            toastr.error(errorMessage, 'Validation Error', {
+                                    "timeOut": "5000", // Set the time the notification stays visible (in milliseconds)
+                                    "toastClass": "toast-red", // Add custom class to the notification
+                                    "extendedTimeOut": "2000", // Set the duration of the extended timeout for mouse hover (in milliseconds)
+                                    "progressBar": true, // Show a progress bar for timing of the notification
+                                    "closeButton": true, // Show a close button for the notification
+                                    "positionClass": "toast-top-right", // Set the position of the notification
+                                    "showDuration": "300", // Set the duration of the show animation (in milliseconds)
+                                    "hideDuration": "1000", // Set the duration of the hide animation (in milliseconds)
+                                    "showEasing": "swing", // Set the easing of the show animation
+                                    "hideEasing": "linear", // Set the easing of the hide animation
+                                    "showMethod": "fadeIn", // Set the method of showing the notification
+                                    "hideMethod": "fadeOut", // Set the method of hiding the notification
+                                    "progressBarBgColor": "#ff0000", // Set the background color of the progress bar
+                                    "preventDuplicates": true // Prevent duplicate notifications from being shown
+                                });
+                        }
+                    });
+
+                });
+
+
+
+
+                            $('.creatBarcodeForInv').on('click', function(e){
+                            e.preventDefault(); 
+
+                            var id = $(this).data('id');
+                            // alert(id);
+                             // Get the CSRF token value from the meta tag
+                            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                            // Make AJAX call
+                            $.ajax({
+                                url: '/create_inv_barcode', // Specify your endpoint URL
+                                type: 'POST', // Or 'GET' depending on your server route
+                                data: {
+                                    id: id,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                }, // Send the order ID in the request
+                                success: function(response) {
+                                    console.log(response);
+
+                                    if(response.success){
+                                            toastr.options = {
+                                            "timeOut": "1000",
+                                            "toastClass": "toast-green",
+                                            "extendedTimeOut": "1000",
+                                            "progressBar": true,
+                                            "closeButton": true,
+                                            "positionClass": "toast-top-right",
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut",
+                                            "preventDuplicates": true,
+                                            "onHidden": function() {
+                                                window.location.reload(); // Reload the page when the toastr is hidden
+                                            }
+                                        }
+                                    }
+
+                                        toastr.success(response.message);
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle any errors
+                                    console.error('Error:', error);
+                                }
+                            });
+
+                            })
+
+
+
+                        $('.creatQRForInv').on('click', function(e){
+                            e.preventDefault(); 
+
+                            var id = $(this).data('id');
+                            // alert(id);
+                             // Get the CSRF token value from the meta tag
+                                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                            // Make AJAX call
+                            $.ajax({
+                                url: '/create_inv_qr_code', // Specify your endpoint URL
+                                type: 'POST', // Or 'GET' depending on your server route
+                                data: {
+                                    id: id,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                }, // Send the order ID in the request
+                                success: function(response) {
+                                    console.log(response);
+
+                                    if(response.success){
+                                            toastr.options = {
+                                            "timeOut": "1000",
+                                            "toastClass": "toast-green",
+                                            "extendedTimeOut": "1000",
+                                            "progressBar": true,
+                                            "closeButton": true,
+                                            "positionClass": "toast-top-right",
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut",
+                                            "preventDuplicates": true,
+                                            "onHidden": function() {
+                                                window.location.reload(); // Reload the page when the toastr is hidden
+                                            }
+                                        }
+                                    }
+
+                                        toastr.success(response.message);
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle any errors
+                                    console.error('Error:', error);
+                                }
+                            });
+                        })
+
+
+
+
+
                             $('#CompareQutBTN').on('click', function(event) {
                                 event.preventDefault();
                                 var checkedIds = [];
@@ -982,7 +1695,7 @@
                                                     var groupedContent = [];
 
                                                     // Add headings as the first entry in the groupedContent array
-                                                    var headings = ["Details", "Qut_number", "Total (rs.)", "Tax Rate %", "Tax (rs.)", "Others (rs.)", "Final Amount (rs.)", "Delivery Time <b>(week)</b>", "Payment Terms <b>(Days)</b>", "Quality", "Customer Service"];
+                                                    var headings = ["Details", "Qut_number", "Total (rs.)", "Tax Rate %", "Tax (rs.)", "Others (rs.)", "Final Amount (rs.)", "Delivery Time <b>(week)</b>", " Payment before Delivery <b>(%)</b>:", "Quality", "Customer Service"];
                                                     groupedContent.push(headings);
 
 
@@ -1099,14 +1812,14 @@
                                                                        
                                                                         // Set background color based on the conditions
                                                                         if (allValuesEqual && ![0, 1, 9, 7, 10].includes(i)) {
-                                                                            if ([0, 1, 5, 9, 7].includes(i)) {
-                                                                            tableBody += '<td style="background-color: #F0F396;" class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
+                                                                            if ([0, 1, 9, 5, 7].includes(i)) {
+                                                                            tableBody += '<td class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
                                                                             }else{
-                                                                                tableBody += '<td style="background-color: #F0F396;" class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
+                                                                                tableBody += '<td class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
 
                                                                             }
                                                                         } else if (cellValue === lowestValue) {
-                                                                            if ([0, 1, 8, 5, 3, 9, 7].includes(i)) {
+                                                                            if ([0, 1, 8, 3, 9, 7].includes(i)) {
                                                                                 tableBody += '<td style="background-color: #90ee90;" class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
                                                                             } else {
                                                                                 tableBody += '<td style="background-color: #90ee90;" class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
@@ -1114,13 +1827,13 @@
                                                                         } else if (hasMultipleGreatest && cellValue === greatestValue && !allValuesEqual && ![0, 1, 3, 10, 9].includes(i)) {
                                                                             tableBody += '<td style="background-color: #8BDCF1;" class="text-center">' + groupedContent[j][i] + '</td>';
                                                                         } else if (cellValue === greatestValue) {
-                                                                            if ([0, 1, 8, 5, 3, 9, 7].includes(i)) {
+                                                                            if ([0, 1, 8, 3, 9, 7].includes(i)) {
                                                                                 tableBody += '<td style="background-color: #EB9595;" class="text-center">' + groupedContent[j][i] + '</td>';
                                                                             } else {
                                                                                 tableBody += '<td style="background-color: #EB9595;" class="text-center">' + numberFormatter.format(groupedContent[j][i]) + '</td>';
                                                                             }
                                                                         } else {
-                                                                            if ([0, 1, 8, 9, 5, 3, 10, 7].includes(i)) {
+                                                                            if ([0, 1, 8, 9, 3, 10, 7].includes(i)) {
                                                                                 if ([0].includes(i)) {
                                                                                     tableBody += '<th class="text-center" style="color:darkblue;">' + groupedContent[j][i] + '</th>';
                                                                                 } else {
@@ -1781,6 +2494,84 @@
                         var person = $('#createRFQModalForm #supplier_person').val('');
                     })
 
+
+
+                    $('#auctionInitiate #type').on('change', function(e){
+                        var type = $('#auctionInitiate #type').children('option:selected').val();
+
+                        if( type == 'Forward Auction' ){
+                            $('#auctionInitiate #bid').val('Increment');
+                        }else{
+                            console.clear();
+                            $('#auctionInitiate #bid').val('Decrement');
+                            $('#auctionInitiate #price_field').hide();
+                        }
+                    })
+
+
+                    $('#auctionInitiate .addAuctionItem').on('click', function(){
+                        // alert('hi');
+                        var auction_id = $('#createRFQModalForm #auction_id').val();
+                        var supplier = $('#createRFQModalForm #supplier').val();
+                        var phone = $('#createRFQModalForm #supplier_phone').val();
+                        var email = $('#createRFQModalForm #supplier_email').val();
+                        var person = $('#createRFQModalForm #supplier_person').val();
+                        var tableBody = '';  
+                        tableBody += '<tr>';
+                        tableBody += '<td>' + auction_id + '</td>';
+                        tableBody += '<td>' + supplier + '</td>';
+                        tableBody += '<td>' + phone + '</td>';
+                        tableBody += '<td>' + email + '</td>';
+                        tableBody += '<td>' + person + '</td>';
+                        tableBody += '<td><a class="delete-link-po btn btn-primary" style="color:white;"><i class="mdi mdi-delete"></i></a>';
+                        tableBody += '</td>';
+                        tableBody += '</tr>';   
+                        if(supplier != ''){
+                        $('#auctionInitiate .auctionItemsLists').append(tableBody);
+                        }else{
+                            alert('add auction product');
+                        }
+
+                         // var pr_num = $('#createRFQModalForm #pr_num').val('');
+                         var supplier = $('#createRFQModalForm #supplier').val('');
+                        var phone = $('#createRFQModalForm #supplier_phone').val('');
+                        var email = $('#createRFQModalForm #supplier_email').val('');
+                        var person = $('#createRFQModalForm #supplier_person').val('');
+                    })
+
+                    $(document).on('click', '.delete-link-po', function(e){
+                        e.preventDefault(); // Prevent the default action, if necessary
+                        $(this).closest('tr').remove(); // Remove the closest 'tr' element
+                    });
+
+                    $('#addSuppliersAuction').on('click',function(){
+
+                        var auction_id = $('#createRFQModalForm #auction_id').val();
+                        var rfq_num = $('#createRFQModalForm #rfq_num').val();
+                        var supplier = $('#createRFQModalForm #supplier').val();
+                        var phone = $('#createRFQModalForm #supplier_phone').val();
+                        var email = $('#createRFQModalForm #supplier_email').val();
+                        var person = $('#createRFQModalForm #supplier_person').val();
+
+                        var tableBody = '';  
+
+                        tableBody += '<tr>';
+                        tableBody += '<td>' + auction_id + '</td>';
+                        tableBody += '<td>' + supplier + '</td>';
+                        tableBody += '<td>' + phone + '</td>';
+                        tableBody += '<td>' + email + '</td>';
+                        tableBody += '<td>' + person + '</td>';
+                        tableBody += '<td><a class="delete-link-po btn btn-primary" style="color:white;"><i class="mdi mdi-delete"></i></a>';
+                        tableBody += '</td>';
+                        tableBody += '</tr>';   
+                        $('#createRFQModalForm #suppliersLists').append(tableBody);
+                        // var pr_num = $('#createRFQModalForm #pr_num').val('');
+                        var supplier = $('#createRFQModalForm #supplier').val('');
+                        var phone = $('#createRFQModalForm #supplier_phone').val('');
+                        var email = $('#createRFQModalForm #supplier_email').val('');
+                        var person = $('#createRFQModalForm #supplier_person').val('');
+                    })
+
                     $('.setVisibility').on('click',function(event){
                         event.preventDefault();
 
@@ -2053,7 +2844,7 @@
                                     tableBody += '</tr>';
                                 });
 
-                            $('#prItemViewAll').html(tableBody);
+                            $('.prItemViewAll').html(tableBody);
 
                             // $('#rfqPR').modal('show');
 
@@ -2149,13 +2940,16 @@
                             var tableBody = '';
                                 
                                 $.each(response.prItems, function(index, item) {
+                                    // $.each(data, function(index, item) {
                                     tableBody += '<tr>';
                                     tableBody += '<td>' + (index + 1) + '</td>';
                                     tableBody += '<td>' + item.item_type + '</td>';
                                     tableBody += '<td>' + item.item_des + '</td>';
+                                    // tableBody += '<td>' + item.item_des + '</td>';
                                     tableBody += '<td>' + item.quantity + '</td>';
                                     tableBody += '<td>' + item.item_feature + '</td>';
                                     tableBody += '</tr>';
+                                    // })
                                 });
 
                             $('.prItemViewAllList').html(tableBody);
@@ -2291,6 +3085,7 @@
                         var type = $('#PRAddModalForm #item_type').children('option:selected').val();
                         var item_description = $('#PRAddModalForm #item_des').val();
                         var pr_number = $('#PRAddModalForm #pr_num').val();
+
                         var item_feature = $('#PRAddModalForm #item_feature').val();
                         var item_qty = $('#PRAddModalForm #item_qty').val();
 
@@ -2761,7 +3556,7 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
-                            // console.log('Data sent successfully:', response);
+                            console.log('Data sent successfully:', response);
                         },
                         error: function(xhr, status, error) {
                                 // Check if the response JSON contains errors
@@ -4167,6 +4962,388 @@ $('#update_order_items_form').submit(function(e) {
     })
 
 
+    $('.itemListsPOBTNInInvoice').on('click', function(e){
+        e.preventDefault();
+
+        var id = $(this).data('id');
+       // Send the order ID as data in the AJAX request
+       $.ajax({
+                    url: '/fetch_order_item_data_for_invoice',
+                    method: 'POST',
+                    data: { id: id }, // Pass id as an object
+                    headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                    success: function(response) {
+                        // Close all modals on success
+                    //    console.log(response);
+                        $('#viewPOmodal').modal('show');
+
+                        var orderDetails = response.orderDetails;
+                        var supplier = response.supplier;
+
+
+                        $('#viewPOmodal #vendor_street_address').text(supplier.address + ', ' +supplier.city + ', '+supplier.state + ' ' +supplier.postal_code + ', ' +supplier.country);
+                        $('#viewPOmodal #vendor_phone').text(supplier.phone_number);
+                        $('#viewPOmodal #vendor_email').text(supplier.email);
+                        $('#viewPOmodal #vendor_name').text(supplier.cotact_person);
+                        $('#viewPOmodal #vendor_gstin').text(supplier.tax_id);
+                        $('#viewPOmodal #order_id').text(orderDetails.po_id);
+                        $('#viewPOmodal #billing_street_address').text(orderDetails.billing_address);
+                        $('#viewPOmodal #billing_address').text(orderDetails.billing_city + ', '+orderDetails.billing_state + ' ' +orderDetails.billing_pincode);
+                        $('#viewPOmodal #shipping_street_address').text(orderDetails.delivery_address + ', ' +orderDetails.delivery_city + ', '+orderDetails.delivery_state + ' ' +orderDetails.delivery_pincode);
+                        $('#viewPOmodal #order_date').text(orderDetails.order_date);
+                        $('#viewPOmodal #expected_delivery_date').text(orderDetails.delivery_date);
+                        $('#viewPOmodal #lead_time').text(orderDetails.payment_terms);
+                        $('#viewPOmodal #total_quantity').text(parseFloat(orderDetails.total_qty).toLocaleString());
+                        $('#viewPOmodal #line_item_total').text(parseFloat(orderDetails.line_amount_total).toLocaleString());
+                        $('#viewPOmodal #total_items').text(orderDetails.total_unit);
+                        $('#viewPOmodal #delivery_method').text(orderDetails.shipping_method);
+                        var tax = orderDetails.line_amount_total * (18/100);
+                        var total =  parseFloat(orderDetails.line_amount_total);
+                        var sgst = tax/2;
+                        var cgst = tax/2;
+                        var handling = 200;
+                        var other = 1000;
+                        var final = sgst + cgst + handling + other + total;
+                        $('#viewPOmodal #sgst').text(parseFloat(sgst).toLocaleString());
+                        $('#viewPOmodal #cgst').text(parseFloat(cgst).toLocaleString());
+                        $('#viewPOmodal #handling').text(parseFloat(handling).toLocaleString());
+                        $('#viewPOmodal #other').text(parseFloat(other).toLocaleString());
+                        $('#viewPOmodal #final').text(parseFloat(final).toLocaleString());
+                        // Optionally, you can redirect the user to a success page or perform any other actions
+                            var tableBody = '';
+
+                              // Clear previous items
+                                $('.item_code, .item_name, .item_category, .item_vehicle, .item_unit_price, .item_quantity, .item_total').empty();
+
+                                $.each(response.orderitems, function(index, item) {
+                                    var unit_price = parseFloat(item.unit_price).toLocaleString();
+                                    var total_price = parseFloat(item.total_price).toLocaleString();
+                                    $('.item_code').append(item.part_number + '<br>');
+                                    $('.item_name').append(item.part_name + '<br>');
+                                    $('.item_category').append(item.category + '<br>');
+                                    $('.item_vehicle').append(item.vehicle + '<br>');
+                                    $('.item_unit_price').append(unit_price + '<br>');
+                                    $('.item_quantity').append(item.quantity + '<br>');
+                                    $('.item_total').append(total_price + '<br>');
+                                });
+
+                            $('#viewPOmodal #table_items_po #table_items_po_tbl_bdy').append(tableBody);
+                            console.clear();
+
+
+                        // Other actions after successful AJAX call
+                    },
+                    error: function(xhr, status, error) {
+                        // Error handling
+                    }
+                });
+    })
+
+
+                    $('.approveValidateInvoice').on('click', function(e){
+                        e.preventDefault();
+
+                        var id = $(this).data('id');
+                        // Get CSRF token value from meta tag
+                        var csrfToken = $('meta[name=csrf-token]').attr('content');
+
+                        // AJAX request
+                        $.ajax({
+                        url: '/approve_invoice', // Replace 'your_server_endpoint_here' with the actual server endpoint
+                        method: 'POST', // or 'GET' depending on your server configuration
+                        headers: {
+                            'X-CSRF-Token': csrfToken // Include CSRF token in the request headers
+                        },
+                        data: {
+                            id: id,
+                        },
+                        success: function(response) {
+                           
+                            // Handle success response from the server
+                            if(response.success == true){
+                            toastr.options = {
+                                "timeOut": "5000",
+                                "toastClass": "toast-green",
+                                "extendedTimeOut": "2000",
+                                "progressBar": true,
+                                "closeButton": true,
+                                "positionClass": "toast-top-right",
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut",
+                                "progressBarBgColor": "#ff0000",
+                                "preventDuplicates": true,
+                                "onHidden": function() {
+                                    window.location.reload(); // Reload the page when the toastr is hidden
+                                }
+                            };
+
+                            toastr.success(response.message);
+                           }else{
+                            toastr.options = {
+                                "timeOut": "5000",
+                                "toastClass": "toast-red",
+                                "extendedTimeOut": "2000",
+                                "progressBar": true,
+                                "closeButton": true,
+                                "positionClass": "toast-top-right",
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut",
+                                "progressBarBgColor": "#ff0000",
+                                "preventDuplicates": true,
+                                "onHidden": function() {
+                                    window.location.reload(); // Reload the page when the toastr is hidden
+                                }
+                            };
+
+                            toastr.success('Some Error occur contact service provider');
+                           }
+                           
+                        },
+                        error: function(xhr, status, error) {
+
+                            // Handle error response from the server
+                            console.error('Error:', error);
+                        }
+                        });
+                    });
+
+
+                    $('.rejectValidateInvoice').on('click', function(e){
+                        e.preventDefault();
+
+                        var id = $(this).data('id');
+                        // Get CSRF token value from meta tag
+                        var csrfToken = $('meta[name=csrf-token]').attr('content');
+
+                        // AJAX request
+                        $.ajax({
+                        url: '/reject_invoice', // Replace 'your_server_endpoint_here' with the actual server endpoint
+                        method: 'POST', // or 'GET' depending on your server configuration
+                        headers: {
+                            'X-CSRF-Token': csrfToken // Include CSRF token in the request headers
+                        },
+                        data: {
+                            id: id,
+                        },
+                        success: function(response) {
+
+                            // Handle success response from the server
+                           if(response.success == true){
+                            toastr.options = {
+                                "timeOut": "5000",
+                                "toastClass": "toast-red",
+                                "extendedTimeOut": "2000",
+                                "progressBar": true,
+                                "closeButton": true,
+                                "positionClass": "toast-top-right",
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut",
+                                "progressBarBgColor": "#ff0000",
+                                "preventDuplicates": true,
+                                "onHidden": function() {
+                                    window.location.reload(); // Reload the page when the toastr is hidden
+                                }
+                            };
+
+                            toastr.success(response.message);
+                           }else{
+                            toastr.options = {
+                                "timeOut": "5000",
+                                "toastClass": "toast-red",
+                                "extendedTimeOut": "2000",
+                                "progressBar": true,
+                                "closeButton": true,
+                                "positionClass": "toast-top-right",
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut",
+                                "progressBarBgColor": "#ff0000",
+                                "preventDuplicates": true,
+                                "onHidden": function() {
+                                    window.location.reload(); // Reload the page when the toastr is hidden
+                                }
+                            };
+
+                            toastr.success('Some Error occur contact service provider');
+                           }
+                            
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle error response from the server
+                            console.error('Error:', error);
+                        }
+                        });
+                    });
+
+
+
+
+                $('.viewInvoice').on('click', function(e){
+                    e.preventDefault();
+
+                    var id = $(this).data('id');
+                    
+                // Get CSRF token value from meta tag
+                var csrfToken = $('meta[name=csrf-token]').attr('content');
+
+                // AJAX request
+                $.ajax({
+                    url: 'fetch_invoice_details', // Replace 'your_server_endpoint_here' with the actual server endpoint
+                    method: 'POST', // or 'GET' depending on your server configuration
+                    headers: {
+                        'X-CSRF-Token': csrfToken // Include CSRF token in the request headers
+                    },
+                    data: {
+                        id: id,
+                    },
+                    success: function(response) {
+                        // Handle success response from the server
+                        console.clear();
+                        console.log('Success:', response);
+                          // Clear previous items
+                     $('#serial_num, #description, #unitprice, #quantity, #total').empty();
+
+
+                        $.each(response.items, function(index, item) {
+                            var unit_price = parseFloat(item.unit_price).toLocaleString();
+                            var total_price = parseFloat(item.total_price).toLocaleString();
+                            $('#downloadInvoiceModal #serial_num').append(index+1);
+                            $('#downloadInvoiceModal #description').append(item.part_name + '<br>');
+                            $('#downloadInvoiceModal #unitprice').append('<b>Rs.</b>'+unit_price + '<br>');
+                            $('#downloadInvoiceModal #quantity').append(item.quantity + '<b>pcs.</b><br>');
+                            $('#downloadInvoiceModal #total').append('<b>Rs.</b>'+total_price + '<br>');
+                        });
+
+
+                        var po_details = response.po_details;
+                        var invoice = response.invoice;
+                        var supplier = response.supplier;
+
+                       // Define the variables
+                        var tax_rate = 18;
+                        var other = 2000;
+
+                        // Assume po_details.line_amount_total is provided as a number or a string that represents a number
+                        var line_amount_total = parseFloat(po_details.line_amount_total);
+
+                        // Calculate the tax amount
+                        var tax_amt = line_amount_total * tax_rate / 100;
+
+                        // Ensure the values are numbers before addition
+                        var final_tax_amt = parseFloat(tax_amt); // Already a number, but ensuring it's a float
+                        var final_line_amount_total = parseFloat(line_amount_total); // Ensuring it's a float
+
+                        // Calculate the overall amount
+                        var overall_amt = final_tax_amt + final_line_amount_total + other;
+
+                        var formatted_other =parseFloat(other).toLocaleString();
+
+                        // Format the amounts to strings with commas for readability, if needed
+                        var formatted_tax_amt = parseFloat(final_tax_amt).toLocaleString();
+                        var formatted_line_amount_total = parseFloat(final_line_amount_total).toLocaleString();
+                        var formatted_overall_amt = parseFloat(overall_amt).toLocaleString();
+                        
+                        $('#downloadInvoiceModal #po_number').html(po_details.po_id);
+                        $('#downloadInvoiceModal #po_date').html(po_details.order_date);
+                        $('#downloadInvoiceModal #sub_total').html('<b>Rs.</b>'+formatted_line_amount_total);
+                        $('#downloadInvoiceModal #tax').html('<b>Rs.</b>'+formatted_tax_amt);
+                        $('#downloadInvoiceModal #other').html('<b>Rs.</b>'+formatted_other);
+                        $('#downloadInvoiceModal #line_item_total').html('<b>Rs.</b>'+formatted_overall_amt);
+                        $('#downloadInvoiceModal #invoice_id').html(invoice.invoice_number);
+                        $('#downloadInvoiceModal #invoice_date').html(invoice.invoice_date);
+                        $('#downloadInvoiceModal #vendor_name').html(supplier.supplier_name);
+                        $('#downloadInvoiceModal #address_line_1').html(invoice.address);
+                        $('#downloadInvoiceModal #address_line_2').html(supplier.city + ',' + supplier.state + ',' + supplier.postal_code);
+                        $('#downloadInvoiceModal #terms').html(supplier.steps);
+                        $('#downloadInvoiceModal #notes').html(supplier.notes);
+                        $('#downloadInvoiceModal #supplier_gst').html(supplier.gst_in);
+                        $('#downloadInvoiceModal #bill_to_address').html(po_details.billing_address);
+                        $('#downloadInvoiceModal #bill_to_address_city').html(po_details.billing_city + ',' + po_details.billing_state + ',' + po_details.billing_pincode);
+                        $('#downloadInvoiceModal #ship_to_address').html(po_details.delivery_address);
+                        $('#downloadInvoiceModal #ship_to_address_city').html(po_details.delivery_city + ',' + po_details.delivery_state + ','+  po_details.delivery_pincode);
+                       
+                        
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response from the server
+                        console.error('Error:', error);
+                    }
+                });
+                })
+
+                $('.sendInvoice').on('click', function(e){
+                    e.preventDefault();
+
+                    var id = $(this).data('id');
+                    // Get CSRF token value from meta tag
+                        var csrfToken = $('meta[name=csrf-token]').attr('content');
+
+                    // AJAX request
+                    $.ajax({
+                        url: '/send_invoice', // Replace 'your_server_endpoint_here' with the actual server endpoint
+                        method: 'POST', // or 'GET' depending on your server configuration
+                        headers: {
+                            'X-CSRF-Token': csrfToken // Include CSRF token in the request headers
+                        },
+                        data: {
+                            id: id,
+                        },
+                        success: function(response) {
+                            // Handle success response from the server
+                            console.log('Success:', response);
+
+                            toastr.options = {
+                            "timeOut": "5000",
+                            "toastClass": "toast-green",
+                            "extendedTimeOut": "2000",
+                            "progressBar": true,
+                            "closeButton": true,
+                            "positionClass": "toast-top-right",
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut",
+                            "progressBarBgColor": "#ff0000",
+                            "preventDuplicates": true,
+                            "onHidden": function() {
+                                window.location.reload(); // Reload the page when the toastr is hidden
+                            }
+                        };
+
+                        toastr.success(response.message);
+                            
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle error response from the server
+                            console.error('Error:', error);
+                        }
+                    });
+                })
+
+
+
+
+
+
 
     $('#add_item_po').on('click', function() {
     var po_number = $('#order_no').val();
@@ -4243,6 +5420,56 @@ $('#update_order_items_form').submit(function(e) {
     $('.delete-link-po').on('click',function(){
       alert('hi');
     })
+
+    $('.generateInvoice').on('click', function(event){
+        event.preventDefault();
+
+        var id = $(this).data('id');
+        // Get CSRF token value from meta tag
+        var csrfToken = $('meta[name=csrf-token]').attr('content');
+
+        $.ajax({
+                url: '/generate_invoice', //Route URL
+                method: 'POST',
+                headers: {
+                'X-CSRF-Token': csrfToken // Include CSRF token in the request headers
+                 },
+                data: {
+                    id: id // Pass the selected PO ID as data
+                },
+                success: function(response) {
+                   
+                    toastr.options = {
+                        "timeOut": "5000",
+                        "toastClass": "toast-green",
+                        "extendedTimeOut": "2000",
+                        "progressBar": true,
+                        "closeButton": true,
+                        "positionClass": "toast-top-right",
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut",
+                        "progressBarBgColor": "#ff0000",
+                        "preventDuplicates": true,
+                        "onHidden": function() {
+                            window.location.reload(); // Reload the page when the toastr is hidden
+                        }
+                    };
+
+                    toastr.success(response.message);
+
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+                
+            });
+
+        });
 
 
 
@@ -4341,7 +5568,6 @@ $('#update_order_items_form').submit(function(e) {
 
     <!-- Plugin js for this page -->
     <script src="{{asset('backend/vendors/chart.js/Chart.min.js')}}"></script>
-    <script src="{{asset('backend/js/jquery.cookie.js')}}" type="text/javascript"></script>
     <!-- End plugin js for this page -->
     <!-- inject:js -->
     <script src="{{asset('backend/js/off-canvas.js')}}"></script>
@@ -4383,7 +5609,7 @@ $('#update_order_items_form').submit(function(e) {
        $(document).ready(function() {
       $('.form-control').css('border-bottom','1px solid black');
       $('.table th').css('color','#273a96');
-      $('.table tr').css('border-bottom','1px solid #273a96');
+    //   $('.table tr').css('border-bottom','1px solid #273a96');
     //   $('.table th').css('color','white');
      
     //   $('.table th').css('background-color','#598ac2');

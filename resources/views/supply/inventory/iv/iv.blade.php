@@ -78,6 +78,7 @@
                             </tr>
                             @php($i=1)
                             @foreach($iv as $data)
+                          
                            
                                 <tr>
                                 <td>{{$i++}}</td>
@@ -108,6 +109,7 @@
                                         <a href="{{url('delete-iv/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
+                              
                                
                             @endforeach
                         </table>

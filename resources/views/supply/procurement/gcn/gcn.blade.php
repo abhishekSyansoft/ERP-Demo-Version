@@ -24,15 +24,20 @@
                     <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
                       <div class="row">
                         <div class="col-md-6 m-0">
-                        <h4 class="card-title float-left m-0 p-0" style="color:white;">GRN Lists</h4>
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;"> {{ Auth::user()->admin==3 ? 'GRN Lists' : 'Material Inward Lists' }}</h4>
                         </div>
                          <!-- Button to open the modal -->
                         <div class="col-md-6">
-                          @if(Auth::user()->admin==3)
+                          @if(Auth::user()->admin==3 || Auth::user()->admin==8)
                         <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
                         @endif
+                        <a style="font-size:30px;float:right;margin-right:10px;" class="mdi mdi-filter"></a>
+                        <div class="search-container" style="float:right;">
+                        <input type="search" name="search" id="search" placeholder="Search" class="p-2">
+                        <i class="mdi mdi-magnify"></i>
+                        </div>
                         </div>
                         <!-- <hr>   -->
                       </div>     
@@ -47,67 +52,69 @@
                     </div>
                     <div class="table-wrapper">
                         <table class="table table-bordered border-primary" style="width: 100%;">
-                            <tr>
-                              <th rowspan="2">S. No.</th>
-                              <th rowspan="2">View GRN.</th>
-                              <th rowspan="2">Reciept No.</th>
-                              <th rowspan="2">PO No.</th>
-                              <th rowspan="2">INV No.</th>
-                              <th rowspan="2">Quotation No.</th>
-                              <th rowspan="1" colspan="3">Received</th>
-                              <th rowspan="2">Recieved Quantity</th>
-                              <th rowspan="2">Expected Quantity</th>
-                              <th rowspan="2">Unit Cost</th>
-                              <th rowspan="2">Total Cost</th>
-                              <th rowspan="2">Supplier</th>
-                              <th rowspan="2">PO Number</th>
-                              <th rowspan="2">Delivery Method</th>
-                              <th rowspan="2">Shipping Carrier</th>
-                              <th rowspan="2">Shipping Tracking Number</th>
-                              <th rowspan="2">Condition</th>
-                              <th rowspan="2">Inspection Results</th>
-                              <th rowspan="2">Serial Number</th>
-                              <th rowspan="2">Remarks/Comments</th>
-                              <th rowspan="2">Quality Control Information</th>
-                              <th rowspan="2">QRcode</th>
-                              <th rowspan="2">Barcode</th>
-                              <th rowspan="2">Action</th>
+                        <tr>    
+                                <th rowspan="2">S. Number</th>
+                                <th rowspan="2"> GRN Number</th>
+                                <th rowspan="2">View GRN</th>
+                                <th rowspan="2">DNN</th>
+                                <th rowspan="1" colspan="2">Invoice</th>
+                                <th rowspan="1" colspan="2">Order</th>
+                                <th rowspan="2">Delivered Quanity</th>
+                                <th colspan="2">Inspection Quantity</th>
+                                <th colspan="2">Conditions</th>
+                                <th rowspan="2" class="inspection_notes">Visual Inspection Notes</th>
+                                <th colspan="2">inspector Details</th>
+                                <th rowspan="2">Photo</th>
+                                <th rowspan="2">Inspection Status</th>
+                                <th rowspan="2">Action</th>
                             </tr>
                             <tr>
-                              <th>Date</th>
+                              <!-- <th>DNN</th> -->
+                              <th colspan="1">Number</th>
+                              <th colspan="1"> Date </th>
+                              <th colspan="1">PO Number</th>
+                              <th colspan="1"> Ordered Quantity </th>
+                              <th>Pass Quantity</th>
+                              <th>Fail Quantity</th>
+                              <th>Packaging</th>
+                              <th>Labeling</th>
+                              <th>Name</th>
+                              <th>ID/Signature</th>
+                            </tr>
+                            <tr>
+                              <!-- <th>Date</th>
                               <th>Person</th>
                               <th>Location</th>
-                            </tr>
-                            @php($a=1)
-                            @foreach($grn as $data)
-                            @for($i=0;$i<=10;$i++)
-                                <tr>
-                                    <td>{{$a++}}</td>
-                                    <td><a data-bs-target="#staticBackdrop" class="mdi mdi-eye btn btn-primary" data-bs-toggle="modal"></a></td>
-                                    <td>{{$data->reciept_number}}</td>
-                                     <td>PO_{{uniqid()}}</td>
-                                     <td>INV_{{uniqid()}}</td>
-                                    <td>QUT_{{uniqid()}}</td>
-                                    <td>{{$data->received_date}}</td>
-                                    <td>{{$data->received_by}}</td>
-                                    <td>{{$data->receiving_location}}</td>
-                                    <td>{{$data->received_quantity}}</td>
-                                    <td>{{$data->expected_quantity}}</td>
-                                    <td>{{$data->unit_cost}}</td>
-                                    <td>{{$data->total_cost}}</td>
-                                    <td>{{$data->supplier_id}}</td>
-                                    <td>{{$data->po_id}}</td>
-                                
-                                    <td>{{$data->delivery_method}}</td>
-                                    <td>{{$data->shipping_carrier}}</td>
-                                    <td>{{$data->tracking_number}}</td>
-                                    <td>{{$data->condition}}</td>
-                                    <td>{{$data->inspection_result}}</td>
-                                    <td>{{$data->serial_number}}</td>
-                                    <td>{{$data->quality_control_information}}</td>
-                                    <td>{{$data->remarks}}</td>
-                                   <td></td>
-                                   <td></td>
+                            </tr> -->
+                           
+                            @php($i=1)
+                            @foreach($details as $data)
+                            @for($a=1;$a<=2;$a++)
+                            @if($data->inspection_status == 1)
+                           
+                            <tr>
+                                <td>{{$i++}}</td>
+                                <td>{{$data->grn_number}}</td>
+                                <td><a class="btn btn-primary mdi mdi-eye viewGRN" data-dnn="{{$data->dnn}}"></a></td>
+                                <td>{{$data->dnn}}</td>
+                                <td>{{$data->invoice_number}}</td>
+                                <td>{{$data->invoice_date}}</td>
+                                <td>{{$data->po_number}}</td>
+                                <td>{{$data->ordered_qty}} pcs.</td>
+                                <td>{{$data->quantity_delivered}} pcs.</td>
+                                <td>{{$data->passed_qty}} pcs.</td>
+                                <td>{{$data->failed_qty}} pcs.</td>
+                                <td>{{$data->packaging_condition}}</td>
+                                <td>{{$data->labeling}}</td>
+                                <td class="inspection_notes">{!!$data->visual_inspection_notes!!}</td>                                <td>{{$data->inspector_name}}</td>
+                                <td>{{$data->inspector_id_signature}}</td>
+                                <td><a href="{{asset('Storage/'.$data->photo_evidence)}}" class="btn btn-primary mdi mdi-eye"></a></td>
+                                @if($data->inspection_status == 1)
+                                <td><a class="mdi mdi-check-circle text-success" style="font-size:20px;"></a></td>
+                                @else
+                                <td></td>
+                                @endif
+
                                     @php($encryptedId = encrypt($data->id)) 
                                     <td>
                                     @if(Auth::user()->admin==3)
@@ -115,6 +122,7 @@
                                     @endif
                                         <a href="{{url('delete-grn/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                     </td>
+                                    @endif
                                 </tr>
                                 @endfor
                             @endforeach
@@ -133,7 +141,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content" style="background-color:white;">
       <div class="modal-header">
-        <h4 class="modal-title" id="addSupplierModalLabel">Create Goods Recieving Note's</h4>
+        <h4 class="modal-title" id="addSupplierModalLabel"> {{ Auth::user()->admin==3 ? 'Create Goods Recieving Notes' : 'Material Inward' }}</h4>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -262,10 +270,7 @@
                         <div class="mb-3 col-md-6 col-lg-3">
                             <label for="order_id" class="form-label">{{ __('Order Number') }}</label>
                             <select id="order_id"  class="form-control p-3" name="order_id" required>
-                                <option value="0">--Select order number--</option>
-                                @foreach($orders as $order)
-                                <option value="{{$order->id}}">{{$order->order_id}}</option>
-                                @endforeach
+                              
                             </select>
                         </div>
 
@@ -321,67 +326,89 @@
 
 
 <!-- Modal -->
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                  <div class="modal-dialog  modal-lg mx-auto">
-                    <div class="modal-content card mx-auto">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Goods Receiving Note</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      
-                      <div class="modal-body ">
-                        <center><h2>Goods Receiving Note</h2></center>
-                        <hr>
-
-                      <table class="grn-table table table-bordered">
-                          <tr>
-                            <th><strong>Headings</strong></th>
-                            <th><strong>Details</strong></th>
-                          </tr>
-                          <tr>
-                            <td><strong>Supplier Information:</strong></td>
-                            <td>Name: ABC Supplier<br>Contact: 123-456-7890</td>
-                          </tr>
-                          <tr>
-                            <td><strong>Receiver Information:</strong></td>
-                            <td>Name: John Doe<br>Contact: johndoe@example.com</td>
-                          </tr>
-                          <tr>
-                            <td><strong>Goods Details:</strong></td>
-                            <td>
-                              <table class="table table-bordered p-2">
-                                <tr><th>Item</th><th>Description</th><th>Quantity</th></tr>
-                                <tr><td>Product A</td><td>Description of Product A</td><td>10</td></tr>
-                                <tr><td>Product B</td><td>Description of Product B</td><td>5</td></tr>
-                              </table>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td><strong>Purchase Order Information:</strong></td>
-                            <td>PO Number: PO12345<br>Date: 2024-04-18</td>
-                          </tr>
-                          <tr>
-                            <td><strong>Delivery Details:</strong></td>
-                            <td>Date: 2024-04-18<br>Mode of Transportation: Truck</td>
-                          </tr>
-                          <!-- Add more details as needed -->
-                        </table>
-                        <hr>
-                        <div class="form-group mt-2">
-                          <!-- <button type="submit" class="btn btn-success">Check one to edit</button> -->
-                           <!-- <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
-                            Check one to edit
-                            </button>   -->
-                          <button type="button" class="btn btn-secondary">Close</button>
-                        </div>
-                        <!-- </form> -->
-                      </div>
-                      
-                        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
-                      <!-- </div> -->
-                    </div>
-                  </div>
+<div class="modal fade" id="GRNiewModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="GRNiewModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 80%; margin: 1.75rem auto;">
+        <div class="modal-content" style="position: relative; display: flex; flex-direction: column; width: 100%; pointer-events: auto; background-color: #fff; background-clip: padding-box; border: 1px solid rgba(0, 0, 0, .2); border-radius: .3rem; outline: 0;">
+            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1rem; border-bottom: 1px solid #dee2e6; border-top-left-radius: .3rem; border-top-right-radius: .3rem;">
+                <h5 class="modal-title" id="GRNiewModalLabel" style="margin-bottom: 0; line-height: 1.5;">Goods Receiving Note</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="padding: 0.25rem 0.25rem; margin: -0.25rem -0.25rem -0.25rem auto; background: transparent; border: 0; appearance: none;"></button>
+            </div>
+            <div class="modal-body grnModalBdy" style="position: relative; flex: 1 1 auto; padding: 1rem;">
+                <div class="printContent">
+                <center><h2>Goods Receiving Note</h2></center>
+                <hr>
+                <div class="table-wrapper" style="height:auto; overflow-x: auto;">
+                    <table class="grn-table" style="width: 100%; margin-bottom: 1rem; color: #212529; border-collapse: collapse; text-align:left !important;">
+                        <thead>
+                            <tr>
+                                <th style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"><strong>Headings</strong></th>
+                                <th style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"><strong>Details</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"><strong>Supplier Information:</strong></td>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black; text-align:left !important;"><b>Name:</b> <span id="supplier_name_grn"></span><br><br><b>Contact:</b> <span id="supplier_contact_grn"></span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"><strong>Receiver Information:</strong></td>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black; text-align:left !important;"><b>Name:</b> <span id="inspector_name_grn"></span><br><br> <b>Identity Number:</b> <span id="inspector_id_grn"></span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"><strong>Goods Details:</strong></td>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black;">
+                                    <div class="table-wrapper" style="height:auto; overflow-x: auto;">
+                                        <table class="table" style="width: 100%; margin-bottom: 1rem; color: #212529; border-collapse: collapse;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="padding: 0.75rem; vertical-align: top; border: 1px solid black;">Item Code</th>
+                                                    <th style="padding: 0.75rem; vertical-align: top; border: 1px solid black;">Description</th>
+                                                    <th style="padding: 0.75rem; vertical-align: top; border: 1px solid black;">Ordered Quantity</th>
+                                                    <th style="padding: 0.75rem; vertical-align: top; border: 1px solid black;">Received Quantity</th>
+                                                    <th style="padding: 0.75rem; vertical-align: top; border: 1px solid black;">OK-Tested Quantity</th>
+                                                    <th style="padding: 0.75rem; vertical-align: top; border: 1px solid black;">Rejected Quantity</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="grn_item_lists_grn">
+                                                <tr>
+                                                    <td id="item_code" style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"></td>
+                                                    <td id="item_name" style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"></td>
+                                                    <td id="order_dty" style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"></td>
+                                                    <td id="deliver_qty" style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"></td>
+                                                    <td id="okTested_qty" style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"></td>
+                                                    <td id="rejected_qty" style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"><strong>Purchase Order Information:</strong></td>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black; text-align:left !important;"><b>PO Number:</b> <span id="po_number_grn"></span><br><br><b>Date:</b> <span id="order_date_grn"></span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black;"><strong>Delivery Details:</strong></td>
+                                <td style="padding: 0.75rem; vertical-align: top; border: 1px solid black; text-align:left !important;"><b>Date:</b> <span id="delivery_date_grn"></span>
+                                    <br><br><b>Delivery Timing:</b> <span id="delivery_time_grn"></span>
+                                    <br><br><b>Vehicle Number:</b> <span id="vehicle_number_grn"></span>
+                                    <br><br><b>DN Number:</b> <span id="dnn_grn"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+                </div>
+                <hr>
+                <div class="form-group" style="margin-top: 0.5rem;">
+                    <button type="button" class="btn" data-bs-dismiss="modal" style="color: #fff; background-color: #6c757d; border-color: #6c757d;">Close</button>
+                    <button type="button" class="btn" id="printGRN" style="color: #fff; background-color: #198754; border-color: #198754;">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
                 <!-- </div>
                   </div> -->
                 <!-- </div> -->

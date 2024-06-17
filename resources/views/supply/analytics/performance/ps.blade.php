@@ -46,8 +46,9 @@
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
                     </div>
-                    <div class="table-wrapper">
-                        <table class="table" style="width: 100%;">
+                    <div class="table-wrapper" style="height:auto;">
+                      <img src="https://cdn.boldbi.com/wp/pages/dashboards/marketing/google-analytics-page-performance-v1-banner.webp" alt="Performance">
+                        <!-- <table class="table" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
                                 <th>Metric Name</th>
@@ -69,7 +70,7 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        </table>
+                        </table> -->
                   </div>
                 </div>
               </div>

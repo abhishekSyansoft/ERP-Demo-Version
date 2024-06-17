@@ -22,9 +22,15 @@ class InvoicesCon extends Controller
          */
         public function Invoices(){
             try {
-
-                // Retrieve all resources from the database
-                $invoices = InvoicesController::all();
+               // Retrieve all resources from the database
+               $invoices = DB::table('invoices_controllers')
+               ->join('suppliers', 'suppliers.id', '=', 'invoices_controllers.supplier_id')
+               ->select(
+                   'invoices_controllers.*', 
+                   'suppliers.supplier_id as supplier_identity', 
+                   'suppliers.supplier_name as supplier_name'
+                )
+                ->orderBy('id', 'desc')->get();
 
                 // Return the view with the list of suppliers
                 return view("supply.procurement.invoice.invoices",compact('invoices'));
@@ -48,43 +54,24 @@ class InvoicesCon extends Controller
                         "file"=> "required",
                     ]);
 
-                   
                         // $dataImage = $request->image;
-                            $attachments = $request->file('file');
-                            $attachmentsdata = $attachments->getContent();
-                            $name_gen = hexdec(uniqid());
-                            $attachments_ext = strtolower($attachments->getClientOriginalExtension());
-                            $attachments_name = $name_gen .'.'. $attachments_ext;
-                            $uplocation = 'attachments/invoices/';
-                            $last_attachments = $uplocation . $attachments_name;
-            
-                            Storage::disk('public')->put($last_attachments,$attachmentsdata);
+                        $attachments = $request->file('file');
+                        $attachmentsdata = $attachments->getContent();
+                        $name_gen = hexdec(uniqid());
+                        $attachments_ext = strtolower($attachments->getClientOriginalExtension());
+                        $attachments_name = $name_gen .'.'. $attachments_ext;
+                        $uplocation = 'attachments/invoices/';
+                        $last_attachments = $uplocation . $attachments_name;
 
-                            
-                          
-                //     // Retrieve the supplier from the database
-                //     PR::insert([
-                //         "invoice_number"=> $request->invoice_number,
-                //         "invoice_date"=> $request->invoice_date,
-                //         "invoice_total"=> $request->invoice_total,
-                //         "file"=> $last_attachments,
-                //         'created_at' => Carbon::now()
-                //     ]);
-
-                // // Redirect back with success message if successful
-                // return redirect()->back()->with("success","Purchase requisition added successfully");
-            // } 
-                // Log the error or handle it in any other appropriate way
-            //     return redirect()->back()->with("error","Failed to create Purchase requisition: ".$e->getMessage());
-            // }
+                        Storage::disk('public')->put($last_attachments,$attachmentsdata);
         }
 
-        public function PREdit($encryptedId){
-            $id = decrypt($encryptedId);
-            $pr = PR::findOrFail($id);
-            $users = User::all();
-            return view("supply.procurement.pr.edit_update.pr_update",compact("pr",'users'));
-        }
+                    public function PREdit($encryptedId){
+                        $id = decrypt($encryptedId);
+                        $pr = PR::findOrFail($id);
+                        $users = User::all();
+                        return view("supply.procurement.pr.edit_update.pr_update",compact("pr",'users'));
+                    }
 
 
 

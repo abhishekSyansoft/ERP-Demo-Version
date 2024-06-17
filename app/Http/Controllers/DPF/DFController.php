@@ -24,10 +24,10 @@ class DFController extends Controller
 
                 // Retrieve all resources from the database
                 $df = DB::table('d_f_s')
-                ->join('products', 'products.id', '=', 'd_f_s.product_id')
-                ->select('d_f_s.*', 'products.product_name as product')
+                ->join('parts', 'parts.part_number', '=', 'd_f_s.product_id')
+                ->select('d_f_s.*', 'parts.part_name as product')
                 ->get();
-                $products = Products::all();
+                $products = DB::table('parts')->get();
 
                 // Return the view with the list of suppliers
                 return view("supply.demand.df.df",compact("df",'products'));

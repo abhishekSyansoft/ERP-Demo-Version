@@ -27,7 +27,7 @@ class SQNController extends Controller
                 ->join('rfq_supplier_lists', DB::raw('BINARY s_q_n_s.qut_num'), '=', DB::raw('BINARY rfq_supplier_lists.qut_num'))
                 ->join('quotations', DB::raw('BINARY quotations.qut_num'), '=', DB::raw('BINARY rfq_supplier_lists.qut_num'))
                 ->select('s_q_n_s.*', 'rfq_supplier_lists.supplier as supplier','quotations.total_amount as finalAmount')
-                ->get();
+                ->orderBy('id', 'desc')->get();
             
                 $products = Products::all();
                 $suppliers = supplier::all();
@@ -41,6 +41,10 @@ class SQNController extends Controller
             }
         }
 
+
+        public function Help(){
+            return view("supply.procurement.help");
+        }
 
         public function CompQuot(Request $request){
             // Validate the incoming request data
@@ -83,7 +87,60 @@ class SQNController extends Controller
 
         public function AppQuotSend(Request $request){
             $qut_num = $request->input('id');
+            $po_id = 'PO_'.uniqid();
+            $order_date = Carbon::now()->toDateString();
 
+            $data = DB::table('quotations')->where('qut_num', $qut_num)->first();
+            $payment_terms = $data->payment_terms;
+            $lead_time = $data->lead_time;
+            $total_amount = $data->total_amount;
+
+            $items = DB::table('qut_item_lists')->where('qut_num',$qut_num)->get();
+
+           
+            // Step 2: Prepare the data for insertion
+            $insertData = [];
+            $insertItem = [];
+
+            foreach ($items as $item) {
+                $item_code = ''.uniqid();
+                $insertData[] = [
+                    'order_id' => $po_id,
+                    'part_name' => $item->item_name,
+                    'unit_price' => $item->unitprice,
+                    'quantity' => $item->quantity,
+                    'total_price' => $item->total,
+                    // Add more columns as needed
+                ];
+
+                $insertItem[] = [
+                    'part_name' => $item->item_name,
+                    'unit_price' => $item->unitprice,
+                    'quantity' => $item->quantity,
+                    'total_price' => $item->total,
+                    // Add more columns as needed
+                ];
+            }
+
+            // Step 3: Insert the data into 'item_lists' table
+            DB::table('item_lists')->insert($insertData);
+
+            $totalQuantity = DB::table('qut_item_lists')->where('qut_num', $qut_num)->sum('quantity');
+            // $subTotal =  ItemLists::where('order_id', $request->order_no)->sum('total_price');
+           //  $totalAmount =  ItemLists::where('order_id', $request->order_no)->sum('sub_total');
+            $totalItem =  DB::table('qut_item_lists')->where('qut_num', $qut_num)->count();
+
+            DB::table('p_o_s')->insert([
+                'supplier_id' => 11,
+                'po_id' => $po_id,
+                'order_date' => $order_date,
+                'payment_terms' => $payment_terms,
+                'lead_time' => $lead_time,
+                'line_amount_total' => $total_amount,
+                'total_qty' => $totalQuantity,
+                'total_unit' => $totalItem,
+                'created_at' => Carbon::now()
+            ]);
 
             DB::table('s_q_n_s')->where('qut_num',$qut_num)->update([
                 'approval' => 1

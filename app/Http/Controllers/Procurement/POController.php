@@ -12,7 +12,7 @@ use App\Models\Procurement\PO;
 use App\Models\Procurement\ItemLists;
 use App\Models\Inventory\Parts;
 use App\Models\supplier\supplier;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -31,7 +31,7 @@ class POController extends Controller
                 $po = DB::table('p_o_s')
                 ->join('suppliers', 'suppliers.id', '=', 'p_o_s.supplier_id')
                 ->select('p_o_s.*', 'suppliers.supplier_name as supplier')
-                ->get();
+                ->orderBy('id', 'desc')->get();
                 $suppliers = supplier::all();
                 $parts = Parts::all();
 
@@ -174,6 +174,129 @@ class POController extends Controller
                        'supplier' => $supplierDetails
                     ]);
                 }
+
+
+                public function FetchOrderItemInvoice(Request $request){
+                    $id = $request->input('id');
+
+                    $orderDetail = PO::where('po_id',$id)->first();
+                    $order_id  = $orderDetail->po_id;
+                    $suppliersID = $orderDetail->supplier_id;
+
+                    $order_items = ItemLists::where('order_id',$order_id)->get();
+                    $supplierDetails = supplier::where('id',$suppliersID)->first();
+
+                    return response()->json([
+                       'success'=>true,
+                       'orderDetails' => $orderDetail,
+                       'orderitems' => $order_items,
+                       'order_id' =>  $order_id,
+                       'supplier' => $supplierDetails
+                    ]);
+                }
+
+
+                public function SendInvoice(Request $request){
+                    $inv_id = $request->input('id');
+
+
+                    $data =  DB::table('invoices_controllers')->where('invoice_number',$inv_id)->first();
+
+                    $id = $data->supplier_id;
+
+                    $supplier = DB::table('suppliers')->where('id',$id)->first();
+                    $supplier_id = $supplier->supplier_id;
+                    $supplier_name = $supplier->supplier_name;
+
+
+                    DB::table('invoices_controllers')->where('invoice_number',$inv_id)->update([
+                        'send_status' => 1
+                    ]);
+
+                    
+                    DB::table('invoice_validation')->insert([
+                        'invoice_number' => $data->invoice_number,
+                        'invoice_date' => $data->invoice_date,
+                        'po_number' => $data->po_id,
+                        'po_date' => $data->order_date,
+                        'supplier_name' => $supplier_name,
+                        'supplier_id' => $supplier_id,
+                        'created_at' => Carbon::now()
+                    ]);
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Invoice sent successfully',
+                        'supplier_id' => $supplier_id,
+                        'supplier_name' => $supplier_name,
+                        ''
+
+                    ]);
+
+                }
+
+                public function ViewInvoice(Request $request){
+                    $id = $request->input('id');
+
+                    $po_details = DB::table('p_o_s')->where('po_id',$id)->first();
+                    $items = DB::table('item_lists')->where('order_id', $id)->get();
+                    $invoice = DB::table('invoices_controllers')->where('po_id', $id)->first();
+
+                    $supplier_id = $po_details->supplier_id;
+
+                    $supplier_details = DB::table('suppliers')->where('id',$supplier_id)->first();
+
+                    return response()->json([
+                        'success' => true,
+                        'po_details' => $po_details,
+                        'items' => $items,
+                        'invoice' => $invoice,
+                        'supplier' => $supplier_details
+                    ]);
+                }
+
+
+
+                public function GenerateInvoice(Request $request){
+                    $po_id = $request->input('id');
+                    $po_data = DB::table('p_o_s')->where('po_id',$po_id)->first();
+                    DB::table('invoices_controllers')->insert([
+                        "po_id" => $po_data->po_id,
+                        "supplier_id" => $po_data->supplier_id,
+                        "order_date" => $po_data->order_date,
+                        "delivery_date" => $po_data->delivery_date,
+                        "payment_terms" => $po_data->payment_terms,
+                        "lead_time" => $po_data->lead_time,
+                        "delivery_address" => $po_data->delivery_address,
+                        "delivery_city" => $po_data->delivery_city,
+                        "delivery_state" => $po_data->delivery_state,
+                        "delivery_pincode" => $po_data->delivery_pincode,
+                        "billing_address" => $po_data->billing_address,
+                        "billing_city" => $po_data->billing_city,
+                        "billing_state" => $po_data->billing_state,
+                        "billing_pincode" => $po_data->billing_pincode,
+                        "total_unit" => $po_data->total_unit,
+                        "total_qty" =>  $po_data->total_qty,
+                        "line_amount_total" =>  $po_data->line_amount_total,
+                        "comments" => $po_data->comments,
+                        'invoice_number' => 'INV_'.uniqid(),
+                        'invoice_date' => Carbon::now(),
+                        'created_at' => Carbon::now()
+                    ]);
+
+                    DB::table('p_o_s')->where('po_id',$po_id)->update([
+                        'invoice_status' => 1
+                    ]);
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Invoice Created Successfully'
+                    ]);
+                }
+
+
+
+
               
                 public function SaveItems(Request $request)
                 {

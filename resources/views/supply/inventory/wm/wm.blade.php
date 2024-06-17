@@ -30,7 +30,13 @@
                         <div class="col-md-6">
                         <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
-                        </button>  
+                        </button> 
+                        
+                        <a style="font-size:30px;float:right;margin-right:10px;" class="mdi mdi-filter"></a>
+                        <div class="search-container" style="float:right;">
+                        <input type="search" name="search" id="search" placeholder="Search" class="p-2">
+                        <i class="mdi mdi-magnify"></i>
+                        </div>
                         </div>
                         <!-- <hr>   -->
                       </div>     
@@ -53,7 +59,7 @@
                                 <th rowspan="1" colspan="4">Location</th>
                                 <th rowspan="2">Warehouse Manager</th>
                                 <th rowspan="2">Capacity</th>
-                                <th rowspan="2">Storage Zones</th>
+                                <th rowspan="2">Vacant Capacity</th>
                                 <th rowspan="2">Bin/Shelf Number</th>
                                 <th rowspan="1" colspan="3">Inventory</th>
                                 <th rowspan="2">Picking and Packing</th>
@@ -81,6 +87,8 @@
                             </tr>
                             @php($i=1)
                             @foreach($warehouses as $data)
+                            @for($a=0;$a<5;$a++)
+                           
                                 <tr>
                                     <td>{{$i++}}</td>
                                     <td>{{$data->warehouse_id}}</td>
@@ -90,8 +98,8 @@
                                     <td>{{$data->state}}</td>
                                     <td>{{$data->pincode}}</td>
                                     <td>{{$data->warehouse_manager}}</td>
-                                    <td>{{$data->capacity}}</td>
-                                    <td>{{$data->storage_zone}}</td>
+                                    <td>{{$data->capacity}}pcs.</td>
+                                    <td>{{$data->storage_zone}}pcs.</td>
                                     <td>{{$data->shelf_number}}</td>
                                     <td>{{$data->inventory_allocation}}</td>
                                     <td>{{$data->inventory_movement}}</td>
@@ -130,6 +138,7 @@
                                         <a href="{{url('delete-wm/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
+                             @endfor  
                             @endforeach
                         </table>
                   </div>
@@ -402,13 +411,9 @@
                         </div>
 
                         <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="storage_zone" class="form-label">{{ __('Storage Zones') }}<sup class="text-danger">*</sup></label>
-                            <select type="text" id="storage_zone" class="form-control p-3" name="storage_zone" placeholder=": Division of the warehouse into different storage zones or areas (e.g., receiving area, picking area, storage racks).">
-                              <option value="">--Select receiving area, picking area, storage racks--</option>
-                              <option value="Receiving Area">Receiving Area</option>
-                              <option value="Picking Area">Picking Area</option>
-                              <option value="Storage Racks">Storage Racks</option>
-                            </select>
+                            <label for="storage_zone" class="form-label">{{ __('Vacant Capacity') }}<sup class="text-danger">*</sup></label>
+                            <input type="text" id="storage_zone" class="form-control p-3" name="storage_zone" placeholder="The vacant capacity in warehouse">
+                             
                         </div>
                         
                         <div class="mb-3 col-md-6 col-lg-3">

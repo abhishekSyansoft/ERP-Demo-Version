@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Procurement;
 use App\Http\Controllers\Controller;
 use App\Models\OrderHeader;
 use Illuminate\Http\Request;
+use App\Models\supplier\supplier;
+use App\Models\Procurement\PO;
+use App\Models\Procurement\ItemLists;
+use App\Models\ERP\GateEntryModel;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Models\Procurement\GRN;
@@ -21,15 +25,12 @@ class GRNController extends Controller
         public function GRN(){
             try {
 
-                // Retrieve all resources from the database
-                $grn = DB::table('g_r_n_s')
-                ->join('order_headers', 'order_headers.id', '=', 'g_r_n_s.po_id')
-                ->select('g_r_n_s.*', 'order_headers.order_id as order_number')
-                ->get();
-                $orders = OrderHeader::all();
+                $details = GateEntryModel::orderBy('id', 'desc')->get();
+                $pos = PO::get();
+                $suppliers = supplier::get();
 
                 // Return the view with the list of suppliers
-                return view("supply.procurement.gcn.gcn",compact("grn",'orders'));
+                return view("supply.procurement.gcn.gcn",compact("details",'pos','suppliers'));
             } catch (\Exception $e) {
                 // Log the error or handle it in any other appropriate way
                 // For example, you can return an error view or redirect with an error message

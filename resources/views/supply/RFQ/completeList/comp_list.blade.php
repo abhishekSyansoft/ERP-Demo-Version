@@ -349,7 +349,7 @@
                             <!-- <div class="mb-1"><b>PR Number:&nbsp;&nbsp;&nbsp;</b><span id="pr_num">+91 6202074551</span></div> -->
                             <div class="mb-1"><b>RFQ Number:&nbsp;&nbsp;&nbsp;</b><span id="rfq_num">08AALCR2857A1ZD</span></div>
                             <div class="mb-1"><b>Lead Time:&nbsp;&nbsp;&nbsp;</b><span id="lead_time"></span>&nbsp;&nbsp;weeks</div>
-                            <div class="mb-1"><b>Payment Terms:&nbsp;&nbsp;&nbsp;</b><span id="payment_terms"></span>&nbsp;&nbsp;days</div>
+                            <div class="mb-1"><b>Payment before Delivery (%):&nbsp;&nbsp;&nbsp;</b><span id="payment_terms"></span>&nbsp;&nbsp;days</div>
                           </div>
                         </div>
 

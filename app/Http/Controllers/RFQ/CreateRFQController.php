@@ -15,7 +15,7 @@ use Carbon\Carbon;
 class CreateRFQController extends Controller
 {
     public function CRFQ(){
-        $prs = CreateRFQ::get();
+        $prs = CreateRFQ::orderBy('created_at', 'desc')->get();
         $suppliers = supplier::get();
         return view('supply.RFQ.createRFQ.create_rfq',compact('prs','suppliers'));
     }
@@ -75,7 +75,8 @@ class CreateRFQController extends Controller
     public function PRVisibility(Request $request){
         $rfq = $request->input('id');
         DB::table('rfq_supplier_lists')->where('rfq_num',$rfq)->update([
-            'visibility_status' => 1
+            'visibility_status' => 1,
+            'user_id' => 5
         ]);
 
 

@@ -31,7 +31,7 @@
   </head>
 
  <style>
-  
+
 .checkout {
   display: flex;
   margin: 3rem 0;
@@ -285,7 +285,7 @@ table, th, td {
   .table-wrapper{
     overflow-x: auto !important;
     overflow-y: auto !important;
-    height: 400px;
+    height: 100vh;
     margin:30px !important;
   }
 
@@ -311,8 +311,9 @@ table, th, td {
     height:100vh;
   } */
   .card-body:not(.main-panel-dashboard .card-body) {
-    /* height:100vh; */
-    box-shadow: 0 0 53px 10px rgba(0, 0, 0, 0.6);
+    height:100vh !important;
+    border:1px solid black;
+    /* box-shadow: 0 0 53px 10px rgba(0, 0, 0, 0.6); */
   }
 
 .main-panel-dashboard .card-body{
@@ -383,8 +384,8 @@ table, th, td {
     }
 
   .main-panel,.content-wrapper{
-    margin:1px;
-    padding:1px;
+    /* margin:1px;
+    padding:1px; */
   }
 
   .table td,.table{
@@ -498,6 +499,21 @@ table, th, td {
 .dropdown:hover .dropbtn {
   background-color: #74b6d1;
 }
+
+.search-container {
+      position: relative;
+      display: inline-block;
+    }
+    .search-container input[type="search"] {
+      padding-right: 2.5rem; /* Adjust this value based on icon size */
+    }
+    .search-container .mdi {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
 
   </style>
   <body>
@@ -682,6 +698,20 @@ table, th, td {
               <a class="nav-link sidebar-link" style="padding-left:10px;padding-right:10px;" href="{{route('dashboard')}}"><span class="menu-title"><b>Dashboard</b></span><i class="mdi mdi-view-dashboard menu-icon"></i></a>
             </li>
 
+            @if(Auth::user()->admin == 2 || Auth::user()->admin == 9)
+              @foreach($modules as $mod)
+              @if($mod->name !== "Role's" && $mod->name !== 'Mapping' && $mod->name !== "Module's" && $mod->name !== 'userlist' && $mod->name !== 'PMM')
+              <li class="nav-item sidebar-item sub-menu m-0" style="padding-left:10px;padding-right:6px;">
+                    <a class="nav-link sidebar-link" style="padding-left:10px;" href="http://127.0.0.1:8000/{{ $mod->url }}">
+                        
+                        <span class="menu-title"> <b>{{ $mod->name !== "Complete Lists" ? ($mod->name === 'RFQ' ? 'RFQ' : $mod->name) : 'RFQ' }}</b></span>  
+                       <i class="mdi {{ $mod->mdi_icon }} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                    </a>
+                </li>               
+              @endif
+              @endforeach
+            @endif
+
            
             @foreach($parents as $parent)
             <li class="nav-item sidebar-item" style="padding-left:10px;padding-right:10px;">
@@ -703,19 +733,7 @@ table, th, td {
               </div>
             </li>
             @endforeach
-            @if(Auth::user()->admin == 2)
-              @foreach($modules as $mod)
-              @if($mod->name !== "Role's" && $mod->name !== 'Mapping')
-              <li class="nav-item sidebar-item sub-menu m-0" style="padding-left:10px;padding-right:6px;">
-                    <a class="nav-link sidebar-link" style="padding-left:10px;" href="http://127.0.0.1:8000/{{ $mod->url }}">
-                        
-                        <span class="menu-title"> <b>{{ $mod->name !== "Complete Lists" ? ($mod->name === 'RFQ' ? 'RFQ' : $mod->name) : 'RFQ' }}</b></span>  
-                       <i class="mdi {{ $mod->mdi_icon }} menu-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                    </a>
-                </li>               
-              @endif
-              @endforeach
-            @endif
+           
            
           </ul>
         </nav>

@@ -31,7 +31,13 @@
                         <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
-                        </div>
+                        <a style="font-size:30px;float:right;margin-right:10px;" class="mdi mdi-filter"></a>
+
+                          <div class="search-container" style="float:right;">
+                            <input type="search" name="search" id="search" placeholder="Search" class="p-2">
+                            <i class="mdi mdi-magnify"></i>
+                          </div>
+                          </div>
                         <!-- <hr>   -->
                       </div>     
 
@@ -74,6 +80,7 @@
                             </tr>
                             @php($i = 1)
                             @foreach($trackings as $tracking)
+                            @for($a=0;$a<=4;$a++)
                             <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$tracking->inventory_id}}</td>
@@ -113,6 +120,7 @@
                                 </td>
 
                             </tr>
+                            @endfor
                             @endforeach
                         </table>
                   </div>

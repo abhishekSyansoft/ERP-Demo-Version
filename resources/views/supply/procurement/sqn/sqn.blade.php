@@ -107,7 +107,7 @@
                   <div class="modal-dialog  modal-lg mx-auto">
                     <div class="modal-content card mx-auto">
                       <div class="modal-header">
-                        <h3 class="modal-title" id="rfqQUTLabel"><b>Quotation</b></h3>
+                        <h3 class="modal-title btn btn-primary" id="rfqQUTLabel">Download Quotation</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       

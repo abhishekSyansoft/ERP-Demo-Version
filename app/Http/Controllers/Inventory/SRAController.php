@@ -8,14 +8,45 @@ use App\Models\Inventory\Parts;
 use App\Models\Inventory\Allocation;
 use Illuminate\Database\QueryException;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 class SRAController extends Controller
 {
    public function SRA(){
-    $allocations = Allocation::get();
+    $allocations = DB::table('allocations')
+    ->join('parts','parts.part_number','allocations.item_code')
+    ->select(['allocations.*','parts.part_name as item_name'])
+    ->get();
     $parts = Parts::get();
     return view("supply.inventory.sra.sra",compact('parts','allocations'));
+   }
+
+
+   public function ScrapItemData(Request $request){
+    $validateData = $request->validate([
+        'scraptype' => 'required',
+        'inventory_id' => 'required',
+        'part_number' => 'required',
+        'vehicle' => 'required',
+        'location' => 'required',w
+        'scrap_quantity' => 'required',
+    ]);
+
+    DB::table('scrap')->insert([
+        'inventory_id' => $request->inventory_id,
+        'scraptype' => $request->scraptype,
+        'part_number' => $request->part_number,
+        'vehicle' => $request->vehicle,
+        'location' => $request->location,
+        'scrap_quantity' => $request->scrap_quantity,
+        'grn' => $request->grn,
+        'dnn' => $request->dnn
+    ]);
+
+    return redirect()->back()->with('message','Scrap item listed successfully');
+
+
    }
 
    public function SRAAdd(Request $request){

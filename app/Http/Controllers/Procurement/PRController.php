@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Models\Procurement\PR;
 use App\Models\User;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class PRController extends Controller
@@ -27,7 +27,7 @@ class PRController extends Controller
             try {
 
                 // Retrieve all resources from the database
-                $pr = DB::table('p_r_s')->get();
+                $pr = DB::table('p_r_s')->orderBy('id', 'desc')->get();
                 $parts = Parts::get();
                 $users = User::all();
                 $orders = OrderHeader::get();

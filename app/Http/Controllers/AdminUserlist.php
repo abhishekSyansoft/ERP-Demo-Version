@@ -62,7 +62,6 @@ class AdminUserlist extends Controller
         $validateData = $request->validate([
          'name'=> 'required',
          'email'=> 'required|max:100|email',
-         'password'=> 'required',
          'designation'=> 'max:100',
          'role'=> 'max:50',
          'admin'=>'max:10'
@@ -71,7 +70,6 @@ class AdminUserlist extends Controller
         $users = User::find($id)->update([
          'name'=> $request->name,
          'email'=> $request->email,
-         'password'=> bcrypt($request->password),
          'role'=> $request->role,
          'admin'=> $request->admin,
          'designation'=> $request->designation

@@ -165,7 +165,7 @@
 
 
                         <!-- Type -->
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-4">
                             <label for="type" class="form-label">Type</label>
                             <select class="form-control p-3" id="type" name="type" required>
                             <option value="">--Select--</option>
@@ -177,13 +177,13 @@
                         </div>
 
                         <!--Prefered Payment Terms -->
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-4">
                             <label for="payment_terms" class="form-label">Prefered Payment Terms</label>
                             <input type="text" class="form-control" id="payment_terms" name="payment_terms" value="{{$supplier->payment_terms}}" placeholder="Payment terms agreed upon with the supplier/vendor">
                         </div>
 
                         <!--Delivery Shedule Lead Time -->
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-4">
                             <label for="lead_time" class="form-label">Deliery Shedule</label>
                             <input type="text" class="form-control" id="lead_time" name="lead_time" value="{{$supplier->lead_time}}" placeholder="Lead time for order fulfilment from the supplier/vendor">
                         </div>
@@ -204,14 +204,14 @@
                         <!-- Notes -->
                         <div class="mb-3 col-md-6">
                             <label for="notes" class="form-label">Notes</label>
-                            <input type="text" class="form-control" id="notes" name="notes" value="{{$supplier->notes}}" placeholder="Additional notes or comments about the supplier/vendor (optional)">
+                            <textarea type="text" class="form-control" id="notes" name="notes"  placeholder="Additional notes or comments about the supplier/vendor (optional)">{{$supplier->notes}}</textarea>
                         </div>
 
 
                         <!-- Notes -->
                         <div class="mb-3 col-md-6">
-                            <label for="steps" class="form-label">Next Steps</label>
-                            <input type="text" class="form-control" id="steps" name="steps" value="{{$supplier->steps}}" placeholder="Enter Next steps (optional)">
+                            <label for="steps" class="form-label">Terms and Condition's</label>
+                            <textarea type="text" class="form-control" id="steps" name="steps" placeholder="Enter Next steps (optional)">{{$supplier->steps}}</textarea>
                         </div>
 
 

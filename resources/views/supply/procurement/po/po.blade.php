@@ -68,8 +68,8 @@
                                 <!-- <th rowspan="2">Quotation Number</th> -->
                                 <th rowspan="2">View PO</th>
                                 <th rowspan="2">View Items</th>
-                                <th rowspan="2">QRCode</th>
-                                <th rowspan="2">Barcode</th>
+                                <!-- <th rowspan="2">QRCode</th>
+                                <th rowspan="2">Barcode</th> -->
                                 <th rowspan="1" colspan="3">Supplier</th>
                                 <th rowspan="1" colspan="4">Order</th>
                                 <th rowspan="2">Expected Delivery Date</th>
@@ -77,12 +77,17 @@
                                 <th rowspan="1" colspan="4">Delivery Location</th>
                                 <th rowspan="1" colspan="4">Billing Location</th>
                                 <th rowspan="2">Comments</th>
+                                @if(Auth::user()->admin == 2)
+                                <th rowspan="2">Create Invoice</th>
+                                @endif
+                                @if(Auth::user()->admin == 3)
                                 <th rowspan="2">Action</th>
+                                @endif
                             </tr>
                             <tr>
                                 <th>Name</th>
-                                <th>Payment Terms</th>
-                                <th>Lead Time</th>
+                                <th>Payment Terms (Days)</th>
+                                <th>Lead Time (Weeks)</th>
                                 <th>Date</th>
                                 <th>Total Items</th>
                                 <th>Total quantity</th>
@@ -105,8 +110,8 @@
                                     <td>{{$data->po_id}}</td>
                                     <td><a class="btn btn-primary itemListsPOBTN" data-bs-toggle="modal" data-bs-target="#viewPOmodal" data-id="{{$data->id}}"><i class="mdi mdi-eye"></i></a></td>
                                     <td><a class="btn btn-primary itemListsBTN" data-id="{{$data->id}}"><i class="mdi mdi-eye"></i></a></td>
-                                    <td><a class="btn btn-primary"><i class="mdi mdi-eye"></i></a></td>
-                                    <td><a class="btn btn-primary"><i class="mdi mdi-eye"></i></a></td>
+                                    <!-- <td><a class="btn btn-primary"><i class="mdi mdi-eye"></i></a></td>
+                                    <td><a class="btn btn-primary"><i class="mdi mdi-eye"></i></a></td> -->
                                     <!-- <td><a class="mdi mdi-eye" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></a></td> -->
                                     <!-- <td><a class="mdi mdi-file" style="font-size:20px;color:red;" href="https://www.wordtemplatesonline.net/wp-content/uploads/2021/06/Quotation-Template-06-2021-04.jpg"></a></td> -->
                                     <td>{{$data->supplier}}</td>
@@ -114,8 +119,8 @@
                                     <td>{{$data->lead_time}}</td>
                                     <td>{{$data->order_date}}</td>
                                     <td>{{$data->total_unit}}</td>
-                                    <td>{{$data->total_qty}}</td>
-                                    <td><b>$ </b>{{number_format($data->line_amount_total)}}</td>
+                                    <td>{{$data->total_qty}}pcs.</td>
+                                    <td><b>Rs.</b>{{number_format($data->line_amount_total)}}</td>
                                     <!-- <td>{{$data->order_date}}</td> -->
                                     <td>{{$data->delivery_date}}</td>
                                     <td>{{$data->delivery_address}}</td>
@@ -127,14 +132,22 @@
                                     <td>{{$data->billing_city}}</td>
                                     <td>{{$data->billing_state}}</td>
                                     <td>{{$data->billing_pincode}}</td>
-                                    <td>{{$data->comments}}</td>
+                                    <td>{!! $data->comments !!}</td>
+                                    @if(Auth::user()->admin == 2)
+                                    @if($data->invoice_status == '')
+                                    <td><a class="btn btn-primary generateInvoice" data-id="{{$data->po_id}}">Generate</a></td>
+                                    @else 
+                                    <td><a class="mdi mdi-check-circle text-success" style="fond-size:20px;"></a></td>    
+                                    @endif
+                                    @endif
                                     @php($encryptedId = encrypt($data->id)) 
-                                    <td>
+                                   
                                       @if(Auth::user()->admin == 3)
+                                      <td>
                                         <a href="{{url('edit-po/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
                                         <a href="{{url('delete-po/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                         <div class="dropdown">
-                                          <a class="dropdownToggle dropbtn btn btn-success" style="background-color:transparent;text-decoration:none;color:black;">{{ $i % 2 == 0 ? 'Approved' : 'Rejected' }}</a>
+                                         <a class="dropdownToggle dropbtn btn btn-success" style="background-color:transparent;text-decoration:none;color:black;">{{ $i % 2 == 0 ? 'Approved' : 'Rejected' }}</a>
                                           <div class="dropdownContent dropdown-content">
                                               <a class="optionSendForApproved btn btn-success" href="#">Send For Approved</a>
                                               <a class="optionRejected btn btn-success" href="#">Rejected</a>
@@ -143,15 +156,15 @@
                                               <!-- Add more options as needed -->
                                           </div>
                                       </div>
-                                      @else
-                                        <a class="btn btn-success createInvoice" data-bs-toggle="modal" data-bs-target="#downloadInvoiceModal">Create Invoice</a>
-                                      @endif
-                                    </td>
+                                      </td>
+                                     @endif
+                                   
                                 </tr>
                                 
                                 @endif
                             @endforeach
                         </table>
+                  </div>
                   </div>
                 </div>
               </div>
@@ -164,19 +177,45 @@
               <div class="modal-dialog modal-lg">
                 <div class="modal-content" style="background-color:white;">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="downloadInvoiceModalLabel">Download Invoice</h5>
+                    <h5 class="modal-title" id="downloadInvoiceModalLabel">Create Invoice</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <center>
-                      <img src="https://cdn.vertex42.com/WordTemplates/images/word-invoice-template.png" id="invoice-image" style="object-fit:contain;" alt="Invoice">
-                    </center>
-                    <div class="mt-3 text-center">
-                      <!-- Download button -->
-                      <a href="https://cdn.vertex42.com/WordTemplates/images/word-invoice-template.png" download="invoice.png" class="btn btn-primary mx-2">Download</a>
-                      <!-- Print button -->
-                      <!-- <button onclick="printImage('invoice-image')" class="btn btn-secondary mx-2">Print</button> -->
+
+                  <form action="" class="row">
+                    <div class="form-group col-md-4">
+                        <label for="po_number">Po Number</label>
+                        <input type="text" name="po_number" id="po_number" class="form-control" placeholder="Enter PO number On behalf of invoice is created.">
                     </div>
+                    <div class="form-group col-md-4">
+                        <label for="invoice_number">Invoice Number</label>
+                        <input type="text" name="invoice_number" id="invoice_number" class="form-control" placeholder="Enter invoice number On behalf of invoice is created." value="INV_{{uniqid()}}">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="date">Date Of Invoice </label>
+                        <input type="date" name="date" id="date" class="form-control" value="{{ date('Y-m-d') }}">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="rate">Tax Rate </label>
+                        <input type="number" name="rate" id="rate" min="0" max="18" class="form-control" placeholder="Tax Rate applicable on the PO items">
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label for="others">Other's Charges </label>
+                        <input type="number" name="others" id="others" class="form-control" min="0" placeholder="Others charges including shipping, picking and all">
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="notes">Notes </label>
+                        <textarea type="text" name="notes" id="notes" class="form-control" min="0" placeholder="Notes applicable on the invoice"></textarea>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="terms">Terms & Conditions </label>
+                        <textarea type="text" name="terms" id="terms" class="form-control" min="0" placeholder="Enter terms and conditions"></textarea>
+                    </div>
+                  </form>
+
                   </div>
                 </div>
               </div>
@@ -388,202 +427,153 @@
         </div>
 
 
-
-        <!-- Modal -->
-        <div class="modal fade" id="viewPOmodal" tabindex="-1" role="dialog" aria-labelledby="viewPOmodalLabel" aria-hidden="true">
-          <div class="modal-dialog mx-auto" style="max-width:900px;" role="document">
-            <div class="modal-content card" style="background-color:white;">
-              <div class="modal-header">
-                <h5 class="modal-title" id="viewPOmodalLabel">View Purchase Order</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body m-0 p-2">
-                <div class="" style="border:1px solid black;">
-                      <div class="content-wrapper m-0 p-2">
-                            <div class="row">
-                              <div class="col-6">
-                                <h4 class="m-0">SyanSoft Pvt. Ltd.</h4>
-                                <h6 class="m-0">Solution for innovators</h6>
-                              </div>
-                              <div class="col-6">
-                                <h2 style="float:right;">Purchase Order</h2>
-                                
-                                <h5 style="float:right">
-                                PO No. : <span id="order_id"></span><br>
-                                Order Date. : <span id="order_date"></span>
-                              </h5>
-                               
-                              </div>
-                              </div>
-                            <!-- </div> -->
-                            <br>
-                       
-                            <div class="row">
-                            <div class="col-6">
-                                  <h4>Vendor Detail's :</h4>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Name :</b><span id="vendor_name"> Abhishek Kumar</span></p></i>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Company Name :</b> SyanSoft Pvt. Ltd.</p></i>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Address :</b><span id="vendor_street_address">Unit No. 306, Tower B4, Spaze ITech Park, Sohna Road, Sector 49, Gurugram, Haryana 122018</span></p></i>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Phone :</b>+91-<span id="vendor_phone">6202074551</span> </p></i>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Email :</b><span id="vendor_email"> abc@gmail.com</span></p></i>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Tin No. :</b><span id="vendor_gstin"> Tin Number </span></p></i>
-                                </div>
-                            </div>
-                            <br>
-                         
-
-                            <!-- <div class="row">
-                              <div class="col-6">
-                                <p class="m-0" style="font-weight:200;">The folowing number must appear on all related <br> correspondence,shipping papers and invoices </p>
-                                <br><h5>Order Number : <span id="order_id">PO_663b364a4778a</span></h5>
-                              </div>
-                            </div>
-                            <br> -->
-
-
-                            <div class="row">
-                              <div class="col-6">
-                               <h4>Bill TO : </h4>
-                               <i><h5 class="m-0" id="billing_street_address"> Unit No. 306, Tower B4, Spaze ITech Park,<br> Sohna Road, Sector 49</h5>
-                                <h6 class="m-0" id="billing_address"> Gurugram, Haryana 122018</h6></i><br>
-                                <i class="mdi mdi-phone"></i> <b>Phone Number :</b><span id="bill_phone"> +91-6202074551 </span><br>
-                                <i class="mdi mdi-email"></i> <b>Email :</b> <span id="bill_email"> +91-6202074551 </span>
-                              </div>
-
-                              <div class="col-6">
-                                  <h4>SHIP TO :</h4> <span style="font-weight: 100 !important;"><i>Please Include as much information as possible. Maps are veryfull.</i></span><br><br>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Name :</b> Abhishek Kumar</p></i>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Company Name :</b> SyanSoft Pvt. Ltd.</p></i>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Address :</b>  <span id="shipping_street_address">Unit No. 306, Tower B4, Spaze ITech Park, Sohna Road, Sector 49, Gurugram, Haryana 122018</span></p></i>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Phone :</b><span id="shipping_phone"> +91-6202074551</span> </p></i>
-                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Email :</b><span id="shipping_email"> abc@gmail.com</span></p></i>
-                              </div>
-                            </div>
-                            <br>
-
-                            <div class="row">
-                              <div class="col-12 table-wrapper" style="margin:0px !important;height:auto;">
-                              <table class="table table-bordered border-primary">
-                                  <!-- <thead> -->
-                                    <tr>
-                                      <!-- <th>P.O. DATE</th> -->
-                                      <th>REQUISITIONER</th>
-                                      <th>SHIPPED VIA</th>
-                                      <th>SHIPPEMENT DATE</th>
-                                      <th>TERMS</th>
-                                    </tr>
-                                  <!-- </thead>
-                                  <tbody> -->
-                                   <tr>
-                                      <!-- <td id="order_date">2024-05-08</td> -->
-                                      <td>SyanSoft Pvt. Ltd</td>
-                                      <td id="delivery_method">Will Call</td>
-                                      <td id="expected_delivery_date">2024-05-08</td>
-                                      <td id="lead_time">Net 30days</td>
-                                   </tr>
-                                  <!-- </tbody> -->
-                              </table>
-                              </div>
-                            </div>
-                       
-
-
-                            <div class="row mt-4">
-                              <div class="col-12" style="margin:0px !important;height:auto;">
-                              <table class="table table-bordered border-primary" id="table_items_po">
-                                  <!-- <thead> -->
-                                    <tr>
-                                      <th>Item Code</th>
-                                      <th>Item Name</th>
-                                      <!-- <th>Category</th> -->
-                                      <th>Vehicle</th>
-                                      <th>Unitprice</th>
-                                      <th>Quantity</th>
-                                      <!-- <th>Total Price</th> -->
-                                    </tr>
-                                    <!-- <tbody id="table_items_po_tbl_bdy">
-
-                                    </tbody> -->
-                                    <tr>
-                                      <td style="min-height:200px;" class="item_code"></td>
-                                      <td style="min-height:200px;" class="item_name"></td>
-                                      <!-- <td style="min-height:200px;" class="item_category"></td> -->
-                                      <td style="min-height:200px;" class="item_vehicle"></td>
-                                      <td style="min-height:200px;" class="item_unit_price"></td>
-                                      <td style="min-height:200px;" class="item_quantity"></td>
-                                      <!-- <td style="min-height:200px;" class="item_total"></td> -->
-                                    </tr>
-                                  <!-- </thead>
-                                  <tbody> -->
-                                   <tr>
-                                      
-                                   </tr>
-                                  <!-- </tbody> -->
-                              </table>
-                              </div>
-                            </div>
-
-                            <div class="row mt-4">
-                              <div class="col-6">
-                                <h6><b>Terms And Conditions: </b></h6>
-                                <ul>
-                                  <li><b>Delivery Schedule:</b> Supplier must adhere to agreed delivery dates. Non-conforming items may be rejected.</li>
-                                </ul>
-                              </div>
-                              <div class="col-6">
-                                <table class="table table-bordered border-primary">
-                                <tr>
-                                  <th class="p-1">Total Price</th>
-                                  <td id="line_item_total"></td>
-                                </tr>
-                                <tr>
-                                  <th class="p-1">SGST</th>
-                                  <td id="sgst"></td>
-                                </tr>
-                                <tr>
-                                  <th class="p-1">CGST</th>
-                                  <td id="cgst"></td>
-                                </tr>
-                                <tr>
-                                  <th class="p-1">Shipping & Handling</th>
-                                  <td id="handling"></td>
-                                </tr>
-                                <tr>
-                                  <th class="p-1">Other</th>
-                                  <td id="other"></td>
-                                </tr>
-                                <tr>
-                                  <th class="p-1">Final Amount</th>
-                                  <td id="final"></td>
-                                </tr>
-                                 
-                                </table>
-                              </div>
-                            </div>
-
-
-                            <div class="row">
-                              <!-- <div class="col-6">
-                              </div> -->
-                              <div class="col-6">
-                                <h6>Signature : <i class="bi bi-patch-check-fill" style="color:green;">Digitally Verefied</i></h6>
-                              </div>
-                            </div>
-                       
-                       
-
-
-                      </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="downloadPO">Download PO</button>
-                <button type="button" class="btn btn-success" id="printPO">Print PO</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              </div>
+<!-- Modal -->
+<div class="modal fade" id="viewPOmodal" tabindex="-1" role="dialog" aria-labelledby="viewPOmodalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog" role="document" style="margin: auto; max-width: 1100px;">
+    <div class="modal-content" style="background-color: white; border-radius: 5px;">
+      <div class="modal-header" style="border-bottom: 1px solid #dee2e6; padding: 1rem 1rem;">
+        <h5 class="modal-title" id="viewPOmodalLabel">View Purchase Order</h5>
+        <button type="button" class="btn-close" style="background: none; border: none;" data-bs-dismiss="modal">X</button>
+      </div>
+      <div class="modal-body" style="padding: 1rem;">
+        <div class="content-wrapper" style="padding: 1rem;">
+          <div style="display: flex; justify-content: space-between;">
+            <div>
+              <h4 style="margin: 0;">SyanSoft Pvt. Ltd.</h4>
+              <h6 style="margin: 0;">Solution for innovators</h6>
+            </div>
+            <div style="text-align: right;">
+              <h2>Purchase Order</h2>
+              <h5>PO No. : <span id="order_id"></span><br>Order Date: <span id="order_date"></span></h5>
+            </div>
+          </div>
+          <br>
+          <div style="display: flex;">
+            <div style="flex: 1;">
+              <h4>Vendor Details:</h4>
+              <p style="margin:0px;"><b>Name:</b> <span id="vendor_name">Abhishek Kumar</span></p>
+              <p style="margin:0px;"><b>Company Name:</b> SyanSoft Pvt. Ltd.</p>
+              <p style="margin:0px;"><b>Address:</b> <span id="vendor_street_address">Unit No. 306, Tower B4, Spaze ITech Park, Sohna Road, Sector 49, Gurugram, Haryana 122018</span></p>
+              <p style="margin:0px;"><b>Phone:</b> +91-<span id="vendor_phone">6202074551</span></p>
+              <p style="margin:0px;"><b>Email:</b> <span id="vendor_email">abc@gmail.com</span></p>
+              <p style="margin:0px;"><b>Tin No.:</b> <span id="vendor_gstin">Tin Number</span></p>
+            </div>
+          </div>
+          <br>
+          <div style="display: flex;">
+            <div style="flex: 1;">
+              <h4>Bill To:</h4>
+              <h5 id="billing_street_address">Unit No. 306, Tower B4, Spaze ITech Park,<br>Sohna Road, Sector 49</h5>
+              <h6 id="billing_address">Gurugram, Haryana 122018</h6><br>
+              <p style="margin:0px;"><b>Phone Number:</b> <span id="bill_phone">+91-6202074551</span></p>
+              <p style="margin:0px;"><b>Email:</b> <span id="bill_email">+91-6202074551</span></p>
+            </div>
+            <div style="flex: 1;">
+              <h4>Ship To:</h4>
+              <p style="margin:0px;"><i>Please include as much information as possible. Maps are very helpful.</i></p>
+              <p style="margin:0px;"><b>Name:</b> Abhishek Kumar</p>
+              <p style="margin:0px;"><b>Company Name:</b> SyanSoft Pvt. Ltd.</p>
+              <p style="margin:0px;"><b>Address:</b> <span id="shipping_street_address">Unit No. 306, Tower B4, Spaze ITech Park, Sohna Road, Sector 49, Gurugram, Haryana 122018</span></p>
+              <p style="margin:0px;"><b>Phone:</b> <span id="shipping_phone">+91-6202074551</span></p>
+              <p style="margin:0px;"><b>Email:</b> <span id="shipping_email">abc@gmail.com</span></p>
+            </div>
+          </div>
+          <br>
+          <div style="width: 100%;">
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #dee2e6;">
+              <thead>
+                <tr>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">REQUISITIONER</th>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">SHIPPED VIA</th>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">SHIPMENT DATE</th>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">TERMS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;">SyanSoft Pvt. Ltd</td>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;" id="delivery_method">Will Call</td>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;" id="expected_delivery_date">2024-05-08</td>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;" id="lead_time">Net 30 days</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <br>
+          <div style="width: 100%;">
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #dee2e6;" id="table_items_po">
+              <thead>
+                <tr>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">Item Code</th>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">Item Name</th>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">Vehicle</th>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">Unit Price</th>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">Quantity</th>
+                </tr>
+              </thead>
+              <tbody id="table_items_po_tbl_bdy">
+                <tr>
+                  <td style="min-height: 200px; border: 1px solid #dee2e6; padding: 0.5rem;" class="item_code"></td>
+                  <td style="min-height: 200px; border: 1px solid #dee2e6; padding: 0.5rem;" class="item_name"></td>
+                  <td style="min-height: 200px; border: 1px solid #dee2e6; padding: 0.5rem;" class="item_vehicle"></td>
+                  <td style="min-height: 200px; border: 1px solid #dee2e6; padding: 0.5rem;" class="item_unit_price"></td>
+                  <td style="min-height: 200px; border: 1px solid #dee2e6; padding: 0.5rem;" class="item_quantity"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <br>
+          <div style="display: flex;">
+            <div style="flex: 1;">
+              <h6><b>Terms And Conditions:</b></h6>
+              <ul>
+                <li><b>Delivery Schedule:</b> Supplier must adhere to agreed delivery dates. Non-conforming items may be rejected.</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <table style="width: 100%; border-collapse: collapse; border: 1px solid #dee2e6;">
+                <tr>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">Total Price</th>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;" id="line_item_total"></td>
+                </tr>
+                <tr>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">SGST</th>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;" id="sgst"></td>
+                </tr>
+                <tr>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">CGST</th>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;" id="cgst"></td>
+                </tr>
+                <tr>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">Shipping & Handling</th>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;" id="handling"></td>
+                </tr>
+                <tr>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">Other</th>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;" id="other"></td>
+                </tr>
+                <tr>
+                  <th style="border: 1px solid #dee2e6; padding: 0.5rem;">Final Amount</th>
+                  <td style="border: 1px solid #dee2e6; padding: 0.5rem;" id="final"></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <br>
+          <div style="display: flex; justify-content: flex-end;">
+            <div>
+              <h6>Signature: <i style="color: green;">Digitally Verified</i></h6>
             </div>
           </div>
         </div>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid #dee2e6; padding: 1rem;">
+        <button type="button" class="btn btn-primary" id="downloadPO" style="padding: 0.5rem 1rem; border: none; background-color: #007bff; color: white; cursor: pointer;">Download PO</button>
+        <button type="button" class="btn btn-secondary" style="padding: 0.5rem 1rem; border: none; background-color: #6c757d; color: white; cursor: pointer;" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 

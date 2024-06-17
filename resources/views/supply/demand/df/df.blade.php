@@ -47,16 +47,24 @@
                     <div class="table-wrapper">
                         <table class="table"style="width: 100%;">
                             <tr>
-                                <th>S No.</th>
-                                <th>Product</th>
-                                <th>Forcast_quantity</th>
-                                <th>Forcast_date</th>
-                                <th>Action</th>
+                                <th rowspan="2">S No.</th>
+                                <th colspan="2">Part</th>
+                              
+                                <th colspan="2">Forcast Quantity</th>
+                                
+                                <th rowspan="2">Action</th>
+                            </tr>
+                            <tr>
+                              <th>Code</th>
+                              <th>Name</th>
+                              <th>Quantity</th>
+                              <th>Date</th>
                             </tr>
                             @php($i=1)
                             @foreach($df as $data)
                                 <tr>
                                     <td>{{$i++}}</td>
+                                    <td>{{$data->product_id}}</td>
                                     <td>{{$data->product}}</td>
                                     <td>{{$data->forecast_quantity}}</td>
                                     <td>{{ $data->forecast_date}}</td>
@@ -94,7 +102,7 @@
                             <select id="product_id"  class="form-control p-3" name="product_id" required>
                                 <option value="0">--Select Product--</option>
                                 @foreach($products as $product)
-                                <option value="{{$product->id}}">{{$product->product_name}}</option>
+                                <option value="{{$product->part_number}}">{{$product->part_name}}</option>
                                 @endforeach
                             </select>
                         </div>

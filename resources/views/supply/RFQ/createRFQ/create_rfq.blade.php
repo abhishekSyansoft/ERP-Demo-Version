@@ -158,7 +158,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content" style="background-color:white;">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="rfqViewModalLabel">RFQ Details</h5>
+                    <h5 class="modal-title btn btn-primary" id="rfqViewModalLabel">Download RFQ</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -198,7 +198,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
                 </div>
             </div>
         </div>
@@ -262,7 +262,7 @@
                             <th>Quantity</th>
                             <th>Features</th>
                           <!-- </thead> -->
-                          <tbody id="prItemViewAll">
+                          <tbody id="prItemViewAll" class="prItemViewAll">
 
                           </tbody>
                         </table>

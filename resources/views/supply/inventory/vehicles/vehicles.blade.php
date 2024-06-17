@@ -31,6 +31,17 @@
                         <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
+                          <!-- <button class="btn-primary p-2" style="float:right;margin-right:10px;border:0px;" data-bs-toggle="modal" data-bs-target="#bulk_upload_modal">Bulk Upload</button> -->
+                          <!-- </div> -->
+                          <a style="font-size:30px;float:right;margin-right:10px;" class="mdi mdi-filter"></a>
+
+                          <div class="search-container" style="float:right;">
+                            <input type="search" name="search" id="search" placeholder="Search" class="p-2">
+                            <i class="mdi mdi-magnify"></i>
+                          </div>
+                          <button class="btn-primary p-2" style="float:right;margin-right:10px;border:0px;" data-bs-toggle="modal" data-bs-target="#bulk_upload_modal">Bulk Upload</button>
+
+<!-- </div> -->
                         </div>
                         <!-- <hr>   -->
                       </div>     
@@ -74,6 +85,7 @@
                             </tr>
                             @php($i=1)
                             @foreach($vehicles as $vehicle)
+                            @for($a=0;$a<=2;$a++)
                             <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$vehicle->vin}}</td>
@@ -118,6 +130,7 @@
                                     <a href="{{url('delete-vinv/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
+                            @endfor
                             @endforeach
                         </table>
                   </div>
@@ -147,6 +160,38 @@
                 </div>
             </div>
         </div>
+
+
+                <!-- Modal -->
+<div class="modal fade" id="bulk_upload_modal" tabindex="-1" aria-labelledby="bulkUploadModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="background-color:white;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="bulkUploadModalLabel">Bulk Upload</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="bulkUploadForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="uploadFile">Upload File</label>
+            <input type="file" class="form-control" id="uploadFile" name="uploadFile" required>
+          </div>
+          <!-- Add any additional form fields here -->
+          <!-- <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+          </div> -->
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="uploadButton">Upload</button>
+      </div>
+    </div>
+  </div>
+</div>
 
          <!-- Modal -->
          <div class="modal fade" id="VehiclesIdendificationDoc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

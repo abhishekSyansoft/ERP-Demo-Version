@@ -33,24 +33,13 @@
                         <label for="email">Email address</label>
                         <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" value="{{$users->email}}">
                       </div>
-
-                      <div class="form-group col-md-6">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password">
-                      </div>
-
-                      <div class="form-group col-md-6">
-                        <label for="password_confirmation">Confirm Password</label>
-                        <input type="password" name="password_confirmation" class="form-control" id="password_confirmation" placeholder="Confirm your password">
-                      </div>
-
                       <div class="form-group col-md-6">
                         <label for="admin">Role</label>
                         <select class="form-control p-3" name="admin" id="exampleSelectGender" style="color:black;">
-                            <option value="1" {{ $users->admin == 1 ? 'selected' : '' }}>Select</option>
-                            <option value="2" {{ $users->admin == 2 ? 'selected' : '' }}>User</option>
-                            <option value="3" {{ $users->admin == 3 ? 'selected' : '' }}>Admin</option>
-                            <option value="6" {{ $users->admin == 6 ? 'selected' : '' }}>Test</option>
+                            <option value="">Select</option>
+                            @foreach($roles as $role)
+                              <option value="{{$role->id}}" {{ $users->admin == $role->id ? 'selected' : '' }}>{{$role->name}}</option>
+                            @endforeach
                         </select>
                       </div>
 

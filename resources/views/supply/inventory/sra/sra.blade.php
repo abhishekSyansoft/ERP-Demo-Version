@@ -24,13 +24,20 @@
                     <div class="clearfix p-2 m-0" style="background-image: linear-gradient(to right, #0081b6, #74b6d1);   border-top-left-radius: 10px;border-top-right-radius: 10px;">
                       <div class="row">
                         <div class="col-md-6 m-0">
-                        <h4 class="card-title float-left m-0 p-0" style="color:white;">Stock Replenishment & Allocation  Lists</h4>
+                        <h4 class="card-title float-left m-0 p-0" style="color:white;">{{ Auth::user()->admin == 3 ? 'Stock Replenishment & Allocation Lists' : 'Inventory Control' }}</h4></h4>
                         </div>
                          <!-- Button to open the modal -->
                         <div class="col-md-6">
+                        <!-- <input type="search" name="search" id="search" placeholder="Search" class="p-2"> -->
                         <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>  
+
+                        <a style="font-size:30px;float:right;margin-right:10px;" class="mdi mdi-filter"></a>
+                        <div class="search-container" style="float:right;">
+                        <input type="search" name="search" id="search" placeholder="Search" class="p-2">
+                        <i class="mdi mdi-magnify"></i>
+                        </div>
                         </div>
                         <!-- <hr>   -->
                       </div>     
@@ -49,21 +56,25 @@
 
                             <tr>    
                                 <th rowspan="2">S No.</th>
-                                <th rowspan="2">Inventory ID</th>
+                                <th rowspan="2">Inventory Section</th>
                                 <th colspan="2">Item</th>
-                                <th rowspan="2">Vehicle</th>
+                                <th rowspan="2">Category</th>
+                                <th rowspan="2">Product</th>
                                 <th rowspan="2">Supplier</th>
                                 <th colspan="3">Stock Description</th>
                                 <th rowspan="2">Reorder Point</th>
                                 <th rowspan="2">Lead Time</th>
                                 <th rowspan="2">Last Replenishment Date</th>
-                                <th rowspan="2">Demand Forecast</th>
+                                <th rowspan="2">View Report</th>
+                                <th colspan="2">Forecasting</th>
                                 <th rowspan="2">Sales Channels</th>
                                 <th colspan="3">Allocation</th>
-                                <th rowspan="2">Demand Variability</th>
+                                <th rowspan="2">Shelf/Bin Number</th>
                                 <th rowspan="2">Safety Stock</th>
                                 <th rowspan="2">Order Quantity</th>
                                 <th rowspan="2">Availability</th>
+                                <!-- <th rowspan="2">QR Code</th>
+                                <th rowspan="2">Barcode</th> -->
                                 <th rowspan="2">Action</th>
                             </tr>
                             <tr>
@@ -72,34 +83,44 @@
                               <th>Current Level</th>
                               <th>Minimum Level</th>
                               <th>Maximum Level</th>
+                              <th>Demand Forecast</th>
+                              <th>Required Stock</th>
                               <th>Quantity</th>
                               <th>Date</th>
                               <th>Location</th>
                             </tr>
                             @php($i = 1)
                             @foreach($allocations as $allocation)
+                          
                               <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$allocation->inventory_id}}</td>
                                 <td>{{$allocation->item_code}}</td>
-                                <td>{{$allocation->description}}</td>
+                                <td>{{$allocation->item_name}}</td>
+                                <td>Vehicle</td>
                                 <td>{{$allocation->category}}</td>
                                 <td>{{$allocation->supplier}}</td>
-                                <td>{{$allocation->current_stock_level}}</td>
-                                <td>{{$allocation->min_stock_level}}</td>
-                                <td>{{$allocation->max_stock_level}}</td>
-                                <td>{{$allocation->reorder_point}}</td>
+                                <td>{{$allocation->current_stock_level}}pcs.</td>
+                                <td>{{$allocation->min_stock_level}}pcs.</td>
+                                <td>{{$allocation->max_stock_level}}pcs.</td>
+                                <td>{{$allocation->reorder_point}}pcs.</td>
                                 <td>{{$allocation->lead_time}}</td>
                                 <td>{{$allocation->last_replenishment_date}}</td>
-                                <td>{{$allocation->demand_forecast}}</td>
+                                <td><a class="mdi mdi-eye btn btn-primary" data-bs-target="#viewReport" data-bs-toggle="modal"></a></td>
+                                <td>{{$allocation->demand_forecast}}pcs.</td>
+                                <td>{{$allocation->demand_forecast - $allocation->current_stock_level}}pcs.</td>
                                 <td>{{$allocation->sales_channels}}</td>
-                                <td>{{$allocation->allocation_qty}}</td>
+                                <td>{{$allocation->allocation_qty}}pcs.</td>
                                 <td>{{$allocation->alloation_date}}</td>
                                 <td>{{$allocation->location}}</td>
                                 <td>{{$allocation->demand_variability}}</td>
-                                <td>{{$allocation->safety_stock}}</td>
-                                <td>{{$allocation->order_qty}}</td>
+                                <td>{{$allocation->safety_stock}}pcs.</td>
+                                <td>{{$allocation->order_qty}}pcs.</td>
                                 <td>{{$allocation->availability}}</td>
+                                <!-- <td><a class="btn btn-primary creatQRForInv" data-id="{{$allocation->inventory_id}}">Create QR Code</a></td>
+                                <td><a class="btn btn-primary createBarcodeInv" data-id="{{$allocation->inventory_id}}">Create Barode</a></td> -->
+                                <!-- <td>{{$allocation->qr_code}}</td>
+                                <td>{{$allocation->barcode}}</td> -->
                                 @php($encryptedId = encrypt($allocation->id))
                                
                                <td>
@@ -107,6 +128,7 @@
                                    <a href="{{url('delete-sra/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                </td>
                               </tr>
+                             
                             @endforeach
                            
                         </table>
@@ -118,17 +140,17 @@
             </div>
           </div>
         <!-- Modal -->
-        <div class="modal fade" id="vehiclesBarcodeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+        <div class="modal fade" id="viewReport" tabindex="-1" aria-labelledby="viewReportLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content" style="background-color:white;">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Barode</h5>
+                        <h5 class="modal-title btn btn-primary" id="downloadForecastReport"><a href="{{asset('Storage/images/Reports/Inventory_Forecasting_Template.xlsx')}}" style="text-decoration:none; color:white;">Export Reports</a></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <center>
                         <!-- QR Code image will be loaded here -->
-                        <td><img id="barcodeImageUrl" style="border-radius:0px;max-width:400px;height:100px;" src="" alt="Barcode"></td>
+                        <td><img id="barcodeImageUrl" src="https://docs.aligni.com/wp-content/uploads/2022/08/InventoryForecastChart@2x.png" style="width:100%;height:100%;object-fit:contain;" alt="Barcode"></td>
                         </center>
                     </div>
                     <div class="modal-footer">
@@ -343,7 +365,7 @@
                         </div>
 
                         <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="demand_variability" class="form-label">{{ __('Demand Variability') }}<sup class="text-danger">*</sup></label>
+                            <label for="demand_variability" class="form-label">{{ __('Shelf/Bin Number') }}<sup class="text-danger">*</sup></label>
                             <input id="demand_variability" type="text" class="form-control" name="demand_variability" placeholder="Variability in demand for the inventory item, based on factors such as seasonality, promotions, and market trends." required>
                         </div>
 

@@ -47,89 +47,44 @@
                     </div>
                     <div class="table-wrapper">
                         <table class="table table-bordered border-primary" style="width: 100%;">
-                            <tr>
+                        <tr>
                               <th rowspan="2">S. No.</th>
-                              <th rowspan="2">View GRN.</th>
-                              <th rowspan="2">Reciept No.</th>
-                              <th rowspan="2">PO No.</th>
-                              <th rowspan="2">INV No.</th>
-                              <th rowspan="2">Quotation No.</th>
-                              <th rowspan="1" colspan="3">Received</th>
-                              <th rowspan="2">Recieved Quantity</th>
-                              <th rowspan="2">Expected Quantity</th>
-                              <th rowspan="2">Unit Cost</th>
-                              <th rowspan="2">Total Cost</th>
-                              <th rowspan="2">Supplier</th>
-                              <th rowspan="2">PO Number</th>
-                              <th rowspan="2">Delivery Method</th>
-                              <th rowspan="2">Shipping Carrier</th>
-                              <th rowspan="2">Shipping Tracking Number</th>
-                              <th rowspan="2">Condition</th>
-                              <th rowspan="2">Inspection Results</th>
-                              <th rowspan="2">Serial Number</th>
-                              <th rowspan="2">Remarks/Comments</th>
-                              <th rowspan="2">Quality Control Information</th>
-                              <th rowspan="2">Select Payment Mode</th>
-                              <th rowspan="2">Make payment</th>
+                              <th rowspan="2">View PO</th>
+                              <th rowspan="2">View Invoice</th>
+                              <th colspan="2">Invoice</th>
+                              <th colspan="2">Order</th>
+                              <th colspan="2">Supplier</th>
+                              <th colspan="2">Payment</th>
                               <th rowspan="2">Action</th>
+                              <!-- <th rowspan="2">Action</th> -->
                             </tr>
                             <tr>
+                              <th>Number</th>
                               <th>Date</th>
-                              <th>Person</th>
-                              <th>Location</th>
+                              <th>Number</th>
+                              <th>Date</th>
+                              <th>Name</th>
+                              <th>Identity Number</th>
+                              <th>Payment ID</th>
+                              <th>Status</th>
                             </tr>
                             @php($a=1)
                             @foreach($grn as $data)
-                            @for($i=0;$i<=10;$i++)
                                 <tr>
-                                    <td>{{$a++}}</td>
-                                    <td><a data-bs-target="#staticBackdrop" class="mdi mdi-eye btn btn-primary" data-bs-toggle="modal"></a></td>
-                                    <td>{{$data->reciept_number}}</td>
-                                     <td>PO_{{uniqid()}}</td>
-                                     <td>INV_{{uniqid()}}</td>
-                                    <td>QUT_{{uniqid()}}</td>
-                                    <td>{{$data->received_date}}</td>
-                                    <td>{{$data->received_by}}</td>
-                                    <td>{{$data->receiving_location}}</td>
-                                    <td>{{$data->received_quantity}}</td>
-                                    <td>{{$data->expected_quantity}}</td>
-                                    <td>{{$data->unit_cost}}</td>
-                                    <td>{{$data->total_cost}}</td>
-                                    <td>{{$data->supplier_id}}</td>
-                                    <td>{{$data->po_id}}</td>
-                                
-                                    <td>{{$data->delivery_method}}</td>
-                                    <td>{{$data->shipping_carrier}}</td>
-                                    <td>{{$data->tracking_number}}</td>
-                                    <td>{{$data->condition}}</td>
-                                    <td>{{$data->inspection_result}}</td>
-                                    <td>{{$data->serial_number}}</td>
-                                    <td>{{$data->quality_control_information}}</td>
-                                    <td>{{$data->remarks}}</td>
-                                    <td>
-
-                                        <div class="dropdown">
-                                          <a class="dropdownToggle dropbtn btn btn-primary" style="background-color:transparent;text-decoration:none;color:white;">Select Payment Mode</a>
-                                          <div class="dropdownContent dropdown-content">
-                                              <a class="Cash" href="#">Cash</a>
-                                              <a class="Online" href="#">Online</a>
-                                              <a class="Online" href="#">Online</a>
-                                              <a class="Bank Transfer" href="#">Bank Transfer</a>
-                                              <!-- Add more options as needed -->
-                                          </div>
-                                      </div>
-
-                                    </td>
-                                    <td><a class="btn btn-success">Pay</a></td>
-                                    @php($encryptedId = encrypt($data->id)) 
-                                    <td>
-                                    @if(Auth::user()->admin==3)
-                                        <a href="{{url('edit-grn/'.$encryptedId)}}" class="btn btn-primary">Edit</a>
-                                    @endif
-                                        <a href="{{url('delete-grn/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
-                                    </td>
+                                  <td>{{$a++}}</td>
+                                  <td><a class="btn btn-primary itemListsPOBTNInInvoice" data-bs-toggle="modal" data-bs-target="#viewPOmodal" data-id="{{$data->po_number}}"><i class="mdi mdi-eye"></i></a></td>
+                                  <td><a class="btn btn-primary mdi mdi-eye viewInvoice" data-id="{{$data->po_number}}" data-bs-target="#downloadInvoiceModal" data-bs-toggle="modal"></a></td>
+                                  <td>{{$data->invoice_number}}</td>
+                                  <td>{{$data->invoice_date}}</td>
+                                  <td>{{$data->po_number}}</td>
+                                  <td>{{$data->po_date}}</td>
+                                  <td>{{$data->supplier_name}}</td>
+                                  <td>{{$data->supplier_id}}</td>
+                                  <td></td>
+                                  <td class="text-warning"><b>Pending</b></td>
+                                  <td><a class="pay btn btn-success">Pay</a></td>
                                 </tr>
-                                @endfor
+                             
                             @endforeach
                         </table>
                   </div>
@@ -140,196 +95,321 @@
           </div>
 
 
-          
-<!-- Add Supplier Modal -->
-<div class="modal fade" id="addSupplierModal" tabindex="-1" aria-labelledby="addSupplierModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content" style="background-color:white;">
-      <div class="modal-header">
-        <h4 class="modal-title" id="addSupplierModalLabel">Create Goods Recieving Note's</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Rescource Form -->
-                <form method="POST" action="{{route('grn.store')}}" class="row">
-                        @csrf
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="reciept_number" class="form-label">{{ __('Reciept Number') }}</label>
-                            <input type="text" id="reciept_number" class="form-control" name="reciept_number" value="RPT_{{uniqid()}}" placeholder="Enter the Reciept Number" required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="po_num" class="form-label">{{ __('PO Number') }}</label>
-                            <select id="po_num" class="form-select p-2" name="po_num" required>
-                                <!-- Options for PO Number will be populated dynamically here -->
-                                @for($i=0;$i<5;$i++)
-                                  <option value="PO_{{uniqid()}}">PO_{{uniqid()}}</option>
-                                @endfor
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="qut_number" class="form-label">{{ __('Quotation Number') }}</label>
-                            <select id="qut_number" class="form-select p-2" name="qut_number" required>
-                                <!-- Options for Quotation Number will be populated dynamically here -->
-                                @for($i=0;$i<5;$i++)
-                                  <option value="QUT_{{uniqid()}}">QUT_{{uniqid()}}</option>
-                                @endfor
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="invoice_number" class="form-label">{{ __('Invoice Number') }}</label>
-                            <select id="invoice_number" class="form-select p-2" name="invoice_number" required>
-                                <!-- Options for Invoice Number will be populated dynamically here -->
-                                @for($i=0;$i<5;$i++)
-                                  <option value="INV_{{uniqid()}}">INV_{{uniqid()}}</option>
-                                @endfor
-                            </select>
-                        </div>
-
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="received_date" class="form-label">{{ __('Received Date') }}</label>
-                            <input type="date" id="received_date" class="form-control" name="received_date" placeholder="Enter the negotiated price" required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="received_by" class="form-label">{{ __('Received By') }}</label>
-                            <input type="text" id="received_by" class="form-control" name="received_by" placeholder="Enter the name of the person who recieves the order" required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="received_quantity" class="form-label">{{ __('Received Quantity') }}</label>
-                            <input type="text" id="received_quantity" class="form-control" name="received_quantity" placeholder="Enter the no. of quantity recieved" required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="expected_quantity" class="form-label">{{ __('Expected Quantity') }}</label>
-                            <input type="text" id="expected_quantity" class="form-control" name="expected_quantity" placeholder="Enter the no. of expected quantity to be recieved" required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="unit_cost" class="form-label">{{ __('Unit Cost') }}</label>
-                            <input type="text" id="unit_cost" class="form-control" name="unit_cost" placeholder="The unit cost of each item received." required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="total_cost" class="form-label">{{ __('Total Cost') }}</label>
-                            <input type="text" id="total_cost" class="form-control" name="total_cost" placeholder="The total cost of the received inventory, calculated based on the unit cost and received quantity." required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="remarks" class="form-label">{{ __('Remarks/Comments') }}</label>
-                            <input type="text" id="remarks" class="form-control" name="remarks" placeholder="Any additional remarks or comments related to the receipt and inspection process." required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="receiving_location" class="form-label">{{ __('Receiving Location') }}</label>
-                            <input type="text" id="receiving_location" class="form-control" name="receiving_location" placeholder="The location within the warehouse or facility where the inventory was received and stored." required>
-                        </div>
-
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="quality_control_information" class="form-label">{{ __('Quality Control Information') }}</label>
-                            <input type="text" id="quality_control_information" class="form-control" name="quality_control_information" placeholder="Details about quality control procedures followed during the receipt and inspection process." required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="serial_number" class="form-label">{{ __('Serial Number') }}</label>
-                            <input type="text" id="serial_number" class="form-control" name="serial_number" placeholder="Serial numbers assigned to individual items received, if applicable." required>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="tracking_number" class="form-label">{{ __('Shipping Tracking Number') }}</label>
-                            <input type="text" id="tracking_number" class="form-control" name="tracking_number" placeholder="The tracking number assigned to the shipment by the shipping carrier.">
-                        </div>
-
-                        
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="delivery_method" class="form-label">{{ __('Delivery Method') }}</label>
-                            <select id="delivery_method" class="form-control p-3" name="delivery_method" placeholder="Enter the name of the person who receives the order">
-                                <option value="">--Select--</option>
-                                <option value="Courier Services">Courier Services</option>
-                                <option value="Truck Delivery">Truck Delivery</option>
-                                <option value="Local Pickup">Local Pickup</option>
-                                <option value="Express Shipping">Express Shipping</option>
-                                <option value="Postal Mail">Postal Mail</option>
-                                <option value="Air Freight">Air Freight</option>
-                                <!-- Add more options as needed -->
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="supplier_id" class="form-label">{{ __('Supplier') }}<sup class="text-danger">*</sup></label>
-                            <select id="supplier_id" class="form-control p-3" name="supplier_id" placeholder="The category or classification of the part (e.g., engine parts, body parts, electrical components)." required autofocus>
-                                <option value="">--Select Supplier--</option> 
-                                <option value="Abhishek">Abhishek</option>
-                                <option value="Priyanka">Priyanka</option>
-                                <option value="Kalpana">Kalpana</option>
-                                <option value="Arush">Arush</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="order_id" class="form-label">{{ __('Order Number') }}</label>
-                            <select id="order_id"  class="form-control p-3" name="order_id" required>
-                                <option value="0">--Select order number--</option>
-                                @foreach($orders as $order)
-                                <option value="{{$order->id}}">{{$order->order_id}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="shipping_carrier" class="form-label">{{ __('Shipping Carrier') }}</label>
-                            <select id="shipping_carrier" class="form-control p-3" name="shipping_carrier" placeholder="Enter the name of the person who receives the order">
-                                <option value="">--Select--</option>
-                                <option value="DHL">DHL</option>
-                                <option value="FedEx">FedEx</option>
-                                <option value="UPS">UPS</option>
-                                <option value="USPS">USPS</option>
-                                <option value="TNT">TNT</option>
-                                <option value="Purolator">Purolator</option>
-                                <option value="Canada Post">Canada Post</option>
-                                <option value="Royal Mail">Royal Mail</option>
-                                <!-- Add more options as needed -->
-                            </select>
-                        </div>
-
-
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="condition" class="form-label">{{ __('Condition') }}</label>
-                            <select id="condition" class="form-control p-3" name="condition" placeholder="Enter the name of the person who receives the order">
-                                <option value="">--Select--</option>
-                                <option value="New">New</option>
-                                <option value="Used">Used</option>
-                                <option value="Damaged">Damaged</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="inspection_result" class="form-label">{{ __('Inspection Results') }}</label>
-                            <select id="inspection_result" class="form-control p-3" name="inspection_result" placeholder="Enter the name of the person who receives the order">
-                                <option value="">--Select--</option>
-                                <option value="Pass">Pass</option>
-                                <option value="Fail">Fail</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                        <button type="submit" class="btn btn-primary">
-                            {{ __('Submit') }}
-                        </button>
-                        </div>
-                    </form>
+           <!-- Modal -->
+           <div class="modal fade" id="downloadInvoiceModal" tabindex="-1" aria-labelledby="downloadInvoiceModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:white;">
+              <div class="modal-header">
+                <a class="btn btn-success printInvoice m-1" style="float:right !important;">Download Invoice <span class="mdi mdi-file"></span></a>                
+                <button type="button" class="btn-close m-1" data-bs-dismiss="modal" aria-label="Close" style="float:right !important;"></button>
+              </div>
+              <div class="modal-body row content-wrapper">
+                <div class="row mx-auto p-0">
+                <div class="col-6">
+                    <h1 class="text-primary"><span id="vendor_name">Kalpana Automobile Agency</span></h1>
+                    <p class="m-0"><b>Address : </b><span id="address_line_1">Sec-48</span></p>
+                            <!-- <p class="m-0"><b>Address Line 2 : </b><span id="address_line_1">Gurugram</span></p> -->
+                    <p class="m-0"><b>City, State, ZipCode: </b><span id="address_line_2">Haryana</span></p>
+                  </div>
+                  <div class="col-6 p-2">
+                    <h1 class="text-primary text-end" style="padding-right:10px;">Invoice</h1>
+                    <p class="m-0 text-end"><b>Inv No./Date : </b><span id="invoice_id">INV_665d9984acc0e</span>/<span id="invoice_date">2024-06-03</span></p>
+                    <p class="m-0 text-end"><b>PO No./Date : </b><span id="po_number">PO_66597c97051aa</span>/<span id="po_date">2024-06-03</span></p>
+                    <p class="m-0 text-end"><b>GST Number: </b><span id="supplier_gst"></span></p>
+                  </div>
                 </div>
+      
+                  <div class="row mt-4 mx-auto">
+                    <div class="p-2 col-6">
+                      <h4 class="text-primary">Bill To:</h4>
+                      <!-- id="ven_name" -->
+                      <p class="m-0"><b>SyanSoft Technologies Private Limited</b></p>
+                      <p class="m-0"><b>Address : </b><span id="bill_to_address">Unit No. 306, Tower B4, Spaze I-Tech Park, Badshahpur Sohna Rd Hwy, Sector 49</span></p>
+                      <!-- <p class="m-0"><b>Address Line 2 : </b><span id="address_line_1">Gurugram</span></p> -->
+                      <p class="m-0"><b>City, State, ZipCode: </b><span id="bill_to_address_city">Gurugram, Haryana 122018</span></p>
+                      <p class="m-0"><b>Customer GSTIN : </b><span id="" class="text-end">29ABCDE1234F1Z5</span></p>
+                    </div>
+
+                    <div class="p-2 col-6">
+                      <h4 class="text-primary">Ship To:</h4>
+                      <!-- id="ven_name" -->
+                      <p class="m-0"><b>SyanSoft Technologies Private Limited</b></p>
+                      <p class="m-0"><b>Address Line 1 : </b><span id="ship_to_address">Unit No. 306, Tower B4, Spaze I-Tech Park, Badshahpur Sohna Rd Hwy, Sector 49</span></p>
+                      <!-- <p class="m-0"><b>Address Line 2 : </b><span id="address_line_1">Gurugram</span></p> -->
+                      <p class="m-0"><b>City, State, ZipCode: </b><span id="ship_to_address_city">Gurugram, Haryana 122018</span></p>
+                    </div>
+                  </div>
+                  <div class="col-6 mt-4">
+                    <b><p class="text-primary">Subject</p></b>
+                  </div>
+
+                  <div>
+                    <table class="table table-hovered" style="border:0px !important;">
+                      
+                        <tr style="background-color:none !important;">
+                          <th>S.No</th>
+                          <th>Description</th>
+                          <!-- <th>HSN Code</th> -->
+                          <th>Unitprice</th>
+                          <th>Quantity</th>
+                          <th>Total</th>
+                        </tr>
+                        <tr>
+                          <td id="serial_num">1</td>
+                          <td id="description"></td>
+                          <!-- <td></td> -->
+                          <td id="unitprice"></td>
+                          <td id="quantity"></td>
+                          <td id="total"></td>
+                        </tr>
+                    </table>
+                  </div>
+
+                  <div class="row mb-4 mx-auto">
+                    <div class="col-6 mt-4 p-0">
+                     
+                      <p><b>Term's & Conditions</b></p>
+                     <div id="terms">
+
+                     </div>
+                    </div>
+                    <div class="col-6 mt-4 m-0 p-0">
+                      <table class="table table-bordered">
+                        <tr>
+                          <td>Sub-total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                          <td id="sub_total"></td>
+                        </tr>
+                        <tr>
+                          <td>Tax Amount &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+                          <td id="tax"></td>
+                        </tr>
+                        <tr>
+                          <td>Other's &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+                          <td id="other"></td>
+                        </tr>
+                        <tr>
+                          <th>Final Amount &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th>
+                          <th id="line_item_total"></th>
+                        </tr>
+                      </table>
+                      <!-- <p><b>Sub-total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </b> <span id="subtotal"></span></p>
+                      <p><b>Tax Amount &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: </b> <span id="total_tax"></span></p> -->
+                    </div>
+                  </div>
+                 <div class="row mx-auto">
+                  <hr>
+                  <h4>Notes:</h4>
+                  <p id="notes">Invoices are vital documents in commercial transactions, detailing products or services provided, costs, and payment terms. They ensure transparency, facilitate accounting, and serve as legal records for both sellers and buyers.</p>
+                  <hr>
                 </div>
+                <h5 class="text-primary" style="font-family:Georgia, serif;">Thank's for your business.</h5>
+              </div>
             </div>
+          </div>
         </div>
+
+
+
+
+        
+             <!-- Modal -->
+             <div class="modal fade" id="viewPOmodal" tabindex="-1" role="dialog" aria-labelledby="viewPOmodalLabel" aria-hidden="true">
+          <div class="modal-dialog mx-auto" style="max-width:900px;" role="document">
+            <div class="modal-content card" style="background-color:white;">
+              <div class="modal-header">
+                <h5 class="modal-title" id="viewPOmodalLabel">View Purchase Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body m-0 p-2">
+                <div class="" style="border:1px solid black;">
+                      <div class="content-wrapper m-0 p-2">
+                            <div class="row">
+                              <div class="col-6">
+                                <h4 class="m-0">SyanSoft Pvt. Ltd.</h4>
+                                <h6 class="m-0">Solution for innovators</h6>
+                              </div>
+                              <div class="col-6">
+                                <h2 style="float:right;">Purchase Order</h2>
+                                
+                                <h5 style="float:right">
+                                PO No. : <span id="order_id"></span><br>
+                                Order Date. : <span id="order_date"></span>
+                              </h5>
+                               
+                              </div>
+                              </div>
+                            <!-- </div> -->
+                            <br>
+                       
+                            <div class="row">
+                            <div class="col-6">
+                                  <h4>Vendor Detail's :</h4>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Name :</b><span id="vendor_name"> Abhishek Kumar</span></p></i>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Company Name :</b> SyanSoft Pvt. Ltd.</p></i>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Address :</b><span id="vendor_street_address">Unit No. 306, Tower B4, Spaze ITech Park, Sohna Road, Sector 49, Gurugram, Haryana 122018</span></p></i>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Phone :</b>+91-<span id="vendor_phone">6202074551</span> </p></i>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Email :</b><span id="vendor_email"> abc@gmail.com</span></p></i>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Tin No. :</b><span id="vendor_gstin"> Tin Number </span></p></i>
+                                </div>
+                            </div>
+                            <br>
+                         
+
+                            <!-- <div class="row">
+                              <div class="col-6">
+                                <p class="m-0" style="font-weight:200;">The folowing number must appear on all related <br> correspondence,shipping papers and invoices </p>
+                                <br><h5>Order Number : <span id="order_id">PO_663b364a4778a</span></h5>
+                              </div>
+                            </div>
+                            <br> -->
+
+
+                            <div class="row">
+                              <div class="col-6">
+                               <h4>Bill TO : </h4>
+                               <i><h5 class="m-0" id="billing_street_address"> Unit No. 306, Tower B4, Spaze ITech Park,<br> Sohna Road, Sector 49</h5>
+                                <h6 class="m-0" id="billing_address"> Gurugram, Haryana 122018</h6></i><br>
+                                <i class="mdi mdi-phone"></i> <b>Phone Number :</b><span id="bill_phone"> +91-6202074551 </span><br>
+                                <i class="mdi mdi-email"></i> <b>Email :</b> <span id="bill_email"> +91-6202074551 </span>
+                              </div>
+
+                              <div class="col-6">
+                                  <h4>SHIP TO :</h4> <span style="font-weight: 100 !important;"><i>Please Include as much information as possible. Maps are veryfull.</i></span><br><br>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Name :</b> Abhishek Kumar</p></i>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Company Name :</b> SyanSoft Pvt. Ltd.</p></i>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Address :</b>  <span id="shipping_street_address">Unit No. 306, Tower B4, Spaze ITech Park, Sohna Road, Sector 49, Gurugram, Haryana 122018</span></p></i>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Phone :</b><span id="shipping_phone"> +91-6202074551</span> </p></i>
+                                  <i class="m-0 p-0"><p class="m-0 p-0"><b>Email :</b><span id="shipping_email"> abc@gmail.com</span></p></i>
+                              </div>
+                            </div>
+                            <br>
+
+                            <div class="row">
+                              <div class="col-12 table-wrapper" style="margin:0px !important;height:auto;">
+                              <table class="table table-bordered border-primary">
+                                  <!-- <thead> -->
+                                    <tr>
+                                      <!-- <th>P.O. DATE</th> -->
+                                      <th>REQUISITIONER</th>
+                                      <th>SHIPPED VIA</th>
+                                      <th>SHIPPEMENT DATE</th>
+                                      <th>TERMS</th>
+                                    </tr>
+                                  <!-- </thead>
+                                  <tbody> -->
+                                   <tr>
+                                      <!-- <td id="order_date">2024-05-08</td> -->
+                                      <td>SyanSoft Pvt. Ltd</td>
+                                      <td id="delivery_method">Will Call</td>
+                                      <td id="expected_delivery_date">2024-05-08</td>
+                                      <td id="lead_time">Net 30days</td>
+                                   </tr>
+                                  <!-- </tbody> -->
+                              </table>
+                              </div>
+                            </div>
+                       
+
+
+                            <div class="row mt-4">
+                              <div class="col-12" style="margin:0px !important;height:auto;">
+                              <table class="table table-bordered border-primary" id="table_items_po">
+                                  <!-- <thead> -->
+                                    <tr>
+                                      <th>Item Code</th>
+                                      <th>Item Name</th>
+                                      <!-- <th>Category</th> -->
+                                      <th>Vehicle</th>
+                                      <th>Unitprice</th>
+                                      <th>Quantity</th>
+                                      <!-- <th>Total Price</th> -->
+                                    </tr>
+                                    <tbody id="table_items_po_tbl_bdy">
+
+                                    </tbody>
+                                    <tr>
+                                      <td style="min-height:200px;" class="item_code"></td>
+                                      <td style="min-height:200px;" class="item_name"></td>
+                                      <!-- <td style="min-height:200px;" class="item_category"></td> -->
+                                      <td style="min-height:200px;" class="item_vehicle"></td>
+                                      <td style="min-height:200px;" class="item_unit_price"></td>
+                                      <td style="min-height:200px;" class="item_quantity"></td>
+                                      <!-- <td style="min-height:200px;" class="item_total"></td> -->
+                                    </tr>
+                                  <!-- </thead>
+                                  <tbody> -->
+                                   <tr>
+                                      
+                                   </tr>
+                                  <!-- </tbody> -->
+                              </table>
+                              </div>
+                            </div>
+
+                            <div class="row mt-4">
+                              <div class="col-6">
+                                <h6><b>Terms And Conditions: </b></h6>
+                                <ul>
+                                  <li><b>Delivery Schedule:</b> Supplier must adhere to agreed delivery dates. Non-conforming items may be rejected.</li>
+                                </ul>
+                              </div>
+                              <div class="col-6">
+                                <table class="table table-bordered border-primary">
+                                <tr>
+                                  <th class="p-1">Total Price</th>
+                                  <td id="line_item_total"></td>
+                                </tr>
+                                <tr>
+                                  <th class="p-1">SGST</th>
+                                  <td id="sgst"></td>
+                                </tr>
+                                <tr>
+                                  <th class="p-1">CGST</th>
+                                  <td id="cgst"></td>
+                                </tr>
+                                <tr>
+                                  <th class="p-1">Shipping & Handling</th>
+                                  <td id="handling"></td>
+                                </tr>
+                                <tr>
+                                  <th class="p-1">Other</th>
+                                  <td id="other"></td>
+                                </tr>
+                                <tr>
+                                  <th class="p-1">Final Amount</th>
+                                  <td id="final"></td>
+                                </tr>
+                                 
+                                </table>
+                              </div>
+                            </div>
+
+
+                            <div class="row">
+                              <!-- <div class="col-6">
+                              </div> -->
+                              <div class="col-6">
+                                <h6>Signature : <i class="bi bi-patch-check-fill" style="color:green;">Digitally Verefied</i></h6>
+                              </div>
+                            </div>
+                       
+                       
+
+
+                      </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="downloadPO">Download PO</button>
+                <button type="button" class="btn btn-success" id="printPO">Print PO</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
 
 
 

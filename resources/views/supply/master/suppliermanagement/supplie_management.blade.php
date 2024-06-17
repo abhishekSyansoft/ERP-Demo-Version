@@ -51,8 +51,8 @@
                                 <th rowspan="2">S No.</th>
                                 <th rowspan="2">Vendor Id</th>
                                 <th rowspan="2">Vendor</th>
-                                <th rowspan="2">Manager</th>
-                                <th rowspan="1" colspan="3">Vendor</th>
+                                <th rowspan="2">Handled BY</th>
+                                <th rowspan="1" colspan="2">Vendor</th>
                                 <th rowspan="1" colspan="4">Contact Information</th>
                                 <th rowspan="1" colspan="5">Location</th>
                                 <th rowspan="2">Type</th>
@@ -62,13 +62,13 @@
                                 <th rowspan="2">Quality Standard</th>
                                 <th rowspan="2">Contract Terms</th>
                                 <th rowspan="1" colspan="4">Account detail's</th>
-                                <th rowspan="2">Notes</th>
-                                <th rowspan="2">Next Steps</th>
+                                <!-- <th rowspan="2">Notes</th>
+                                <th rowspan="2">Next Steps</th> -->
                                 <th rowspan="2">Action</th>
                             </tr>
                             <tr>
                               <th>Evaluation</th>
-                              <th>Diversity</th>
+                              <!-- <th>Diversity</th> -->
                               <th>Relationship</th>
                               <th>Contact Person</th>
                               <th>Phone Number</th>
@@ -86,7 +86,7 @@
                             </tr>
                             @php($i=1)
                             @foreach($supplier as $vendor)
-                          
+                           
                             <tr>
                                 
                                 <td>{{$i++}}</td>
@@ -94,7 +94,7 @@
                                 <td>{{$vendor->supplier_name}}</td>
                                 <td>{{$vendor->manager}}</td>
                                 <td>{{$vendor->supplier_evaluation}}</td>
-                                <td>{{$vendor->supplier_diversity}}</td>
+                                <!-- <td>{{$vendor->supplier_diversity}}</td> -->
                                 <td>{{$vendor->supplier_relationship}}</td>
                                 <td>{{$vendor->contact_person}}</td>
                                 <td>{{$vendor->phone_number}}</td>
@@ -119,8 +119,8 @@
                                 <td>{{$vendor->tax_id}}</td>
                                 <td>{{$vendor->gst_in}}</td>
                                 <td>{{$vendor->tin_no}}</td>
-                                <td>{{$vendor->notes}}</td>
-                                <td>{{$vendor->steps}}</td>
+                                <!-- <td>{{$vendor->notes}}</td>
+                                <td>{{$vendor->steps}}</td> -->
                                 @php($encryptedId = encrypt($vendor->id))
                                
                                 <td>
@@ -128,7 +128,7 @@
                                     <a href="{{url('delete-supplier/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
-                            
+                         
                             @endforeach
                         </table>
                   </div>
@@ -184,7 +184,7 @@
 
           <!-- Account Manager Number -->
           <div class="mb-3 col-md-6 col-lg-3">
-            <label for="manager" class="form-label">Account Manager</label>
+            <label for="manager" class="form-label">Handled BY</label>
             <input type="text" class="form-control" id="manager" name="manager" placeholder="The designated account manager or representative at the supplier's organization." required>      
           </div>
 
@@ -297,41 +297,41 @@
           </div>
 
            <!--Prefered Payment Terms -->
-           <div class="mb-3 col-md-6 col-lg-3">
+           <div class="mb-3 col-md-6 col-lg-4">
             <label for="payment_terms" class="form-label">Prefered Payment Terms</label>
             <input type="text" class="form-control" id="payment_terms" name="payment_terms" placeholder="Payment terms agreed upon with the supplier/vendor">
           </div>
 
           <!--Delivery Shedule Lead Time -->
-          <div class="mb-3 col-md-6 col-lg-3">
+          <div class="mb-3 col-md-6 col-lg-4">
             <label for="lead_time" class="form-label">Deliery Shedule</label>
             <input type="text" class="form-control" id="lead_time" name="lead_time" placeholder="Lead time for order fulfilment from the supplier/vendor">
           </div>
             <!--Quality Standard -->
-            <div class="mb-3 col-md-6 col-lg-3">
+            <div class="mb-3 col-md-6 col-lg-4">
             <label for="quality_standard" class="form-label">Quality Standard</label>
             <input type="text" class="form-control" id="quality_standard" name="quality_standard" placeholder="Quality standard approved by goverment (e.g. ISO 9001 Certified)">
           </div>
 
 
             <!--Quality Standard -->
-          <div class="mb-3 col-md-6 col-lg-3">
+          <div class="mb-3 col-md-6 col-lg-6">
             <label for="contract_terms" class="form-label">Contract Terms</label>
             <input type="text" class="form-control" id="contract_terms" name="contract_terms" placeholder="Contract terms signed (e.g. NON Disclosure Aggreement required)">
           </div>
 
          
           <!-- Notes -->
-          <div class="mb-3 col-md-6 col-lg-3">
+          <div class="mb-3 col-md-6 col-lg-6">
             <label for="notes" class="form-label">Notes</label>
-            <input type="text" class="form-control" id="notes" name="notes" placeholder="Additional notes or comments about the supplier/vendor (optional)">
+            <textarea type="text" class="form-control" id="notes" name="notes" placeholder="Additional notes or comments about the supplier/vendor (optional)"></textarea>
           </div>
 
 
           <!-- Notes -->
-          <div class="mb-3 col-md-6 col-lg-3">
-            <label for="steps" class="form-label">Next Steps</label>
-            <input type="text" class="form-control" id="steps" name="steps" placeholder="Enter Next steps (optional)">
+          <div class="mb-3 col-md-6 col-lg-6">
+            <label for="steps" class="form-label">Term's and Conditions</label>
+            <textarea type="text" class="form-control" id="steps" name="steps" placeholder="Enter Next steps (optional)"></textarea>
           </div>
 
           <!-- Submit Button -->

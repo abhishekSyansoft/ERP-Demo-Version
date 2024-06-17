@@ -84,9 +84,10 @@
                                         <td>{{ number_format($items->product_price) }}</td>
                                         <td>{{ $items->product_currency }}</td>
                                         <td>{{ number_format($items->product_quantity) }}</td>
+                                        @php($encryptedId = $items->id)
                                         <td>
-                                            <a href="{{ url('products/edit/'.$items->product_id) }}" class="mdi mdi-pen mdi-lg m-2 btn btn-primary btn-sm">  Edit</a>
-                                            <a href="{{ url('products/delete/'.$items->product_id) }}" class="mdi mdi-delete mdi-lg m-2 btn btn-danger btn-sm">  Delete</a>
+                                            <a href="{{ url('products/edit/'.$encryptedId) }}" class="mdi mdi-pen mdi-lg m-2 btn btn-primary btn-sm">  Edit</a>
+                                            <a href="{{ url('products/delete/'.$encryptedId) }}" class="mdi mdi-delete mdi-lg m-2 btn btn-danger btn-sm">  Delete</a>
                                         </td>
                                     </tr>
                                 @elseif(!isset($_GET['product']))

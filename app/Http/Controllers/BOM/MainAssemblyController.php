@@ -21,14 +21,11 @@ class MainAssemblyController extends Controller
         try {
 
             // Retrieve all resources from the database
-            $grn = DB::table('g_r_n_s')
-            ->join('order_headers', 'order_headers.id', '=', 'g_r_n_s.po_id')
-            ->select('g_r_n_s.*', 'order_headers.order_id as order_number')
-            ->get();
-            $orders = OrderHeader::all();
+            $grn = DB::table('invoice_validation')->get();
+            // $orders = OrderHeader::all();
 
             // Return the view with the list of suppliers
-            return view("supply.payment.validation.invoice_validation",compact("grn",'orders'));
+            return view("supply.payment.validation.invoice_validation",compact("grn"));
         } catch (\Exception $e) {
             // Log the error or handle it in any other appropriate way
             // For example, you can return an error view or redirect with an error message
@@ -37,19 +34,57 @@ class MainAssemblyController extends Controller
         
     }
 
+
+    public function RejectInvoiceValidation(Request $request){
+        $inv_num = $request->input('id');
+
+        DB::table('invoice_validation')->update([
+            'rejected' => 1
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Invoice Validation failed and not approed by the approvar'
+        ]);
+    }
+
+    public function ApproveInvoiceValidation(Request $request){
+        $inv_num = $request->input('id');
+
+
+        $data =  DB::table('invoice_validation')->where('invoice_number', $inv_num)->first();
+
+        DB::table('invoice_validation')->where('invoice_number', $inv_num)->update([
+            'approved' => 1
+        ]);
+
+        DB::table('payment')->insert([
+            'invoice_number' => $data->invoice_number,
+            'invoice_date' => $data->invoice_date,
+            'po_number' => $data->po_number,
+            'po_date' => $data->po_date,
+            'supplier_name' => $data->supplier_name,
+            'supplier_id' => $data->supplier_id,
+            'created_at' => Carbon::now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Invoice Validation Success and approed by the approvar'
+        ]);
+    }
+    
+
     
     public function SupplierProfile(){
         try {
 
             // Retrieve all resources from the database
-            $grn = DB::table('g_r_n_s')
-            ->join('order_headers', 'order_headers.id', '=', 'g_r_n_s.po_id')
-            ->select('g_r_n_s.*', 'order_headers.order_id as order_number')
-            ->get();
+            $suppliers = DB::table('suppliers')->get();
             $orders = OrderHeader::all();
 
             // Return the view with the list of suppliers
-            return view("supply.payment.supplier.supplier",compact("grn",'orders'));
+            return view("supply.payment.supplier.supplier",compact("suppliers"));
         } catch (\Exception $e) {
             // Log the error or handle it in any other appropriate way
             // For example, you can return an error view or redirect with an error message
@@ -63,14 +98,11 @@ class MainAssemblyController extends Controller
         try {
 
             // Retrieve all resources from the database
-            $grn = DB::table('g_r_n_s')
-            ->join('order_headers', 'order_headers.id', '=', 'g_r_n_s.po_id')
-            ->select('g_r_n_s.*', 'order_headers.order_id as order_number')
-            ->get();
-            $orders = OrderHeader::all();
+            $grn = DB::table('payment')->get();
+           
 
             // Return the view with the list of suppliers
-            return view("supply.payment.initiation.initiate_payment",compact("grn",'orders'));
+            return view("supply.payment.initiation.initiate_payment",compact("grn"));
         } catch (\Exception $e) {
             // Log the error or handle it in any other appropriate way
             // For example, you can return an error view or redirect with an error message

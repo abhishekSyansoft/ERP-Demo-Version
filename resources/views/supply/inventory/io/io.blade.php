@@ -1,4 +1,4 @@
-@include('admin.layout.header')
+s@include('admin.layout.header')
 @include('admin.layout.navbar')
    <div class="main-panel">
           <div class="content-wrapper mx-auto">

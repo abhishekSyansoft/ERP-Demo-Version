@@ -45,8 +45,11 @@
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
                     </div>
-                    <div class="table-wrapper">
-                        <table class="table" style="width: 100%;">
+                    <div class="table-wrapper" style="height:auto;">
+                      <center>
+                      <img src="https://365datascience.com/resources/blog/thumb@1024_2018-07-3-Bad-chart-example-min.webp" style="object-fit:contain;" alt="analytics">
+                      </center>
+                      <!-- <table class="table" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
                                 <th>Metric Name</th>
@@ -68,7 +71,7 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        </table>
+                        </table> -->
                   </div>
                 </div>
               </div>

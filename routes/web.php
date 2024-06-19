@@ -81,6 +81,12 @@ route::middleware(['role:3,6,2,8,9'])->group(function () {
             // Start E-Auction
             route::get('/initiate_auction', [EauctionController::class, 'EAuction'])->name('initiate_auction');
             route::get('/scrap_items', [EauctionController::class, 'ScrapItems'])->name('scrap_items');
+            route::post('/auction/detail/store', [EauctionController::class, 'InitiateAuctionDetails'])->name('auction.detail.store');
+            route::post('/save_auction_item', [EauctionController::class, 'SaveAuctionItemRecord']);
+            route::post('/save_auction_supplers', [EauctionController::class, 'SaveAuctionSuppliersRecord']);
+            route::post('/fetch_auction_details', [EauctionController::class, 'FetchAuctionDetails']);
+           
+           
             // End E-Auction
 
 

@@ -258,7 +258,7 @@ table, th, td {
     white-space: nowrap !important;
     overflow: hidden !important;;
     text-overflow: ellipsis !important;;
-    -webkit-mask-image: linear-gradient(to right, #000 50%, transparent 100%) !important;;
+    -webkit-mask-image: linear-gradient(to right, #000 50%, transparent 100%) !important;
 }
 
 .scrollable-placeholder:-moz-placeholder {
@@ -321,7 +321,7 @@ table, th, td {
 }
 
   .btn{
-    padding:7px !important;
+    padding:7px !wimportant;
   }
 
    /* .card-body{

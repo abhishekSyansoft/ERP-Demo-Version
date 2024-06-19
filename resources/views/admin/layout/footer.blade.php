@@ -14,18 +14,53 @@
     <script src="{{asset('backend/vendors/js/vendor.bundle.base.js')}}"></script>
     <!-- endinject -->
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <script src="{{asset('backend/js/jquery.cookie.js')}}" type="text/javascript"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="{{asset('backend/js/jquery.cookie.js')}}" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://cdn.tiny.cloud/1/hk0f0e88romq2xcsd198zlsl7nfw00tlegcbx29pr71q77l0/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
-    tinymce.init({
-        selector: 'textarea'
-    });
+tinymce.init({
+    selector: 'textarea',
+    plugins: 'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons template paste textpattern',
+    toolbar: 'undo redo | bold italic underline strikethrough | fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | template visualblocks visualchars | hr nonbreaking toc insertdatetime',
+    height: 300,
+    menubar: 'file edit view insert format tools table help',
+    branding: false,
+    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+    image_title: true,
+    automatic_uploads: true,
+    file_picker_types: 'image',
+    file_picker_callback: function (callback, value, meta) {
+        if (meta.filetype === 'image') {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+
+            input.onchange = function () {
+                var file = this.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function () {
+                    callback(reader.result, {
+                        alt: file.name
+                    });
+                };
+                reader.readAsDataURL(file);
+            };
+
+            input.click();
+        }
+    },
+    language: 'en',
+    browser_spellcheck: true,
+    contextmenu: false,
+    media_live_embeds: true, // Enable live embeds
+});
 </script>
+
 <script>
 function toggleAccordion(element) {
     var content = element.nextElementSibling;
@@ -35,6 +70,8 @@ function toggleAccordion(element) {
         content.style.display = "block";
     }
 }
+
+
 </script>
 
 <script>
@@ -2506,37 +2543,200 @@ function toggleAccordion(element) {
                             $('#auctionInitiate #bid').val('Decrement');
                             $('#auctionInitiate #price_field').hide();
                         }
+                    });
+
+
+                    $('.auctionDetails').on('click',function(event){
+                        event.preventDefault();
+
+                        var id = $(this).data('autno');
+                       
+                        // Get CSRF token value from meta tag
+                        var csrfToken = $('meta[name="csrf-token"]').attr('content'); // Get CSRF token
+                       // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/fetch_auction_details',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: id,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // Handle the AJAX response here
+                                   var auction = response.auction_details;
+                                  
+                                   if(auction.start_price == '')
+                                   {
+                                    var start_price  = 'NA';
+                                   }else{
+                                    var start_price = parseFloat(auction.start_price).toLocaleString();
+                                   }
+                                   $('#suppliersModal #item_img').attr('src', '/Storage/' + auction.image);
+                                   $('#suppliersModal #auction_number').text(auction.auction_number);
+                                   $('#suppliersModal #c_date').text(auction.created_date);
+                                   $('#suppliersModal #last_date_to_submit').text(auction.last_date_of_subbmission);
+                                   $('#suppliersModal #price').text('Rs.' + start_price);
+                                   $('#suppliersModal #auction_type').text(auction.auction_type);
+                                   $('#suppliersModal #bidding_type').text(auction.bidding_type);
+                                   $('#suppliersModal #notes').html(auction.notes);
+
+                                   $.each(response.auction_item, function(index,item){
+                                        // <td id="preview_items"></td>
+                                        //     <td id="preview_discount"></td>
+                                        //     <td id="preview_total_amount"></td>
+                                        $('#suppliersModal #desc').text(item.item_desc);
+                                        $('#suppliersModal #features').html(item.features);
+                                        $('#suppliersModal #quantity').text(item.quantity);
+                                   });
+
+
+                                    // $('#staticBackdrop').on('hidden.bs.modal', function (e) {
+                                        // Reload the page when the modal is closed
+                                        // window.location.reload();
+                                    // });
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
                     })
+
+
+
+
+                    $('#createEAuction').on('submit', function(){
+                        var dataToSend = [];
+                        // Loop through each row of the table
+                        $("#auctionItemsLists tr").each(function() {
+                            var rowData = {};
+
+                            // Loop through each cell of the current row
+                            $(this).find("td").each(function() {
+                                // Get the column name from the table header
+                                var columnName = $(this).closest('table').find('th').eq($(this).index()).text().trim();
+                                
+                                // Get the text content of the cell
+                                var cellData = $(this).text().trim();
+                                
+                                // Add cell data to rowData with column name as key
+                                rowData[columnName] = cellData;
+                            });
+
+                            // Push the rowData object to dataToSend array
+                            dataToSend.push(rowData);
+                        });
+                        // Send data to server via AJAX
+                        sendDataToAuction(dataToSend);
+                        // sendDataToServerHeader();
+                    });
+                    $('#createEAuction').on('submit', function(){
+                        var dataToSend = [];
+                        // Loop through each row of the table
+                        $("#AuctionSuppliersLists tr").each(function() {
+                            var rowData = {};
+
+                            // Loop through each cell of the current row
+                            $(this).find("td").each(function() {
+                                // Get the column name from the table header
+                                var columnName = $(this).closest('table').find('th').eq($(this).index()).text().trim();
+                                
+                                // Get the text content of the cell
+                                var cellData = $(this).text().trim();
+                                
+                                // Add cell data to rowData with column name as key
+                                rowData[columnName] = cellData;
+                            });
+
+                            // Push the rowData object to dataToSend array
+                            dataToSend.push(rowData);
+                        });
+                        // Send data to server via AJAX
+                        sendDataToAuctionSuppliers(dataToSend);
+                        // sendDataToServerHeader();
+                    });
+
+                    function sendDataToAuction(data) {
+                    // Send data via AJAX to a Laravel route that maps to a controller function
+                    // Replace 'your-route' with the actual route name in your Laravel routes file
+                    // Replace 'your-controller-method' with the actual method name in your controller
+                    
+                    $.ajax({
+                        url: '/save_auction_item',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        dataType: 'json', // Specify that you're expecting JSON data in the response
+                        data: JSON.stringify({ data: data }),
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            console.clear();
+                            console.log('Item Saved in Auction lists successfully:', response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error sending data:', error);
+                        }
+                    });
+
+                    }
+
+                    function sendDataToAuctionSuppliers(data) {
+                    // Send data via AJAX to a Laravel route that maps to a controller function
+                    // Replace 'your-route' with the actual route name in your Laravel routes file
+                    // Replace 'your-controller-method' with the actual method name in your controller
+                    
+                    $.ajax({
+                        url: '/save_auction_supplers',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        dataType: 'json', // Specify that you're expecting JSON data in the response
+                        data: JSON.stringify({ data: data }),
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            console.clear();
+                            console.log('Auction details is deliverd to the suppliers', response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error sending data:', error);
+                        }
+                    });
+
+                    }
+
+
 
 
                     $('#auctionInitiate .addAuctionItem').on('click', function(){
                         // alert('hi');
-                        var auction_id = $('#createRFQModalForm #auction_id').val();
-                        var supplier = $('#createRFQModalForm #supplier').val();
-                        var phone = $('#createRFQModalForm #supplier_phone').val();
-                        var email = $('#createRFQModalForm #supplier_email').val();
-                        var person = $('#createRFQModalForm #supplier_person').val();
+                        var auction_id = $('#createEAuction #auction_id').val();
+                        var auction_item = $('#createEAuction #auction_item').val();
+                        var quantity = $('#createEAuction #quantity').val();
+                        var features = tinymce.get('features').getContent();
+
+                        console.clear();
+                        // console.log(features);
                         var tableBody = '';  
                         tableBody += '<tr>';
                         tableBody += '<td>' + auction_id + '</td>';
-                        tableBody += '<td>' + supplier + '</td>';
-                        tableBody += '<td>' + phone + '</td>';
-                        tableBody += '<td>' + email + '</td>';
-                        tableBody += '<td>' + person + '</td>';
+                        tableBody += '<td>' + auction_item + '</td>';
+                        tableBody += '<td>' + quantity + '</td>';
+                        tableBody += '<td style="text-align: left !important;">' + features + '</td>';
                         tableBody += '<td><a class="delete-link-po btn btn-primary" style="color:white;"><i class="mdi mdi-delete"></i></a>';
                         tableBody += '</td>';
                         tableBody += '</tr>';   
-                        if(supplier != ''){
+                        if(auction_item != ''){
                         $('#auctionInitiate .auctionItemsLists').append(tableBody);
                         }else{
-                            alert('add auction product');
+                            alert('Enter the name of the auction product');
                         }
 
-                         // var pr_num = $('#createRFQModalForm #pr_num').val('');
-                         var supplier = $('#createRFQModalForm #supplier').val('');
-                        var phone = $('#createRFQModalForm #supplier_phone').val('');
-                        var email = $('#createRFQModalForm #supplier_email').val('');
-                        var person = $('#createRFQModalForm #supplier_person').val('');
+                        // var auction_id = $('#createRFQModalForm #auction_id').val('');
+                        var auction_item = $('#createEAuction #auction_item').val('');
+                        var quantity = $('#createEAuction #quantity').val('');
+                        var features = tinymce.get('features').setContent('');
                     })
 
                     $(document).on('click', '.delete-link-po', function(e){
@@ -2546,12 +2746,12 @@ function toggleAccordion(element) {
 
                     $('#addSuppliersAuction').on('click',function(){
 
-                        var auction_id = $('#createRFQModalForm #auction_id').val();
-                        var rfq_num = $('#createRFQModalForm #rfq_num').val();
-                        var supplier = $('#createRFQModalForm #supplier').val();
-                        var phone = $('#createRFQModalForm #supplier_phone').val();
-                        var email = $('#createRFQModalForm #supplier_email').val();
-                        var person = $('#createRFQModalForm #supplier_person').val();
+                        var auction_id = $('#createEAuction #auction_id').val();
+                        var rfq_num = $('#createEAuction #rfq_num').val();
+                        var supplier = $('#createEAuction #supplier').val();
+                        var phone = $('#createEAuction #supplier_phone').val();
+                        var email = $('#createEAuction #supplier_email').val();
+                        var person = $('#createEAuction #supplier_person').val();
 
                         var tableBody = '';  
 
@@ -2564,12 +2764,12 @@ function toggleAccordion(element) {
                         tableBody += '<td><a class="delete-link-po btn btn-primary" style="color:white;"><i class="mdi mdi-delete"></i></a>';
                         tableBody += '</td>';
                         tableBody += '</tr>';   
-                        $('#createRFQModalForm #suppliersLists').append(tableBody);
+                        $('#createEAuction #AuctionSuppliersLists').append(tableBody);
                         // var pr_num = $('#createRFQModalForm #pr_num').val('');
-                        var supplier = $('#createRFQModalForm #supplier').val('');
-                        var phone = $('#createRFQModalForm #supplier_phone').val('');
-                        var email = $('#createRFQModalForm #supplier_email').val('');
-                        var person = $('#createRFQModalForm #supplier_person').val('');
+                        var supplier = $('#createEAuction #supplier').val('');
+                        var phone = $('#createEAuction #supplier_phone').val('');
+                        var email = $('#createEAuction #supplier_email').val('');
+                        var person = $('#createEAuction #supplier_person').val('');
                     })
 
                     $('.setVisibility').on('click',function(event){
@@ -2860,39 +3060,48 @@ function toggleAccordion(element) {
                 })
 
 
-                $('#createRFQModalForm #supplier').on('keyup',function(){
+              // Function to make the AJAX call and update the form fields
+function fetchSupplierDetails(formId) {
+    var id = $('#' + formId + ' #supplier').val();
+    
+    // Get the CSRF token value from the meta tag
+    var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-                    var id = $('#createRFQModalForm #supplier').val();
-                   
-                  // Get the CSRF token value from the meta tag
-                  var csrfToken = $('meta[name="csrf-token"]').attr('content');
+    // Make AJAX call
+    $.ajax({
+        url: '/fetch-supplier-details', // Specify your endpoint URL
+        type: 'POST', // Or 'GET' depending on your server route
+        data: {
+            id: id,
+            _token: csrfToken // Include the CSRF token in the data
+        }, // Send the order ID in the request
+        success: function(response) {
+            var supplier = response.supplier;
+            $('#' + formId + ' #supplier_phone').val(supplier.phone_number);
+            $('#' + formId + ' #supplier_email').val(supplier.email);
+            $('#' + formId + ' #supplier_person').val(supplier.contact_person);
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors
+            console.error('Error:', error);
+        }
+    });
+}
 
-                    // Make AJAX call
-                    $.ajax({
-                        url: '/fetch-supplier-details', // Specify your endpoint URL
-                        type: 'POST', // Or 'GET' depending on your server route
-                        data: {
-                                id: id,
-                                _token: csrfToken // Include the CSRF token in the data
-                            }, // Send the order ID in the request
-                        success: function(response) {
+// Bind the function to the keyup event for both forms
+$('#createRFQModalForm #supplier').on('keyup', function() {
+    fetchSupplierDetails('createRFQModalForm');
+});
 
-                            // console.log(response);
-                            
-                            var supplier = response.supplier;
-                            $('#createRFQModalForm #supplier_phone').val(supplier.phone_number);
-                            $('#createRFQModalForm #supplier_email').val(supplier.email);
-                            $('#createRFQModalForm #supplier_person').val(supplier.contact_person);
+$('#createEAuction #supplier').on('keyup', function() {
+    fetchSupplierDetails('createEAuction');
+});
 
-                        },
-                        error: function(xhr, status, error) {
-                            // Handle any errors
-                            console.error('Error:', error);
-                        }
-                    });   
-                })
-
-
+// Bind the function to the button click event
+$('#fetchSupplierDetails').on('click', function() {
+    fetchSupplierDetails('createRFQModalForm');
+    fetchSupplierDetails('createEAuction');
+});
 
 
 
@@ -3086,7 +3295,8 @@ function toggleAccordion(element) {
                         var item_description = $('#PRAddModalForm #item_des').val();
                         var pr_number = $('#PRAddModalForm #pr_num').val();
 
-                        var item_feature = $('#PRAddModalForm #item_feature').val();
+                        var item_feature = tinymce.get('item_feature').getContent();
+                     
                         var item_qty = $('#PRAddModalForm #item_qty').val();
 
                         var tableBody = '';  
@@ -3127,6 +3337,7 @@ function toggleAccordion(element) {
                             // Add cell data to rowData with column name as key
                             rowData[columnName] = cellData;
                         });
+                        
 
                         // Push the rowData object to dataToSend array
                         dataToSend.push(rowData);
@@ -5609,6 +5820,7 @@ $('#update_order_items_form').submit(function(e) {
        $(document).ready(function() {
       $('.form-control').css('border-bottom','1px solid black');
       $('.table th').css('color','#273a96');
+      $('.tox-editor-container').addClass('p-0');
     //   $('.table tr').css('border-bottom','1px solid #273a96');
     //   $('.table th').css('color','white');
      

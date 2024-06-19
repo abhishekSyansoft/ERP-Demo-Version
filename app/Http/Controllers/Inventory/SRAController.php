@@ -29,7 +29,7 @@ class SRAController extends Controller
         'inventory_id' => 'required',
         'part_number' => 'required',
         'vehicle' => 'required',
-        'location' => 'required',w
+        'location' => 'required',
         'scrap_quantity' => 'required',
     ]);
 

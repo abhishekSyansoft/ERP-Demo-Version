@@ -50,16 +50,36 @@
                         <table class="table" style="width: 100%;">
                             <tr>
                                 <th>S. No.</th>
-                               <th>Action</th>
+                                <th>Items</th>
+                                <th>Auction Number</th>
+                                <th>Auction Type</th>
+                                <th>Bidding Type</th>
+                                <th>Starting Price</th>
+                                <th>Created Date</th>
+                                <th>Last Date of Subbmission</th>
+                                <th>Action</th>
                             </tr>
                             @php($a=1)
+                            @foreach($auction_lists as $details)
                               <tr>
                                 <td>{{$a++}}</td>
+                                <td><a class="mdi mdi-eye btn btn-primary auctionDetails" data-bs-toggle="modal" data-bs-target="#suppliersModal" data-autno="{{$details->auction_number}}"></a></td>
+                                <td>{{$details->auction_number}}</td>
+                                <td>{{$details->auction_type}}</td>
+                                <td>{{$details->bidding_type}}</td>
+                                @if($details->start_price == '')
+                                <td></td>
+                                @else
+                                <td>Rs.{{number_format($details->start_price)}}</td>
+                                @endif
+                                <td>{{$details->created_date}}</td>
+                                <td>{{$details->last_date_of_subbmission}}</td>
                                 <td>
                                   <a class="btn btn-primary">Edit</a>
                                   <a class="btn btn-danger">Delete</a>
                                 </td>
                               </tr> 
+                              @endforeach
                         </table>
                   </div>
                 </div>
@@ -76,24 +96,53 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content" style="background-color:white;">
       <div class="modal-header">
-        <h5 class="modal-title" id="suppliersModalLabel">Supplier List</h5>
+        <h5 class="modal-title" id="suppliersModalLabel">Auction Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <h5>Supplier List</h5>
-        <table class="table table-bordered border-primary">
-          <thead>
-            <tr>
-              <th>S. Number</th>
-              <th>Supplier Name</th>
-              <th>Phone Number</th>
-              <th>Email</th>
-              <th>Contact Person</th>
-            </tr>
-          </thead>
-          <tbody id="supplierTableBody">
-            <!-- Supplier list will be dynamically populated here -->
-          </tbody>
+        <h3 class="mb-3">Auction Item  and complete details</h3>
+        <table class="table table-bordered border-primary mb-3">
+          <tr>
+            <th>Item Decription</th>
+            <th>Item Features</th>
+            <th>Quantity</th>
+           
+          </tr>
+          <tr>
+            <td id="desc"></td>
+            <td id="features"></td>
+            <td id="quantity"></td>
+          </tr>
+          
+        </table>
+        <table class=" table table-bordered border-primary" style="width:100%;">
+          <tr>
+            <th class="p-2">Description</th>
+            <th class="p-2">Details</th>
+            <th class="p-2">Photo</th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Auction Number : <td class="p-2" id="auction_number">Auct_66712207eb7eb</td></th>
+            <td rowspan="6" class="p-0 m-0" style="background-color:black;"><img id="item_img" src="https://th.bing.com/th?id=OIP.qNJ-3o_aLdtFRswCO9VLOgHaEK&w=333&h=187&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2" style="object-fit:cotain;height:100%;width:100%;border-radius:0px;padding:0px;margib:0px;" alt=""></td>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Auction Created On : <td class="p-2" id="c_date" style="text-align:left !important;">2024-06-18</td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Last date to submit bid in Auction : <td class="p-2" id="last_date_to_submit" style="text-align:left !important;">2024-06-28</td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Start Price : <td class="p-2" id="price" style="text-align:left !important;"></td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Auction Type : <td class="p-2" id="auction_type" style="text-align:left !important;">Reverse Auction</td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Bidding Type : <td class="p-2" id="bidding_type" style="text-align:left !important;">Decrement</td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Note's/Comments : <td class="p-2" colspan="2" id="notes" style="text-align:left !important;">Not Any till now</td></th>
+          </tr>
         </table>
       </div>
       <div class="modal-footer">
@@ -174,7 +223,7 @@
       </div>
       <div class="modal-body">
         <!-- Rescource Form -->
-                <form method="POST" class="row mx-auto" id="createRFQModalForm">
+                <form method="POST" action="{{route('auction.detail.store')}}" class="row mx-auto" id="createEAuction" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3 col-md-6 col-lg-4">
@@ -193,7 +242,7 @@
 
                         <div class="mb-3 col-md-6 col-lg-4">
                             <label for="bid" class="form-label">{{ __('Bidding Type') }}</label>
-                            <select type="bid" id="bid" class="form-control p-3" name="type" placeholder="Auction Type">
+                            <select id="bid" class="form-control p-3" name="bid" placeholder="Auction Type">
                                 <option value="">--Select Bidding Type--</option>
                                 <option value="Increment">Increment</option>
                                 <option value="Decrement">Decrement</option>
@@ -201,21 +250,31 @@
                         </div>
 
                         
-                        <div class="mb-3 col-md-6 col-lg-4" id="price_field">
+                        <div class="mb-3 col-md-6 col-lg-3" id="price_field">
                             <label for="start_price" class="form-label">{{ __('Starting Price') }}</label>
                             <input type="number" id="start_price" class="form-control" name="start_price" placeholder="mention the starting price of the assets">
                         </div>
 
 
-                        <div class="mb-3 col-md-6 col-lg-4">
+                        <div class="mb-3 col-md-6 col-lg-3">
                             <label for="doc" class="form-label">{{ __('Date of Creation') }}</label><b>(Auction)</b></label>
                             <input type="date" id="doc" class="form-control" name="doc" value="{{date('Y-m-d')}}" placeholder="Last date of bid submission">
                         </div>
 
 
-                        <div class="mb-3 col-md-6 col-lg-4">
-                            <label for="dos" class="form-label">{{ __('Date of Submission') }}</label>
+                        <div class="mb-3 col-md-6 col-lg-3">
+                            <label for="dos" class="form-label">{{ __('Last Date of Submission') }}</label>
                             <input type="date" id="dos" class="form-control" name="dos" placeholder="Last date of bid submission">
+                        </div>
+
+                        <div class="mb-3 col-md-6 col-lg-3">
+                            <label for="image" class="form-label">{{ __('Image of the Item') }}</label>
+                            <input type="file" id="image" class="form-control" name="image" placeholder="Select Image which is mentioned in the auction">
+                        </div>
+
+                        <div class="col-md-12 mt-3">
+                            <label for="notes">Note's/Comment's</label>
+                            <textarea name="notes" class="form-control" id="notes" placeholder="Enter if any notes or comments related to this auction"></textarea>
                         </div>
 
 
@@ -225,8 +284,23 @@
                             <hr>
                         </div>
 
+                        <div class="col-md-6">
+                            <label for="auction_item">Auction Item</label>
+                            <input type="text" name="auction_item" class="form-control" id="auction_item" placeholder="Enter the name of he auction Items">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="quantity">Qunatity</label>
+                            <input type="text" name="quantity" class="form-control" id="quantity" placeholder="Quantity of te auction Item">
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <label for="features">Features</label>
+                            <textarea name="features" class="form-control" id="features" placeholder="Enter the features of the auction item if any"></textarea>
+                        </div>
 
-                        <div class="col-12 form-group">
+
+                        <div class="col-12 form-group mt-3">
+                        <a class="btn btn-primary addAuctionItem mt-3 mb-3">AddItems</a>
+                           
                         <div class="table-wrapper" style="height:auto;margin:0pc !important;">
                             <table class="table table-bordered border-primary">
                                 <!-- <thead> -->
@@ -242,8 +316,6 @@
                                 </tbody>
                             </table>
                         </div>
-                        <a class="btn btn-primary addAuctionItem mt-3">AddItems</a>
-
                         </div>
 
 
@@ -294,7 +366,7 @@
                                 <th>Contact Person</th>
                                 <th>Action</th>
                               </thead>
-                              <tbody id="suppliersLists">
+                              <tbody id="AuctionSuppliersLists">
 
                               </tbody>
                             </table>

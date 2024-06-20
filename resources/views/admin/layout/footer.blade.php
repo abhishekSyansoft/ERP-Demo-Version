@@ -25,7 +25,7 @@
 tinymce.init({
     selector: 'textarea',
     plugins: 'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons template paste textpattern',
-    toolbar: 'undo redo | bold italic underline strikethrough | fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | template visualblocks visualchars | hr nonbreaking toc insertdatetime',
+    toolbar: 'undo redo | bold italic underline strikethrough | fontsizeselect fontfamilyselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | template visualblocks visualchars | hr nonbreaking toc insertdatetime',
     height: 300,
     menubar: 'file edit view insert format tools table help',
     branding: false,
@@ -1748,7 +1748,6 @@ function toggleAccordion(element) {
                                                             }else{
                                                                 tableBody1 += '<td class="text-center"><a class="btn btn-success text-center SApprovalQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Approval </a></td>'; 
                                                             }
-
                                                             if(item.QutNego == 1){
                                                             tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
                                                             }else{
@@ -1906,6 +1905,457 @@ function toggleAccordion(element) {
                             });
 
 
+
+                            $('#compareAuctionBTN').on('click', function(event) {
+                                event.preventDefault();
+                                $('#bidder_name').html('Lowest BID');
+                                $('#auction_type_head').html('Reverse AuctionBID Comparision');
+                                
+
+                                var checkedIds = [];
+                                $('#auction_bid_table_received .compareAuction:checked').each(function() {
+                                    checkedIds.push($(this).data('id'));
+                                });
+                                console.clear();
+                                // console.log(checkedIds);
+
+                                if (checkedIds.length > 0) {
+                                    $.ajax({
+                                        url: '/select_auction_to_compare',
+                                        type: 'POST',
+                                        data: JSON.stringify({ ids: checkedIds }),
+                                        contentType: 'application/json; charset=utf-8',
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                        },
+                                        success: function(response) {
+                                            console.log(response);
+
+                                            var tableBody1 = '';
+                                            const numberFormatter = new Intl.NumberFormat('en-US', {
+                                                style: 'decimal',
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2
+                                            });
+
+                                            var groupedContent = [];
+                                            var headings = ["Details", "Bidding Amount (rs.)", "Delivery Term <b>(days)</b>", "Payment before Delivery <b>(%)</b>:", "Quality :", "Rating :", "Supplier :", "Limit Amount <b>(rs.)</b> :"];
+                                            groupedContent.push(headings);
+
+                                            $.each(response.data, function(index, item) {
+                                                tableBody1 += '<tr>';
+                                                tableBody1 += '<td>' + (index + 1) + '</td>';
+                                                tableBody1 += '<td>' + item.supplierName + '</td>';
+                                                tableBody1 += '<td>' + item.qut_num + '</td>';
+                                                if (item.QutApproval == 1) {
+                                                    tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                                } else {
+                                                    tableBody1 += '<td class="text-center"><a class="btn btn-success text-center SApprovalQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Approval </a></td>';
+                                                }
+                                                if (item.QutNego == 1) {
+                                                    tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                                } else {
+                                                    tableBody1 += '<td class="text-center"><a class="btn btn-primary text-center SNegoQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Negotiation </a></td>';
+                                                }
+                                                tableBody1 += '</tr>';
+                                            });
+
+                                            $('#actionOnQuot').html(tableBody1);
+
+                                            var lowestValueCounts = [];
+
+                                            $.each(response.data, function(index, item) {
+                                                var BidAmount = parseFloat(item.bidding_amount);
+                                                var delivery_term = item.delivery_terms || 0;
+                                                var limit = item.limit || 0;
+                                                var quality = 'Good';
+                                                var rating = 'Excellent';
+                                                groupedContent.push([
+                                                    item.auction_number_bid,
+                                                    BidAmount,
+                                                    delivery_term,
+                                                    item.before,
+                                                    quality,
+                                                    rating,
+                                                    item.supplier_name,
+                                                    limit,
+                                                ]);
+
+                                                lowestValueCounts.push(0);
+                                            });
+
+                                            var columnsToCompare = [1, 2, 3];
+
+                                            columnsToCompare.forEach(function(colIndex) {
+                                                var lowestValue = null;
+                                                groupedContent.slice(1).forEach(function(row) {
+                                                    var value = parseFloat(row[colIndex]);
+                                                    if (lowestValue === null || value < lowestValue) {
+                                                        lowestValue = value;
+                                                    }
+                                                });
+
+                                                groupedContent.slice(1).forEach(function(row, rowIndex) {
+                                                    var value = parseFloat(row[colIndex]);
+                                                    if (value === lowestValue) {
+                                                        lowestValueCounts[rowIndex] += 1;
+                                                    }
+                                                });
+                                            });
+
+                                            groupedContent.slice(1).forEach(function(row, rowIndex) {
+                                                var lowestCount = lowestValueCounts[rowIndex];
+                                                var rating = (lowestCount / columnsToCompare.length) * 5;
+                                                row[5] = rating.toFixed(2);
+                                            });
+
+                                            // Generate star icons for ratings
+                                            groupedContent.slice(1).forEach(function(row) {
+                                                var rating = parseFloat(row[5]);
+                                                var fullStars = Math.floor(rating);
+                                                var halfStar = rating % 1 >= 0.5 ? 1 : 0;
+                                                var emptyStars = 5 - fullStars - halfStar;
+
+                                                var starsHtml = '';
+                                                for (var i = 0; i < fullStars; i++) {
+                                                    starsHtml += '<i class="mdi mdi-star" style="color: gold;font-size:20px;"></i>';
+                                                }
+                                                if (halfStar) {
+                                                    starsHtml += '<i class="mdi mdi-star-half" style="color: gold;font-size:20px;"></i>';
+                                                }
+                                                for (var i = 0; i < emptyStars; i++) {
+                                                    starsHtml += '<i class="mdi mdi-star-outline" style="color: gold;font-size:20px;"></i>';
+                                                }
+                                                row[5] = starsHtml;
+                                            });
+
+                                            var tableBody = '';
+                                            for (var i = 0; i < groupedContent[0].length; i++) {
+                                                tableBody += '<tr>';
+                                                for (var j = 0; j < groupedContent.length; j++) {
+                                                    if (j === 0) {
+                                                        tableBody += '<th style="color:darkblue;" class="text-center">' + groupedContent[j][i] + '</th>';
+                                                    } else {
+                                                        var cellValue = groupedContent[j][i];
+                                                        var isNumeric = !isNaN(parseFloat(cellValue)) && isFinite(cellValue);
+
+                                                        if (isNumeric) {
+                                                            cellValue = parseFloat(cellValue);
+                                                        }
+
+                                                        var allValuesEqual = true;
+                                                        var hasMultipleGreatest = false;
+                                                        var greatestValue = null;
+                                                        var lowestValue = null;
+                                                        var valueCounts = {};
+                                                        var lowestValueCount = 0;
+                                                        var greatestValueCount = 0;
+
+                                                        if ([1, 2, 3, 7].includes(i)) {
+                                                            for (var k = 1; k < groupedContent.length; k++) {
+                                                                var value = parseFloat(groupedContent[k][i]);
+                                                                if (!isNaN(value) && isFinite(value)) {
+                                                                    if (greatestValue === null || value > greatestValue) {
+                                                                        greatestValue = value;
+                                                                    }
+                                                                    if (lowestValue === null || value < lowestValue) {
+                                                                        lowestValue = value;
+                                                                    }
+                                                                    valueCounts[value] = (valueCounts[value] || 0) + 1;
+                                                                }
+                                                            }
+
+                                                            for (var m = 1; m < groupedContent.length; m++) {
+                                                                var value = parseFloat(groupedContent[m][i]);
+                                                                if (!isNaN(value) && isFinite(value)) {
+                                                                    if (value !== greatestValue || value !== lowestValue) {
+                                                                        allValuesEqual = false;
+                                                                    }
+                                                                    if (value === greatestValue && valueCounts[value] > 1) {
+                                                                        hasMultipleGreatest = true;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (allValuesEqual && ![0, 1, 3, 2].includes(i)) {
+                                                            if ([0, 2, 3].includes(i)) {
+                                                                tableBody += '<td class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
+                                                            } else {
+                                                                tableBody += '<td class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
+                                                            }
+                                                        } else if (cellValue === lowestValue) {
+                                                            if (![7].includes(i)) {
+                                                            if ([0, 2].includes(i)) {
+                                                                tableBody += '<td style="background-color: #90ee90;" class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
+                                                            } else {
+                                                                tableBody += '<td style="background-color: #90ee90;" class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
+                                                            }
+                                                        }else{
+                                                            tableBody += '<td class="text-center">' + numberFormatter.format(groupedContent[j][i]) + '</td>';
+                                                        }
+                                                        } else if (hasMultipleGreatest && cellValue === greatestValue && !allValuesEqual && ![].includes(i)) {
+                                                            tableBody += '<td style="background-color: #8BDCF1;" class="text-center">' + groupedContent[j][i] + '</td>';
+                                                        }  else {
+                                                            if ([0, 2].includes(i)) {
+                                                                if (![7].includes(i)) {
+                                                                if ([0].includes(i)) {
+                                                                    tableBody += '<th class="text-center" style="color:darkblue;">' + groupedContent[j][i] + '</th>';
+                                                                } else {
+                                                                    tableBody += '<td class="text-center">' + groupedContent[j][i] + '</td>';
+                                                                }
+                                                            }else{
+                                                                tableBody += '<td class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
+
+                                                            }
+                                                            } else {
+                                                                tableBody += '<td class="text-center">' + numberFormatter.format(groupedContent[j][i]) + '</td>';
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                tableBody += '</tr>';
+                                            }
+
+                                            $('#CompSupplierList').html(tableBody);
+
+                                            $('#staticBackdrop').modal('show');
+                                        },
+                                        error: function(xhr, status, error) {
+                                            alert("Error: " + xhr.responseText);
+                                        }
+                                    });
+                                } else {
+                                    alert("No auctionBID selected.");
+                                }
+                            });
+
+
+
+
+
+
+                             $('#compareForwardBTN').on('click', function(event) {
+                                event.preventDefault();
+                                $('#bidder_name').html('Highest BID');
+                                $('#auction_type_head').html('Forward AuctionBID Comparision');
+                                var checkedIds = [];
+                                $('#auction_bid_table_received .compareAuction:checked').each(function() {
+                                    checkedIds.push($(this).data('id'));
+                                });
+                                console.clear();
+                                // console.log(checkedIds);
+
+                                if (checkedIds.length > 0) {
+                                    $.ajax({
+                                        url: '/select_auction_to_compare',
+                                        type: 'POST',
+                                        data: JSON.stringify({ ids: checkedIds }),
+                                        contentType: 'application/json; charset=utf-8',
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                        },
+                                        success: function(response) {
+                                            console.log(response);
+
+                                            var tableBody1 = '';
+                                            const numberFormatter = new Intl.NumberFormat('en-US', {
+                                                style: 'decimal',
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2
+                                            });
+
+                                            var groupedContent = [];
+                                            var headings = ["Details", "Bidding Amount (rs.)", "Delivery Term <b>(days)</b>", "Payment before Delivery <b>(%)</b>:", "Quality :", "Rating :", "Supplier :", "Limit Amount <b>(rs.)</b> :"];
+                                            groupedContent.push(headings);
+
+                                            $.each(response.data, function(index, item) {
+                                                tableBody1 += '<tr>';
+                                                tableBody1 += '<td>' + (index + 1) + '</td>';
+                                                tableBody1 += '<td>' + item.supplierName + '</td>';
+                                                tableBody1 += '<td>' + item.qut_num + '</td>';
+                                                if (item.QutApproval == 1) {
+                                                    tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                                } else {
+                                                    tableBody1 += '<td class="text-center"><a class="btn btn-success text-center SApprovalQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Approval </a></td>';
+                                                }
+                                                if (item.QutNego == 1) {
+                                                    tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                                } else {
+                                                    tableBody1 += '<td class="text-center"><a class="btn btn-primary text-center SNegoQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Negotiation </a></td>';
+                                                }
+                                                tableBody1 += '</tr>';
+                                            });
+
+                                            $('#actionOnQuot').html(tableBody1);
+
+                                            var lowestValueCounts = [];
+
+                                            $.each(response.data, function(index, item) {
+                                                var BidAmount = parseFloat(item.bidding_amount);
+                                                var delivery_term = item.delivery_terms || 0;
+                                                var limit = item.limit || 0;
+                                                var quality = 'Good';
+                                                var rating = 'Excellent';
+                                                groupedContent.push([
+                                                    item.auction_number_bid,
+                                                    BidAmount,
+                                                    delivery_term,
+                                                    item.before,
+                                                    quality,
+                                                    rating,
+                                                    item.supplier_name,
+                                                    limit,
+                                                ]);
+
+                                                lowestValueCounts.push(0);
+                                            });
+
+                                            var columnsToCompare = [1, 2, 3];
+
+                                            columnsToCompare.forEach(function(colIndex) {
+                                                var lowestValue = null;
+                                                groupedContent.slice(1).forEach(function(row) {
+                                                    var value = parseFloat(row[colIndex]);
+                                                    if (lowestValue === null || value > lowestValue) {
+                                                        lowestValue = value;
+                                                    }
+                                                });
+
+                                                groupedContent.slice(1).forEach(function(row, rowIndex) {
+                                                    var value = parseFloat(row[colIndex]);
+                                                    if (value === lowestValue) {
+                                                        lowestValueCounts[rowIndex] += 1;
+                                                    }
+                                                });
+                                            });
+
+                                            groupedContent.slice(1).forEach(function(row, rowIndex) {
+                                                var lowestCount = lowestValueCounts[rowIndex];
+                                                var rating = (lowestCount / columnsToCompare.length) * 5;
+                                                row[5] = rating.toFixed(2);
+                                            });
+
+                                            // Generate star icons for ratings
+                                            groupedContent.slice(1).forEach(function(row) {
+                                                var rating = parseFloat(row[5]);
+                                                var fullStars = Math.floor(rating);
+                                                var halfStar = rating % 1 >= 0.5 ? 1 : 0;
+                                                var emptyStars = 5 - fullStars - halfStar;
+
+                                                var starsHtml = '';
+                                                for (var i = 0; i < fullStars; i++) {
+                                                    starsHtml += '<i class="mdi mdi-star" style="color: gold;font-size:20px;"></i>';
+                                                }
+                                                if (halfStar) {
+                                                    starsHtml += '<i class="mdi mdi-star-half" style="color: gold;font-size:20px;"></i>';
+                                                }
+                                                for (var i = 0; i < emptyStars; i++) {
+                                                    starsHtml += '<i class="mdi mdi-star-outline" style="color: gold;font-size:20px;"></i>';
+                                                }
+                                                row[5] = starsHtml;
+                                            });
+
+                                            var tableBody = '';
+                                            for (var i = 0; i < groupedContent[0].length; i++) {
+                                                tableBody += '<tr>';
+                                                for (var j = 0; j < groupedContent.length; j++) {
+                                                    if (j === 0) {
+                                                        tableBody += '<th style="color:darkblue;" class="text-center">' + groupedContent[j][i] + '</th>';
+                                                    } else {
+                                                        var cellValue = groupedContent[j][i];
+                                                        var isNumeric = !isNaN(parseFloat(cellValue)) && isFinite(cellValue);
+
+                                                        if (isNumeric) {
+                                                            cellValue = parseFloat(cellValue);
+                                                        }
+
+                                                        var allValuesEqual = true;
+                                                        var hasMultipleGreatest = false;
+                                                        var greatestValue = null;
+                                                        var lowestValue = null;
+                                                        var valueCounts = {};
+                                                        var lowestValueCount = 0;
+                                                        var greatestValueCount = 0;
+
+                                                        if ([1, 2, 3, 7].includes(i)) {
+                                                            for (var k = 1; k < groupedContent.length; k++) {
+                                                                var value = parseFloat(groupedContent[k][i]);
+                                                                if (!isNaN(value) && isFinite(value)) {
+                                                                    if (greatestValue === null || value > greatestValue) {
+                                                                        greatestValue = value;
+                                                                    }
+                                                                    if (lowestValue === null || value < lowestValue) {
+                                                                        lowestValue = value;
+                                                                    }
+                                                                    valueCounts[value] = (valueCounts[value] || 0) + 1;
+                                                                }
+                                                            }
+
+                                                            for (var m = 1; m < groupedContent.length; m++) {
+                                                                var value = parseFloat(groupedContent[m][i]);
+                                                                if (!isNaN(value) && isFinite(value)) {
+                                                                    if (value !== greatestValue || value !== lowestValue) {
+                                                                        allValuesEqual = false;
+                                                                    }
+                                                                    if (value === greatestValue && valueCounts[value] > 1) {
+                                                                        hasMultipleGreatest = true;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if (allValuesEqual && ![0, 1, 3, 2].includes(i)) {
+                                                            if ([0, 2, 3].includes(i)) {
+                                                                tableBody += '<td class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
+                                                            } else {
+                                                                tableBody += '<td class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
+                                                            }
+                                                        } else if (cellValue === greatestValue) {
+                                                            if (![7].includes(i)) {
+                                                            if ([0, 2].includes(i)) {
+                                                                tableBody += '<td style="background-color: #90ee90;" class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
+                                                            } else {
+                                                                tableBody += '<td style="background-color: #90ee90;" class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
+                                                            }
+                                                        }else{
+                                                            tableBody += '<td class="text-center">' + numberFormatter.format(groupedContent[j][i]) + '</td>';
+                                                        }
+                                                        } else if (hasMultipleGreatest && cellValue === greatestValue && !allValuesEqual && ![].includes(i)) {
+                                                            tableBody += '<td style="background-color: #8BDCF1;" class="text-center">' + groupedContent[j][i] + '</td>';
+                                                        }  else {
+                                                            if ([0, 2].includes(i)) {
+                                                                if (![7].includes(i)) {
+                                                                if ([0].includes(i)) {
+                                                                    tableBody += '<th class="text-center">' + groupedContent[j][i] + '</th>';
+                                                                } else {
+                                                                    tableBody += '<td class="text-center">' + groupedContent[j][i] + '</td>';
+                                                                }
+                                                            }else{
+                                                                tableBody += '<td class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
+
+                                                            }
+                                                            } else {
+                                                                tableBody += '<td class="text-center">' + numberFormatter.format(groupedContent[j][i]) + '</td>';
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                tableBody += '</tr>';
+                                            }
+
+                                            $('#CompSupplierList').html(tableBody);
+
+                                            $('#staticBackdrop').modal('show');
+                                        },
+                                        error: function(xhr, status, error) {
+                                            alert("Error: " + xhr.responseText);
+                                        }
+                                    });
+                                } else {
+                                    alert("No auctionBID selected.");
+                                }
+                            });
 
 
                             
@@ -2532,25 +2982,85 @@ function toggleAccordion(element) {
                     })
 
 
+                    $('.notifyAboutAuction').on('click', function(e){
+                        e.preventDefault();
+                        var id = $(this).data('autno'); 
+                        // Get CSRF token value from meta tag
+                        var csrfToken = $('meta[name="csrf-token"]').attr('content'); // Get CSRF token
+                       // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/set_auction_visibility',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: id,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // console.log(response);
+                                    // Handle the AJAX response here
+                                    toastr.options = {
+                                    "timeOut": "5000",
+                                    "toastClass": "toast-green",
+                                    "extendedTimeOut": "2000",
+                                    "progressBar": true,
+                                    "closeButton": true,
+                                    "positionClass": "toast-top-right",
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut",
+                                    "progressBarBgColor": "#ff0000",
+                                    "preventDuplicates": true,
+                                    "onHidden": function() {
+                                        window.location.reload(); // Reload the page when the toastr is hidden
+                                    }
+
+                                };
+                                toastr.success(response.message);
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
+
+                    })
+
+
 
                     $('#auctionInitiate #type').on('change', function(e){
                         var type = $('#auctionInitiate #type').children('option:selected').val();
 
                         if( type == 'Forward Auction' ){
-                            $('#auctionInitiate #bid').val('Increment');
+                            $('#auctionInitiate #bid').val('Decrement');
                         }else{
                             console.clear();
-                            $('#auctionInitiate #bid').val('Decrement');
+                            $('#auctionInitiate #bid').val('Increment');
                             $('#auctionInitiate #price_field').hide();
+                            $('#auctionInitiate #bidding_limit').show();
+                        }
+                    });
+
+                    $('#auctionInitiate #type').on('change', function(e){
+                        var type = $('#auctionInitiate #type').children('option:selected').val();
+
+                        if( type != 'Forward Auction' ){
+                            $('#auctionInitiate #bid').val('Decrement');
+                        }else{
+                            console.clear();
+                            $('#auctionInitiate #bid').val('Increment');
+                            $('#auctionInitiate #bidding_limit').hide();
+                            $('#auctionInitiate #price_field').show();
                         }
                     });
 
 
-                    $('.auctionDetails').on('click',function(event){
+                    $('.auctionDetails, .submitAuctionBid').on('click',function(event){
                         event.preventDefault();
 
                         var id = $(this).data('autno');
-                       
                         // Get CSRF token value from meta tag
                         var csrfToken = $('meta[name="csrf-token"]').attr('content'); // Get CSRF token
                        // Make AJAX call with the id and CSRF token
@@ -2565,28 +3075,44 @@ function toggleAccordion(element) {
                                     // Handle the AJAX response here
                                    var auction = response.auction_details;
                                   
-                                   if(auction.start_price == '')
+                                   if(auction.start_price == null)
                                    {
                                     var start_price  = 'NA';
+                                    var price = start_price;
                                    }else{
                                     var start_price = parseFloat(auction.start_price).toLocaleString();
+                                    var price = 'Rs.'+start_price;
                                    }
-                                   $('#suppliersModal #item_img').attr('src', '/Storage/' + auction.image);
-                                   $('#suppliersModal #auction_number').text(auction.auction_number);
-                                   $('#suppliersModal #c_date').text(auction.created_date);
-                                   $('#suppliersModal #last_date_to_submit').text(auction.last_date_of_subbmission);
-                                   $('#suppliersModal #price').text('Rs.' + start_price);
-                                   $('#suppliersModal #auction_type').text(auction.auction_type);
-                                   $('#suppliersModal #bidding_type').text(auction.bidding_type);
-                                   $('#suppliersModal #notes').html(auction.notes);
+
+                                   if(auction.limit == null)
+                                   {
+                                    var limit  = 'NA';
+                                    var limit_amount = limit;
+                                   }else{
+                                    var limit = parseFloat(auction.limit).toLocaleString();
+                                    var limit_amount = 'Rs.'+limit;
+                                   }
+                                   $('#suppliersModal #item_img, #rfqViewModal #item_img').attr('src', '/Storage/' + auction.image);
+                                   $('#suppliersModal #auction_number, #rfqViewModal #auction_number').text(auction.auction_number);
+                                   $('#rfqViewModal #auction_number_bid').val(auction.auction_number);
+                                   
+                                   $('#suppliersModal #c_date, #rfqViewModal #c_date').text(auction.created_date);
+                                   $('#suppliersModal #last_date_to_submit, #rfqViewModal #last_date_to_submit').text(auction.last_date_of_subbmission);
+                                   $('#suppliersModal #price, #rfqViewModal #price').text(price);
+                                   $('#suppliersModal #auction_type, #rfqViewModal #auction_type').text(auction.auction_type);
+                                   $('#suppliersModal #bidding_type, #rfqViewModal #bidding_type').text(auction.bidding_type);
+                                   $('#suppliersModal #bidding_limit, #rfqViewModal #bidding_limit').text(limit_amount);
+                                   $('#suppliersModal #category, #rfqViewModal #category').text(auction.category);
+                                   $('#suppliersModal #subcat, #rfqViewModal #subcat').text(auction.subcat);
+                                   $('#suppliersModal #notes, #rfqViewModal #notes').html(auction.notes);
 
                                    $.each(response.auction_item, function(index,item){
                                         // <td id="preview_items"></td>
                                         //     <td id="preview_discount"></td>
                                         //     <td id="preview_total_amount"></td>
-                                        $('#suppliersModal #desc').text(item.item_desc);
-                                        $('#suppliersModal #features').html(item.features);
-                                        $('#suppliersModal #quantity').text(item.quantity);
+                                        $('#suppliersModal #desc, #rfqViewModal #desc').text(item.item_desc);
+                                        $('#suppliersModal #features, #rfqViewModal #features').html(item.features);
+                                        $('#suppliersModal #quantity, #rfqViewModal #quantity').text(item.quantity);
                                    });
 
 
@@ -2601,6 +3127,9 @@ function toggleAccordion(element) {
                                 }
                             });
                     })
+
+
+
 
 
 
@@ -4373,24 +4902,24 @@ $('#update_order_items_form').submit(function(e) {
 
 
 
-            $(".compare tr").each(function(index, row) {
-                if (index === 0) return; // Skip header row
-                var cells = $(row).find("td");
-                cells.each(function(cellIndex, cell) {
-                if (cellIndex === 0) return; // Skip first column
-                var cellValue = $(cell).text().trim();
-                if (!isNaN(parseFloat(cellValue))) { // Check if the cell contains a number
-                    cellValue = parseFloat(cellValue.replace(/[^0-9.-]+/g, "")); // Remove non-numeric characters
-                    var minValue = Math.min.apply(null, $.map(cells.slice(1), function(c) { return parseFloat($(c).text().replace(/[^0-9.-]+/g, "")); }));
-                    var maxValue = Math.max.apply(null, $.map(cells.slice(1), function(c) { return parseFloat($(c).text().replace(/[^0-9.-]+/g, "")); }));
-                    if (cellValue === minValue) {
-                    $(cell).addClass("good");
-                    } else if (cellValue === maxValue) {
-                    $(cell).addClass("bad");
-                    }
-                }
-                });
-            });
+            // $(".compare tr").each(function(index, row) {
+            //     if (index === 0) return; // Skip header row
+            //     var cells = $(row).find("td");
+            //     cells.each(function(cellIndex, cell) {
+            //     if (cellIndex === 0) return; // Skip first column
+            //     var cellValue = $(cell).text().trim();
+            //     if (!isNaN(parseFloat(cellValue))) { // Check if the cell contains a number
+            //         cellValue = parseFloat(cellValue.replace(/[^0-9.-]+/g, "")); // Remove non-numeric characters
+            //         var minValue = Math.min.apply(null, $.map(cells.slice(1), function(c) { return parseFloat($(c).text().replace(/[^0-9.-]+/g, "")); }));
+            //         var maxValue = Math.max.apply(null, $.map(cells.slice(1), function(c) { return parseFloat($(c).text().replace(/[^0-9.-]+/g, "")); }));
+            //         if (cellValue === minValue) {
+            //         $(cell).addClass("good");
+            //         } else if (cellValue === maxValue) {
+            //         $(cell).addClass("bad");
+            //         }
+            //     }
+            //     });
+            // });
 
 
 
@@ -5821,6 +6350,7 @@ $('#update_order_items_form').submit(function(e) {
       $('.form-control').css('border-bottom','1px solid black');
       $('.table th').css('color','#273a96');
       $('.tox-editor-container').addClass('p-0');
+      $('.btn').addClass('p-2');
     //   $('.table tr').css('border-bottom','1px solid #273a96');
     //   $('.table th').css('color','white');
      

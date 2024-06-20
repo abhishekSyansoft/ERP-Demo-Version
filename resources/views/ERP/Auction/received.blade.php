@@ -47,45 +47,46 @@
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
                     </div>
                     <div class="table-wrapper">
-                        <table class="table" style="width: 100%;">
+                        <table class="table" style="width: 100%;" id="auction_bid_table_received">
                             <tr>
-                                <th>S. No.</th>
-                                <th>Details Preview</th>
-                                <th>Send Notification</th>
+                                <th rowspan="2">S. No.</throws>
+                                <th rowspan="2">Details Preview</th>
+                                <th rowspan="2">Compare</th>
+                                <th colspan="4">Auction</th>
+                                <th colspan="3">Item</th>
+                                <th colspan="4">Supplier</th>
+                                <th rowspan="2">Action</th>
+                            </tr>
+                            <tr>
                                 <th>Auction Number</th>
                                 <th>Auction Type</th>
                                 <th>Bidding Type</th>
-                                <th>Category</th>
-                                <th>Sub-Category</th>
-                                <th>Bidding Limit</th>
-                                <th>Starting Price</th>
-                                <th>Created Date</th>
-                                <th>Last Date of Subbmission</th>
-                                <th>Action</th>
+                                <th>Bidding Price</th>
+                                <th>Item Description</th>
+                                <th>Features</th>
+                                <th>Quantity</th>
+                                <th>Name</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Contact Person</th>
                             </tr>
                             @php($a=1)
-                            @foreach($auction_lists as $details)
+                            @foreach($details as $detail)
                               <tr>
                                 <td>{{$a++}}</td>
-                                <td><a class="mdi mdi-eye btn btn-primary auctionDetails" data-bs-toggle="modal" data-bs-target="#suppliersModal" data-autno="{{$details->auction_number}}"></a></td>
-                                @if($details->notification_status == 1)
-                                <td><a class="mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>
-                                @else
-                                <td><a class="btn btn-primary notifyAboutAuction" data-autno="{{$details->auction_number}}">Notify Supplier</a></td>
-                                @endif
-                                <td>{{$details->auction_number}}</td>
-                                <td>{{$details->auction_type}}</td>
-                                <td>{{$details->bidding_type}}</td>
-                                <td>{{$details->category}}</td>
-                                <td>{{$details->subcat}}</td>
-                                <td>{{$details->limit}}</td>
-                                @if($details->start_price == '')
-                                <td></td>
-                                @else
-                                <td>Rs.{{number_format($details->start_price)}}</td>
-                                @endif
-                                <td>{{$details->created_date}}</td>
-                                <td>{{$details->last_date_of_subbmission}}</td>
+                                <td><a class="mdi mdi-eye btn btn-primary auctionDetails" data-bs-toggle="modal" data-bs-target="#suppliersModal" data-autno="{{$detail->auction_number_bid}}"></a></td>
+                                <td><input type="checkbox" class="compareAuction" data-id="{{$detail->auction_number_bid}}" value="Compare"></td>
+                                <td>{{$detail->auction_number_bid}}</td>
+                                <td>{{$detail->auction_type}}</td>
+                                <td>{{$detail->bidding_type}}</td>
+                                <td><b>Rs.&nbsp;&nbsp;</b>{{number_format($detail->bidding_amount)}}</td>
+                                <td>{{$detail->item_name}}</td>
+                                <td>{{$detail->features}}</td>
+                                <td>{{$detail->quantity}}</td>
+                                <td>{{$detail->supplier_name}}</td>
+                                <td>{{$detail->phone}}</td>
+                                <td>{{$detail->email}}</td>
+                                <td>{{$detail->contact_person}}</td>
                                 <td>
                                   <a class="btn btn-primary">Edit</a>
                                   <a class="btn btn-danger">Delete</a>
@@ -93,7 +94,10 @@
                               </tr> 
                               @endforeach
                         </table>
+                        <a class="btn btn-primary mt-3" id="compareAuctionBTN">Compare Reverse Bidding</a>
+                        <a class="btn btn-primary mt-3" id="compareForwardBTN">Compare Forward Bidding</a>
                   </div>
+                 
                 </div>
               </div>
             </div>
@@ -130,7 +134,7 @@
         </table>
         </div>
         <div class="table-wrapper" style="height:auto;">
-        <table class="table table-bordered border-primary" style="width:100%;">
+        <table class=" table table-bordered border-primary" style="width:100%;">
           <tr>
             <th class="p-2">Description</th>
             <th class="p-2">Details</th>
@@ -138,7 +142,7 @@
           </tr>
           <tr>
             <th class="p-2" style="text-align:left !important;">Auction Number : <td class="p-2" id="auction_number">Auct_66712207eb7eb</td></th>
-            <td rowspan="9" class="p-0 m-0" style="background-color:black;"><img id="item_img" src="https://th.bing.com/th?id=OIP.qNJ-3o_aLdtFRswCO9VLOgHaEK&w=333&h=187&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2" style="object-fit:cotain;height:100%;width:100%;border-radius:0px;padding:0px;margib:0px;" alt=""></td>
+            <td rowspan="6" class="p-0 m-0" style="background-color:black;"><img id="item_img" src="https://th.bing.com/th?id=OIP.qNJ-3o_aLdtFRswCO9VLOgHaEK&w=333&h=187&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2" style="object-fit:cotain;height:100%;width:100%;border-radius:0px;padding:0px;margib:0px;" alt=""></td>
           </tr>
           <tr>
             <th class="p-2" style="text-align:left !important;">Auction Created On : <td class="p-2" id="c_date" style="text-align:left !important;">2024-06-18</td></th>
@@ -156,15 +160,6 @@
             <th class="p-2" style="text-align:left !important;">Bidding Type : <td class="p-2" id="bidding_type" style="text-align:left !important;">Decrement</td></th>
           </tr>
           <tr>
-            <th class="p-2" style="text-align:left !important;">Category : <td class="p-2" id="category" style="text-align:left !important;"></td></th>
-          </tr>
-          <tr>
-            <th class="p-2" style="text-align:left !important;"> SubCategory : <td class="p-2" id="subcat" style="text-align:left !important;"></td></th>
-          </tr>
-          <tr>
-            <th class="p-2" style="text-align:left !important;">Bidding Limit : <td class="p-2" id="bidding_limit" style="text-align:left !important;"></td></th>
-          </tr>
-          <tr>
             <th class="p-2" style="text-align:left !important;">Note's/Comments : <td class="p-2" colspan="2" id="notes" style="text-align:left !important;">Not Any till now</td></th>
           </tr>
         </table>
@@ -176,6 +171,91 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                  <div class="modal-dialog  modal-lg mx-auto">
+                    <div class="modal-content card mx-auto">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Comparision of AuctionBID</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      
+                      <div class="modal-body compare">
+
+                     <center> <h2 id="auction_type_head">AuctionBID Comparison</h2></center>
+                     <hr>
+
+
+      <div style="border:1px solid black;">
+      <div class="row col-4 table-wrapper" style="height:auto !important;">
+                        <h5 class="m-0 p-0 mb-3"><b>Comparison Metrics</b></h5>
+                          <table class="col-6 table table-bordered table-striped">
+                                <!-- <tr class="m-1">
+                                  <th>Highest BID</th>
+                                  <td style="background-color: #EB9595;"></td>
+                                </tr> -->
+                                <tr>
+                                  <th id="bidder_name">Lowest BID</th>
+                                  <td style="background-color: #90ee90;margin:10px !important;"></td>
+                                </tr>
+                                <!-- <tr>
+                                  <th>All Equal</th>
+                                  <td class="m-1" style="background-color:#F0F396;"></td>
+                                </tr> -->
+                                <!-- <tr>
+                                  <th>Multiple Highest BID</th>
+                                  <td style="background-color:#8BDCF1;"></td>
+                                </tr> -->
+
+                          </table>
+                        </div>
+
+                        <div class="table-wrapper" style="height:auto !important;">
+                          <table class="table table-bordered border-primary">
+
+                            <tbody id="CompSupplierList">
+                            </tbody>
+                          </table>
+                        </div>
+
+                        <div class="table-wrapper" style="height:auto !important;">
+                        <table class="table table-bordered mt-2">
+                          <thead>
+                              <tr>
+                                <th>Serial No</th>
+                                <th>Vendor Name</th>
+                                <th>Quotation Number</th>
+                                <th class="text-center">Send For Approval</th>
+                                <th class="text-center">Send For Negotiation</th>
+                              </tr>
+                          </thead>
+                        <tbody id="actionOnCompQuot">
+                        </tbody>
+                        </table>
+                        </div>
+                        <div class="form-group mt-2">
+                          <!-- <button type="submit" class="btn btn-success">Check one to edit</button> -->
+                           <!-- <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
+                            Check one to edit
+                            </button>   -->
+                        </div>
+                        </div>
+                          <button type="button" class="btn btn-secondary mt-2" data-bs-dismiss="modal">Close</button>
+                        
+                       
+                      </div>
+                      
+                        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </div>
 
 
 
@@ -274,48 +354,25 @@
                             </select>
                         </div>
 
-                        <div class="mb-3 col-md-6 col-lg-4">
-                            <label for="category" class="form-label">{{ __('Category') }}</label>
-                            <select id="category" class="form-control p-3" name="category" placeholder="Auction Type">
-                                <option value="">--Select Bidding Type--</option>
-                                <option value="Service">Service</option>
-                                <option value="Product">Product</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-4">
-                            <label for="subcat" class="form-label">{{ __('Sub Category') }}</label>
-                            <select id="subcat" class="form-control p-3" name="subcat" placeholder="Type">
-                                <option value="">--Select sub-category type--</option>
-                                <option value="IT Services & Solution">IT Services & Solution</option>
-                                <option value="Sell Asset">Sell Asset</option>
-                                <option value="Purchase Asset">Purchase Asset</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-4" id="bidding_limit">
-                            <label for="limit" class="form-label">{{ __('Bidding Limit') }} <b>(Rs.)</b></label>
-                            <input type="number" id="limit" class="form-control" name="limit" placeholder="Bidding limit for the auction">
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-4" id="price_field">
-                            <label for="start_price" class="form-label">{{ __('Starting Price') }} <b>(Rs.)</b></label>
+                        
+                        <div class="mb-3 col-md-6 col-lg-3" id="price_field">
+                            <label for="start_price" class="form-label">{{ __('Starting Price') }}</label>
                             <input type="number" id="start_price" class="form-control" name="start_price" placeholder="mention the starting price of the assets">
                         </div>
 
 
-                        <div class="mb-3 col-md-6 col-lg-4">
+                        <div class="mb-3 col-md-6 col-lg-3">
                             <label for="doc" class="form-label">{{ __('Date of Creation') }}</label><b>(Auction)</b></label>
                             <input type="date" id="doc" class="form-control" name="doc" value="{{date('Y-m-d')}}" placeholder="Last date of bid submission">
                         </div>
 
 
-                        <div class="mb-3 col-md-6 col-lg-4">
+                        <div class="mb-3 col-md-6 col-lg-3">
                             <label for="dos" class="form-label">{{ __('Last Date of Submission') }}</label>
                             <input type="date" id="dos" class="form-control" name="dos" placeholder="Last date of bid submission">
                         </div>
 
-                        <div class="mb-3 col-md-6 col-lg-4">
+                        <div class="mb-3 col-md-6 col-lg-3">
                             <label for="image" class="form-label">{{ __('Image of the Item') }}</label>
                             <input type="file" id="image" class="form-control" name="image" placeholder="Select Image which is mentioned in the auction">
                         </div>
@@ -376,9 +433,7 @@
                             <label for="part_number" class="form-label">{{ __('Supplier') }}<sup class="text-danger">*</sup></label>
                             <input list="supplier_list" id="supplier" class="form-control" name="supplier" placeholder="Supplier name if any for this PR">
                             <datalist id="supplier_list">
-                                @foreach($suppliers as $supplier)
-                                    <option value="{{$supplier->supplier_name}}">
-                                @endforeach
+                               
                                 <!-- Add more options as needed -->
                             </datalist>
                         </div>

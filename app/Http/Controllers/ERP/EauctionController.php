@@ -17,13 +17,117 @@ class EauctionController extends Controller
         return view('ERP.Auction.Initiate.initiate_auction',compact('suppliers','auction_lists'));
     }
 
+    public function ReceivedBID(){
+        $details = DB::table('bid_table')
+        ->join('auction_items', 'auction_items.auction_number','=','bid_table.auction_number_bid')
+        ->join('auction_details', 'auction_details.auction_number','=','bid_table.auction_number_bid')
+        ->select(['bid_table.*','auction_items.item_desc as item_name','auction_items.features as features','auction_items.quantity as quantity','auction_details.auction_type as auction_type','auction_details.bidding_type as bidding_type'])
+        ->get();
+
+        return view('ERP.Auction.received',compact('details'));
+
+    }
+
+
+    public function CompareAuctionBID(Request $request){
+         // Validate the incoming request data
+         $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'string'
+        ]);
+
+        // Retrieve the array of IDs
+        $ids = $request->input('ids');
+
+        // Fetch the quotations from the database
+            $quotations = DB::table('auction_details')
+            ->join('auction_items', function($join) use ($ids) {
+                $join->on(DB::raw('BINARY auction_items.auction_number'), '=', DB::raw('BINARY auction_details.auction_number'))
+                    ->whereIn('auction_items.auction_number', $ids);
+            })
+            ->join('bid_table', function($join) use ($ids) {
+                $join->on(DB::raw('BINARY bid_table.auction_number_bid'), '=', DB::raw('BINARY auction_details.auction_number'));
+            })
+            ->select(['bid_table.*','auction_details.*'])
+            ->whereIn('bid_table.auction_number_bid', $ids)
+            ->get();
+
+
+        // Perform any required operations with the IDs, for example:
+        // $quotations = Quotation::whereIn('id', $ids)->get();
+
+       
+            return response()->json([
+                'success' => true,
+                'message' => 'Quotations retrieved successfully',
+                'ids' => $ids,
+                'data' => $quotations
+            ]);
+    }
+
+    public function SupplierEAuctionPage(){
+        $auction_lists = DB::table('auction_details')->get();
+        $suppliers = DB::table('suppliers')->get();
+        return view('ERP.Auction.supplierPanel.eAuctionBid',compact('suppliers','auction_lists'));
+    }
+
+
+    public function saveBID(Request $request){
+        $validateData =  $request->validate([
+            'auction_number_bid' => 'required',
+            'bidding_amount' => 'required',
+            'user_id' => 'required' 
+        ]);
+
+        $supplier = DB::table('auction_suppliers')->where('user_id',$request->user_id)->first();
+
+        $supplier_name = $supplier->supplier_name;
+        $phone = $supplier->phone;
+        $email = $supplier->email;
+        $person = $supplier->contact_person;
+
+        DB::table('bid_table')->insert([
+            'auction_number_bid' => $request->auction_number_bid,
+            'bidding_amount' => $request->bidding_amount,
+            'user_id' => $request->user_id,
+            'supplier_name' => $supplier_name,
+            'email' => $email,
+            'phone' => $phone,
+            'contact_person' => $person,
+            'before' => $request->before,
+            'delivery_terms' => $request->delivery_terms,
+            'notes' => $request->bidder_notes,
+            'created_at' => Carbon::now()
+        ]);
+
+        return redirect()->back()->with('success','Thank for your participation you VID submitted successfully and sent to the requester');
+
+    }
+
+
+
+
+    public function NotifySupplierAboutAuction(Request $request){
+        $id = $request->input('id');
+
+        DB::table('auction_details')->where('auction_number', $id)->update([
+            'notification_status' => 1
+        ]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Notification sent to the selected suppliers',
+            // 'id' => $id
+        ]);
+    }
+
     public function FetchAuctionDetails(Request $request){
         $id = $request->input('id');
 
 
-        $auction_supplier = DB::table('auction_suppliers')->where('auction_number',$id)->get();
-        $auction_item = DB::table('auction_items')->where('auction_number',$id)->get();
-        $auction_details = DB::table('auction_details')->where('auction_number',$id)->first();
+        $auction_supplier = DB::table('auction_suppliers')->where('auction_number', $id)->get();
+        $auction_item = DB::table('auction_items')->where('auction_number', $id)->get();
+        $auction_details = DB::table('auction_details')->where('auction_number', $id)->first();
 
         return response()->json([
             'success' => true,
@@ -155,6 +259,9 @@ public function SaveAuctionItemRecord(Request $request){
                 'auction_number' => $request->auction_id,
                 'auction_type' => $request->type,
                 'bidding_type' => $request->bid,
+                'category' => $request->category,
+                'subcat' => $request->subcat,
+                'limit' => $request->limit,
                 'start_price' => $request->start_price,
                 'notes' => $request->notes,
                 'created_date' => $request->doc,

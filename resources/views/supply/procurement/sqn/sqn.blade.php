@@ -32,6 +32,8 @@
                         <!-- <button style="float:right;" type="button" class="btn btn-primary animated-button" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
                         </button>   -->
+                        <a class="btn btn-primary" id="CompareQutBTN" style="float:right;">Compare Quotation</a>
+
                         </div>
                         <!-- <hr>   -->
                       </div>     
@@ -45,8 +47,10 @@
                         
                 <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
                     </div>
+                    
                     <div class="table-wrapper">
-                        <table class="table mx-auto" style="width: 100%;">
+                      
+                        <table class="table table-bordered border-primary mx-auto" style="width: 100%;">
                             <tr>
                                 <th>S No.</th>
                                 <th>Select to Compare</th>
@@ -92,8 +96,10 @@
                             @endforeach
                             </tbody>
                         </table>
+                        
                     </div>
-                    <a class="btn btn-primary m-4" id="CompareQutBTN">Compare Quotation</a>
+                    
+                   
                     <!-- <a data-bs-toggle="modal" data-bs-target="#staticBackdrop">preview</a> -->
                   </div>
               </div>

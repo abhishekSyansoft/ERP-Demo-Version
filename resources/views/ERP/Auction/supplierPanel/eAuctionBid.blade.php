@@ -51,34 +51,24 @@
                             <tr>
                                 <th>S. No.</th>
                                 <th>Details Preview</th>
-                                <th>Send Notification</th>
                                 <th>Auction Number</th>
                                 <th>Auction Type</th>
                                 <th>Bidding Type</th>
-                                <th>Category</th>
-                                <th>Sub-Category</th>
-                                <th>Bidding Limit</th>
                                 <th>Starting Price</th>
                                 <th>Created Date</th>
                                 <th>Last Date of Subbmission</th>
-                                <th>Action</th>
+                                <th>Participate</th>
+                               
                             </tr>
                             @php($a=1)
                             @foreach($auction_lists as $details)
+                            @if($details->notification_status == 1)
                               <tr>
                                 <td>{{$a++}}</td>
                                 <td><a class="mdi mdi-eye btn btn-primary auctionDetails" data-bs-toggle="modal" data-bs-target="#suppliersModal" data-autno="{{$details->auction_number}}"></a></td>
-                                @if($details->notification_status == 1)
-                                <td><a class="mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>
-                                @else
-                                <td><a class="btn btn-primary notifyAboutAuction" data-autno="{{$details->auction_number}}">Notify Supplier</a></td>
-                                @endif
                                 <td>{{$details->auction_number}}</td>
                                 <td>{{$details->auction_type}}</td>
                                 <td>{{$details->bidding_type}}</td>
-                                <td>{{$details->category}}</td>
-                                <td>{{$details->subcat}}</td>
-                                <td>{{$details->limit}}</td>
                                 @if($details->start_price == '')
                                 <td></td>
                                 @else
@@ -86,11 +76,10 @@
                                 @endif
                                 <td>{{$details->created_date}}</td>
                                 <td>{{$details->last_date_of_subbmission}}</td>
-                                <td>
-                                  <a class="btn btn-primary">Edit</a>
-                                  <a class="btn btn-danger">Delete</a>
-                                </td>
+                                <td><a class="btn btn-primary submitAuctionBid" data-bs-toggle="modal" data-bs-target="#rfqViewModal" data-autno="{{$details->auction_number}}">Submit BID</a></td>
+                               
                               </tr> 
+                              @endif
                               @endforeach
                         </table>
                   </div>
@@ -113,7 +102,117 @@
       </div>
       <div class="modal-body">
         <h3 class="mb-3">Auction Item  and complete details</h3>
-        <div class="table-wrapper" style="height:auto;">
+     <div class="table-wrapper" style="height:auto;">
+     <table class="table table-bordered border-primary mb-3">
+          <tr>
+            <th>Item Decription</th>
+            <th>Item Features</th>
+            <th>Quantity</th>
+           
+          </tr>
+          <tr>
+            <td id="desc"></td>
+            <td id="features"></td>
+            <td id="quantity"></td>
+          </tr> 
+        </table>
+     </div>
+     <div class="table-wrapper" style="height:auto;">
+     <table class="table table-bordered border-primary" style="width:100%;">
+          <tr>
+            <th class="p-2">Description</th>
+            <th class="p-2">Details</th>
+            <th class="p-2">Photo</th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Auction Number : <td class="p-2" id="auction_number">Auct_66712207eb7eb</td></th>
+            <td rowspan="9" class="p-0 m-0" style="background-color:black;"><img id="item_img" src="https://th.bing.com/th?id=OIP.qNJ-3o_aLdtFRswCO9VLOgHaEK&w=333&h=187&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2" style="object-fit:cotain;height:100%;width:100%;border-radius:0px;padding:0px;margib:0px;" alt=""></td>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Auction Created On : <td class="p-2" id="c_date" style="text-align:left !important;">2024-06-18</td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Last date to submit bid in Auction : <td class="p-2" id="last_date_to_submit" style="text-align:left !important;">2024-06-28</td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Start Price : <td class="p-2" id="price" style="text-align:left !important;"></td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Auction Type : <td class="p-2" id="auction_type" style="text-align:left !important;">Reverse Auction</td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Bidding Type : <td class="p-2" id="bidding_type" style="text-align:left !important;">Decrement</td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Category : <td class="p-2" id="category" style="text-align:left !important;"></td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;"> SubCategory : <td class="p-2" id="subcat" style="text-align:left !important;"></td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Bidding Limit : <td class="p-2" id="bidding_limit" style="text-align:left !important;"></td></th>
+          </tr>
+          <tr>
+            <th class="p-2" style="text-align:left !important;">Note's/Comments : <td class="p-2" colspan="2" id="notes" style="text-align:left !important;">Not Any till now</td></th>
+          </tr>
+        </table>
+     </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="rfqViewModal" tabindex="-1" aria-labelledby="rfqViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:white;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Subbmit your BID</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+        <h3 class="mb-3"><u>Auction Item  and complete details</u></h3>
+        <hr>
+        <form action="{{route('savebid')}}" method="POST" class="mt-3 mb-3 row">
+          @csrf
+          <input type="text" value="{{Auth::user()->id}}" name="user_id" id="user_id" hidden>
+          <div class="form-group col-md-3">
+            <lable for="auction_number_bid">Auction Number</lable>
+            <input type="text" name="auction_number_bid" id="auction_number_bid" class="form-control" placeholder="Enter the the auction for which submission of bid" readonly>
+          </div>
+
+          <div class="form-group col-md-3">
+            <lable for="bidding_amount">Bidding Amount <b>(Rs.)</b></lable>
+            <input type="number" name="bidding_amount" id="bidding_amount" min="0" class="form-control" placeholder="Enter your bidding amount">
+          </div>
+
+          <div class="form-group col-md-3">
+            <lable for="before">Payment Before Delivery <b>(%)</b></lable>
+            <input type="number" name="before" id="before" min="0" class="form-control" placeholder="Enter the amount to be paid before delivery">
+          </div>
+
+          <div class="form-group col-md-3">
+            <lable for="delivery_terms">Delivery Terms <b>(Days)</b></lable>
+            <input type="number" name="delivery_terms" id="delivery_terms" min="0" class="form-control" placeholder="Delivery Terms in days">
+          </div>
+
+          <div class="col-md-12 mb-3">
+              <label for="bidder_notes">Note's/Comment's</label>
+              <textarea name="bidder_notes" class="form-control" id="bidder_notes" placeholder="Enter if any notes or comments related to this auction"></textarea>
+          </div>
+
+          <div class="form-group col-md-12">
+            <button class="btn btn-primary" type="submit" name="submit">Submit BID</button>
+          </div>
+         
+        </form>
+        <hr>
+        <h4>Item Description : </h4>
+        <div class="table-wrapper" style="height:auto !important;margin:0px !important;">
         <table class="table table-bordered border-primary mb-3">
           <tr>
             <th>Item Decription</th>
@@ -129,7 +228,8 @@
           
         </table>
         </div>
-        <div class="table-wrapper" style="height:auto;">
+        <h4>Auction Description : </h4>
+        <div class="table-wrapper" style="height:auto !important;margin:0px !important;">
         <table class="table table-bordered border-primary" style="width:100%;">
           <tr>
             <th class="p-2">Description</th>
@@ -170,60 +270,6 @@
         </table>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-
-
-  <!-- Modal -->
-  <div class="modal fade" id="rfqViewModal" tabindex="-1" aria-labelledby="rfqViewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="background-color:white;">
-                <div class="modal-header">
-                    <h5 class="modal-title btn btn-primary" id="rfqViewModalLabel">Download RFQ</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                <div class="container p-3" style="border:1px solid black;">
-                        <h2 class="text-center">SyanSoft Private Limited</h2>
-                        <!-- <h1 class="text-center text-primary">**************************</h1> -->
-                        <h4 class="text-center">Solutioning For Innovator, An IT Company</h4>
-                        <h6 class="text-center">Unit No. 306, Tower B4, Spaze I-Tech Park, Badshahpur Sohna Rd Hwy, Sector 49, Gurugram, Haryana 122018</h6>
-                        <h6 class="text-center">Phone #+91 6202074551 Fax #309-278-0186 Toll Free #+91 9570191426 </h6>
-                        <h6 class="text-center">Email Address <span class="text-primary">#abhishek.kumar@syansoft.in</span></h6>
-                        <!-- <div><b>PR No. </b><span id="pr_num">    </span></div> -->
-                        <div><b>RFQ No. </b><span id="rfq_num">    </span></div>
-                        <div><b>Delivery: </b><span id="del_date">  </span><b>(on or before) </b></div><br><br>
-
-                        <h2 class="text-center"><b>REQUEST FOR QUOTE FORM</b></h2>
-                        <!-- <h5><b>Item Lists</b></h5> -->
-                       <div class="table-wrapper" style="height:auto;">
-                       <table class="table table-bordered border-primary">
-                          <!-- <thead> -->
-                            <th>S No.</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Features</th>
-                          <!-- </thead> -->
-                          <tbody class="prItemViewAllList">
-
-                          </tbody>
-                        </table>
-
-                       </div>
-
-                       <h6>Lead time on above material is : <span id="lead_time"></span></h6>
-                       <h4 class="text-center mt-4">This quote is prepared by : SyanSoft Private Limited Established in 1998. </h4>
-                   
-                      </div>
-                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
@@ -274,48 +320,25 @@
                             </select>
                         </div>
 
-                        <div class="mb-3 col-md-6 col-lg-4">
-                            <label for="category" class="form-label">{{ __('Category') }}</label>
-                            <select id="category" class="form-control p-3" name="category" placeholder="Auction Type">
-                                <option value="">--Select Bidding Type--</option>
-                                <option value="Service">Service</option>
-                                <option value="Product">Product</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-4">
-                            <label for="subcat" class="form-label">{{ __('Sub Category') }}</label>
-                            <select id="subcat" class="form-control p-3" name="subcat" placeholder="Type">
-                                <option value="">--Select sub-category type--</option>
-                                <option value="IT Services & Solution">IT Services & Solution</option>
-                                <option value="Sell Asset">Sell Asset</option>
-                                <option value="Purchase Asset">Purchase Asset</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-4" id="bidding_limit">
-                            <label for="limit" class="form-label">{{ __('Bidding Limit') }} <b>(Rs.)</b></label>
-                            <input type="number" id="limit" class="form-control" name="limit" placeholder="Bidding limit for the auction">
-                        </div>
-
-                        <div class="mb-3 col-md-6 col-lg-4" id="price_field">
-                            <label for="start_price" class="form-label">{{ __('Starting Price') }} <b>(Rs.)</b></label>
+                        
+                        <div class="mb-3 col-md-6 col-lg-3" id="price_field">
+                            <label for="start_price" class="form-label">{{ __('Starting Price') }}</label>
                             <input type="number" id="start_price" class="form-control" name="start_price" placeholder="mention the starting price of the assets">
                         </div>
 
 
-                        <div class="mb-3 col-md-6 col-lg-4">
+                        <div class="mb-3 col-md-6 col-lg-3">
                             <label for="doc" class="form-label">{{ __('Date of Creation') }}</label><b>(Auction)</b></label>
                             <input type="date" id="doc" class="form-control" name="doc" value="{{date('Y-m-d')}}" placeholder="Last date of bid submission">
                         </div>
 
 
-                        <div class="mb-3 col-md-6 col-lg-4">
+                        <div class="mb-3 col-md-6 col-lg-3">
                             <label for="dos" class="form-label">{{ __('Last Date of Submission') }}</label>
                             <input type="date" id="dos" class="form-control" name="dos" placeholder="Last date of bid submission">
                         </div>
 
-                        <div class="mb-3 col-md-6 col-lg-4">
+                        <div class="mb-3 col-md-6 col-lg-3">
                             <label for="image" class="form-label">{{ __('Image of the Item') }}</label>
                             <input type="file" id="image" class="form-control" name="image" placeholder="Select Image which is mentioned in the auction">
                         </div>

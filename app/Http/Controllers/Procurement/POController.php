@@ -312,7 +312,7 @@ class POController extends Controller
                             foreach($data as $processData){
                             ItemLists::create([
                                 'order_id' => $processData['PO Number'],
-                                'part_number' => $procwessData['Item Code'],
+                                'part_number' => $processData['Item Code'],
                                 'vehicle' => $processData['Vehicle'],
                                 'part_name' => $processData['Item Name'],
                                 'unit_price' => $processData['Unitprice'],

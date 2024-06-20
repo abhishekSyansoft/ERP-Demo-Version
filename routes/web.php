@@ -85,9 +85,14 @@ route::middleware(['role:3,6,2,8,9'])->group(function () {
             route::post('/save_auction_item', [EauctionController::class, 'SaveAuctionItemRecord']);
             route::post('/save_auction_supplers', [EauctionController::class, 'SaveAuctionSuppliersRecord']);
             route::post('/fetch_auction_details', [EauctionController::class, 'FetchAuctionDetails']);
-           
-           
-            // End E-Auction
+            route::post('/set_auction_visibility', [EauctionController::class, 'NotifySupplierAboutAuction']);
+            route::get('/auction_bid', [EauctionController::class, 'SupplierEAuctionPage']);
+            route::post('/savebid', [EauctionController::class, 'SaveBID'])->name('savebid');
+            route::get('/auction_bid_received', [EauctionController::class, 'ReceivedBID'])->name('auction_bid_received');
+            route::POST('/select_auction_to_compare', [EauctionController::class, 'CompareAuctionBID'])->name('select_auction_to_compare');
+            
+
+            // End E-Auctiona
 
 
 

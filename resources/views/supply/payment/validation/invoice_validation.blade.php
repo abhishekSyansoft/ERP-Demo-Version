@@ -70,7 +70,6 @@
                                 <tr>
                                     <td>{{$a++}}</td>
                                     <td><a class="btn btn-primary itemListsPOBTNInInvoice" data-bs-toggle="modal" data-bs-target="#viewPOmodal" data-id="{{$data->po_number}}"><i class="mdi mdi-eye"></i></a></td>
-
                                     <td><a class="btn btn-primary mdi mdi-eye viewInvoice" data-id="{{$data->po_number}}" data-bs-target="#downloadInvoiceModal" data-bs-toggle="modal"></a></td>
                                     <td>{{$data->invoice_number}}</td>
                                     <td>{{$data->invoice_date}}</td>

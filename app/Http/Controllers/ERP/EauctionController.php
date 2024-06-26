@@ -71,6 +71,90 @@ class EauctionController extends Controller
         return view('ERP.Auction.supplierPanel.eAuctionBid',compact('suppliers','auction_lists'));
     }
 
+    /**
+     * Send Auction BID for approval.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function ApprovalAuction(Request $request)
+    {
+        // Get the auction BID ID from the request
+        $id = $request->input('id');
+
+
+        $validateData = $request->validate([
+            'id' => 'required'
+        ]);
+
+        try {
+            // Update the bid_table to set the approval status to 1
+            DB::table('bid_table')->where('ubn', $id)->update([
+                'approval' => 1
+            ]);
+
+            // Return a successful response
+            return response()->json([
+                'success' => true,
+                'message' => 'Auction BID Sent for approval',
+                'id' => $id
+            ]);
+
+        } catch (\Exception $e) {
+            // Log the exception for debugging purposes
+            Log::error('Error in ApprovalAuction: ' . $e->getMessage());
+
+            // Return an error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send Auction BID for approval',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Send Auction BID for negotiation.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function NegoAuction(Request $request)
+    {
+        // Get the auction BID ID from the request
+        $id = $request->input('id');
+
+        $validateData = $request->validate([
+            'id' => 'required'
+        ]);
+
+
+        try {
+            // Update the bid_table to set the negotiation status to 1
+            DB::table('bid_table')->where('ubn', $id)->update([
+                'negotiation' => 1
+            ]);
+
+            // Return a successful response
+            return response()->json([
+                'success' => true,
+                'message' => 'Auction BID Sent for negotiation',
+                'id' => $id
+            ]);
+
+        } catch (\Exception $e) {
+            // Log the exception for debugging purposes
+            Log::error('Error in NegoAuction: ' . $e->getMessage());
+
+            // Return an error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send Auction BID for negotiation',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function saveBID(Request $request){
         $validateData =  $request->validate([
@@ -85,6 +169,7 @@ class EauctionController extends Controller
         $phone = $supplier->phone;
         $email = $supplier->email;
         $person = $supplier->contact_person;
+        $bid_num = 'UBN_'.uniqid();
 
         DB::table('bid_table')->insert([
             'auction_number_bid' => $request->auction_number_bid,
@@ -93,6 +178,7 @@ class EauctionController extends Controller
             'supplier_name' => $supplier_name,
             'email' => $email,
             'phone' => $phone,
+            'ubn' => $bid_num,
             'contact_person' => $person,
             'before' => $request->before,
             'delivery_terms' => $request->delivery_terms,

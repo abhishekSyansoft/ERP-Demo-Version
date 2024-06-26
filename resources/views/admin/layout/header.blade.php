@@ -31,6 +31,26 @@
   </head>
 
  <style>
+ .color-option {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    border-radius: 50%;
+    vertical-align: middle;
+    border: 1px solid #000;
+  }
+  .color-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .color-label input {
+    margin-right: 10px;
+  }
+   .error-border {
+        border: 1px solid red !important;
+    }
 
 .checkout {
   display: flex;
@@ -311,7 +331,7 @@ table, th, td {
     height:100vh;
   } */
   .card-body:not(.main-panel-dashboard .card-body) {
-    height:100vh !important;
+    /* min-height : calc(100vh - 70px); */
     border:1px solid black;
     /* box-shadow: 0 0 53px 10px rgba(0, 0, 0, 0.6); */
   }

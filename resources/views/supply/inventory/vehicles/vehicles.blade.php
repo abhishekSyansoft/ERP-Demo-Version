@@ -85,7 +85,6 @@
                             </tr>
                             @php($i=1)
                             @foreach($vehicles as $vehicle)
-                            @for($a=0;$a<=2;$a++)
                             <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$vehicle->vin}}</td>
@@ -93,8 +92,8 @@
                                 <td>{{$vehicle->year}}</td>
                                 <td>{{$vehicle->color}}</td>
                                 
-                                <td>{{$vehicle->mileage}}</td>
-                                <td>{{$vehicle->price}}</td>
+                                <td>{{$vehicle->mileage}}&nbsp;&nbsp;km/hr.</td>
+                                <td>Rs.&nbsp;&nbsp;{{$vehicle->price}}</td>
                                 <td>{{$vehicle->location}}</td>
                                 <td>{{$vehicle->status}}</td>
                                
@@ -130,7 +129,6 @@
                                     <a href="{{url('delete-vinv/'.$encryptedId)}}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
-                            @endfor
                             @endforeach
                         </table>
                   </div>
@@ -303,7 +301,7 @@
 
                         <div class="mb-3 col-md-6 col-lg-3">
                             <label for="vin" class="form-label">{{ __('Vehile Identification Number') }}<sup class="text-danger">*</sup></label>
-                            <input type="text" id="vin" class="form-control" name="vin" value="VIN_{{rand(0,999999)}}" placeholder="Vehicle Identification Number" required>
+                            <input type="text" id="vin" class="form-control" name="vin" value="VIN_{{rand(0,999999999999)}}" placeholder="Vehicle Identification Number" required>
                         </div>
                         
                         <div class="mb-3 col-md-6 col-lg-3">
@@ -316,10 +314,67 @@
                             <input type="date" id="year" class="form-control" name="year" placeholder="The manufacturing year of the vehicle." required autofocus>     
                         </div>
 
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="color" class="form-label">{{ __('Color') }}<sup class="text-danger">*</sup></label>
-                            <input type="text" id="color" class="form-control" name="color" placeholder="The manufacturing year of the vehicle." required autofocus>     
-                        </div>
+                        <div class="form-group col-md-6 col-lg-3">
+                            <label for="color">Choose a bike color:</label>
+                              <input list="colors" id="color" name="color" class="form-control" placeholder="Check radio button">
+                              <datalist id="colors">
+                                <option value="Red"></option>
+                                <option value="Green"></option>
+                                <option value="Blue"></option>
+                                <option value="Yellow"></option>
+                                <option value="Orange"></option>
+                                <option value="Purple"></option>
+                                <option value="Black"></option>
+                                <option value="White"></option>
+                                <option value="Grey"></option>
+                                <option value="Gold"></option>
+                              </datalist>
+
+                              <div class="row mt-3">
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#FF0000">
+                                  <span class="color-option" style="background-color:#FF0000;"></span> Red
+                                </div>
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#00FF00">
+                                  <span class="color-option" style="background-color:#00FF00;"></span> Green
+                                </div>
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#0000FF">
+                                  <span class="color-option" style="background-color:#0000FF;"></span> Blue
+                                </div>
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#FFFF00">
+                                  <span class="color-option" style="background-color:#FFFF00;"></span> Yellow
+                                </div>
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#FFA500">
+                                  <span class="color-option" style="background-color:#FFA500;"></span> Orange
+                                </div>
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#800080">
+                                  <span class="color-option" style="background-color:#800080;"></span> Purple
+                                </div>
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#000000">
+                                  <span class="color-option" style="background-color:#000000;"></span> Black
+                                </div>
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#FFFFFF">
+                                  <span class="color-option" style="background-color:#FFFFFF; border: 1px solid #000;"></span> White
+                                </div>
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#A9A9A9">
+                                  <span class="color-option" style="background-color:#A9A9A9;"></span> Grey
+                                </div>
+                                <div class="color-label col">
+                                  <input type="radio" name="color" value="#FFD700">
+                                  <span class="color-option" style="background-color:#FFD700;"></span> Gold
+                                </div>
+                                
+                              </div>
+                            </div>
+
 
                         <!-- <div class="mb-3 col-md-6 col-lg-3">
                             <label for="trim" class="form-label">{{ __('Trim') }}<sup class="text-danger">*</sup></label>

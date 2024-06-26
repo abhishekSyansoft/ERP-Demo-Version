@@ -14288,6 +14288,21 @@ dl {
         .sidebar .nav.sub-menu .nav-item:hover {
           background: transparent; }
 
+          /* Assuming .container is the parent of .sidebar and .main-panel */
+.container {
+  display: flex;
+  min-height: 100vh; /* Ensure container takes full height */
+}
+
+.sidebar {
+  flex: 0 0 auto; /* Sidebar takes only the space it needs */
+}
+
+.main-panel {
+  flex: 1 1 auto; /* Main panel takes remaining space */
+  overflow: auto; /* Allow scrolling if content overflows */
+}
+
 /* style for off-canvas menu*/
 @media screen and (max-width: 991px) {
   .sidebar-offcanvas {

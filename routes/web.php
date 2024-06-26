@@ -90,6 +90,9 @@ route::middleware(['role:3,6,2,8,9'])->group(function () {
             route::post('/savebid', [EauctionController::class, 'SaveBID'])->name('savebid');
             route::get('/auction_bid_received', [EauctionController::class, 'ReceivedBID'])->name('auction_bid_received');
             route::POST('/select_auction_to_compare', [EauctionController::class, 'CompareAuctionBID'])->name('select_auction_to_compare');
+            route::POST('/send_auct_for_approval', [EauctionController::class, 'ApprovalAuction']);
+            route::POST('/send_auct_for_nego', [EauctionController::class, 'NegoAuction']);
+            
             
 
             // End E-Auctiona
@@ -170,6 +173,11 @@ route::post('modules/update/{encryptedID}',[moduleController::class ,'UpdateModu
 //End Modules HTTP requests 
 
 //Start Modules HTTP requests 
+route::get('new_bom',[MainAssemblyController::class , 'CreateNewBom'])->name('new_bom');
+route::POST('save_bom_item_lists',[MainAssemblyController::class , 'SaveBOMData']);
+route::POST('view_bom_lists',[MainAssemblyController::class , 'ShowBOMLists']);
+route::POST('/upload_bom',[MainAssemblyController::class , 'UploadBOM'])->name('upload_bom');
+route::POST('/send_auct_for_nego', [EauctionController::class, 'NegoAuction']);
 route::get('bike_parts',[MainAssemblyController::class , 'BikeParts'])->name('bike_parts');
 route::POST('bike_parts/add_cat',[MainAssemblyController::class ,'AddPartCat'])->name('add.cat');
 route::get('invoice_validation',[MainAssemblyController::class ,'Validation'])->name('invoice_validation');

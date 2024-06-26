@@ -29,7 +29,7 @@
 
 
 
-                    <div class="tab">
+                  <div class="tab">
                     <button class="tablinks btn btn-lg btn-success" onclick="openCity(event, 'category')">Category</button>
                     <button class="tablinks btn btn-lg btn-success" onclick="openCity(event, 'subcategory')">Sub-Category</button>
                     <button class="tablinks btn btn-lg btn-success" onclick="openCity(event, 'bulk')">Bulk Upload</button>

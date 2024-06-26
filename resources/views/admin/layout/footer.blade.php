@@ -20,45 +20,52 @@
 
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://cdn.tiny.cloud/1/hk0f0e88romq2xcsd198zlsl7nfw00tlegcbx29pr71q77l0/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<!-- <script src="https://cdn.tiny.cloud/1/hk0f0e88romq2xcsd198zlsl7nfw00tlegcbx29pr71q77l0/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script> -->
 <script>
-tinymce.init({
-    selector: 'textarea',
-    plugins: 'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons template paste textpattern',
-    toolbar: 'undo redo | bold italic underline strikethrough | fontsizeselect fontfamilyselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | template visualblocks visualchars | hr nonbreaking toc insertdatetime',
-    height: 300,
-    menubar: 'file edit view insert format tools table help',
-    branding: false,
-    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-    image_title: true,
-    automatic_uploads: true,
-    file_picker_types: 'image',
-    file_picker_callback: function (callback, value, meta) {
-        if (meta.filetype === 'image') {
-            var input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.setAttribute('accept', 'image/*');
+// tinymce.init({
+//     selector: 'textarea',
+//     plugins: 'advlist autolink link image lists charmap# print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table directionality emoticons template paste textpattern',
+//     toolbar: 'undo redo | bold italic underline strikethrough | fontsizeselect fontfamilyselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | template visualblocks visualchars | hr nonbreaking toc insertdatetime',
+//     height: 300,
+//     menubar: 'file edit view insert format tools table help',
+//     branding: false,
+//     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+//     image_title: true,
+//     automatic_uploads: true,
+//     file_picker_types: 'image',
+//     file_picker_callback: function (callback, value, meta) {
+//         if (meta.filetype === 'image') {
+//             var input = document.createElement('input');
+//             input.setAttribute('type', 'file');
+//             input.setAttribute('accept', 'image/*');
 
-            input.onchange = function () {
-                var file = this.files[0];
-                var reader = new FileReader();
+//             input.onchange = function () {
+//                 var file = this.files[0];
+//                 var reader = new FileReader();
 
-                reader.onload = function () {
-                    callback(reader.result, {
-                        alt: file.name
-                    });
-                };
-                reader.readAsDataURL(file);
-            };
+//                 reader.onload = function () {
+//                     callback(reader.result, {
+//                         alt: file.name
+//                     });
+//                 };
+//                 reader.readAsDataURL(file);
+//             };
 
-            input.click();
-        }
-    },
-    language: 'en',
-    browser_spellcheck: true,
-    contextmenu: false,
-    media_live_embeds: true, // Enable live embeds
-});
+//             input.click();
+//         }
+//     },
+//     language: 'en',
+//     browser_spellcheck: true,
+//     contextmenu: false,
+//     media_live_embeds: true, // Enable live embeds
+// });
+</script>
+<script>
+  document.querySelectorAll('input[name="color"]').forEach(function(input) {
+    input.addEventListener('change', function() {
+      document.getElementById('bikeColor').value = this.nextElementSibling.style.backgroundColor;
+    });
+  });
 </script>
 
 <script>
@@ -1597,7 +1604,7 @@ function toggleAccordion(element) {
 
 
 
-                            $('.creatBarcodeForInv').on('click', function(e){
+                        $('.creatBarcodeForInv').on('click', function(e){
                             e.preventDefault(); 
 
                             var id = $(this).data('id');
@@ -1645,7 +1652,7 @@ function toggleAccordion(element) {
                                 }
                             });
 
-                            })
+                        });
 
 
 
@@ -1906,6 +1913,312 @@ function toggleAccordion(element) {
 
 
 
+
+                            $('#CreateNewBOMButton').on('click', function(e){
+                                e.preventDefault();
+
+                                $('#auctionInitiate').modal('show');
+
+                                function generateRandomNumber() {
+                                    return Math.floor(100000000000 + Math.random() * 900000000000); // Generate a 6-digit random number
+                                }
+
+                                $('#product_code').val('VIN_'+generateRandomNumber());
+                                // $('#product_code').val('VIN_' + generateRandomNumber(10));
+                                $('#item_number').val('VPTN_' + generateRandomNumber(6));
+                                $('#serial').val(generateRandomNumber(10));
+
+                            })
+
+
+
+                            $('#addToBOMLists').click(function(event) {
+                                    event.preventDefault(); // Prevent the default form submission
+
+                                    var formData = {
+                                        product_name: $('#product_name').val(),
+                                        product_code: $('#product_code').val(),
+                                        year: $('#year').val(),
+                                        mileage: $('#mileage').val(),
+                                        price: $('#sprice').val(),
+                                        status: $('select[name="status"]').val(),
+                                        color: $('#bikeColor').val(),
+                                        part: $('#part').val(),
+                                        item_number: $('#item_number').val(),
+                                        serial: $('#serial').val(),
+                                        category: $('#product').val(),
+                                        qty_required: $('#qty_required').val(),
+                                        unit: $('#unit').val(),
+                                        parent: $('#parent').val(),
+                                        child: $('#child').val(),
+                                        unit_cost: $('#unit_cost').val(),
+                                        total_cost: $('#total_cost').val(),
+                                        dependencies: $('#dependencies').val(),
+                                        constraints: $('#constraints').val(),
+                                        hazardous_material: $('select[name="hazardous_material"]').val(),
+                                        disposable_info: $('#dinfo').val(),
+                                        life_cycle: $('select[name="life_cycle"]').val(),
+                                        eol: $('#eol').val(),
+                                        supplier_name: $('#supplier_name').val(),
+                                        supplier_part_number: $('#supplier_part_number').val(),
+                                        lead_time: $('#lead_time_bom').val()
+                                    };
+
+                                    // console.log(formData);
+
+                                    // Append the form data to the table body
+                                    var newRow = `<tr>
+                                        <td>${formData.product_name}</td>
+                                        <td>${formData.product_code}</td>
+                                        <td>${formData.year}</td>
+                                        <td>${formData.mileage}</td>
+                                        <td>${formData.price}</td>
+                                        <td>${formData.status}</td>
+                                        <td>${formData.color}</td>
+                                        <td>${formData.part}</td>
+                                        <td>${formData.item_number}</td>
+                                        <td>${formData.serial}</td>
+                                        <td>${formData.category}</td>
+                                        <td>${formData.qty_required}</td>
+                                        <td>${formData.unit}</td>
+                                        <td>${formData.parent}</td>
+                                        <td>${formData.child}</td>
+                                        <td>${formData.unit_cost}</td>
+                                        <td>${formData.total_cost}</td>
+                                        <td>${formData.dependencies}</td>
+                                        <td>${formData.constraints}</td>
+                                        <td>${formData.hazardous_material}</td>
+                                        <td hidden>${formData.disposable_info}</td>
+                                        <td>${formData.life_cycle}</td>
+                                        <td hidden>${formData.eol}</td>
+                                        <td>${formData.supplier_name}</td>
+                                        <td>${formData.supplier_part_number}</td>
+                                        <td>${formData.lead_time}</td>
+                                    </tr>`;
+
+
+                                    if(formData.part !== '' || formData.item_number !== ''|| formData.category !== ''|| formData.qty_required !== ''|| formData.unit !== ''|| formData.parent !== ''|| formData.child !== ''|| formData.unit_cost !== ''|| formData.supplier_name !== ''){
+                                    $('#BOMListsTableItem').append(newRow);
+                                    console.log(formData);
+                                    }else{
+                                        toastr.options = {
+                                                "timeOut": "5000",
+                                                "toastClass": "toast-red",
+                                                "extendedTimeOut": "1000",
+                                                "progressBar": true,
+                                                "closeButton": true,
+                                                "positionClass": "toast-top-right",
+                                                "showDuration": "300",
+                                                "hideDuration": "1000",
+                                                "showEasing": "swing",
+                                                "hideEasing": "linear",
+                                                "showMethod": "fadeIn",
+                                                "hideMethod": "fadeOut",
+                                                "preventDuplicates": true,
+                                            };
+                                  
+                                                toastr.success('Oops! Some Fields required attention. Please check all fields are properlly filled or not and then add to the BOM Lists.');
+                                    }
+
+
+                                    // Clear all form inputs and TinyMCE editors
+                                    $('#part').val('');
+                                    $('#item_number').val('');
+                                    $('#serial').val('');
+                                    $('#product').val('');
+                                    $('#qty_required').val('');
+                                    $('#unit').val('');
+                                    $('#parent').val('');
+                                    $('#child').val('');
+                                    $('#unit_cost').val('');
+                                    $('#total_cost').val('');
+                                    $('#dependencies').val('');
+                                    $('#constraints').val('');
+                                    $('select[name="hazardous_material"]').val('');
+                                    $('#dinfo').val('');
+                                    $('select[name="life_cycle"]').val('');
+                                    $('#eol').val('');
+                                    $('#supplier_name').val('');
+                                    $('#supplier_part_number').val('');
+                                    $('#lead_time_bom').val('');
+
+                                    function generateRandomString(length) {
+                                        var characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                                        var result = '';
+                                        for (var i = 0; i < length; i++) {
+                                            var randomIndex = Math.floor(Math.random() * characters.length);
+                                            result += characters.charAt(randomIndex);
+                                        }
+                                        return result;
+                                    }
+
+
+                                    function generateRandomNumber() {
+                                        return Math.floor(100000000000 + Math.random() * 900000000000); // Generate a 6-digit random number
+                                    }
+
+
+                                    // $('#product_code').val('VIN_' + generateRandomNumber(10));
+                                    $('#item_number').val('VPTN_' + generateRandomNumber(6));
+                                    $('#serial').val(generateRandomNumber(10));
+
+                                    // function generateUniqueNumber() {
+                                    //         // Generate a random 10-digit number
+                                    //         var uniqueNumber = Math.floor(1000000000 + Math.random() * 9000000000);
+                                            
+                                    //         // Set the value of the input field with id 'serial'
+                                    //         $('#serial').val(uniqueNumber);
+                                    //     }
+                                    // $('#serial').val();
+                                    // tinymce.activeEditor.setContent('');
+
+                                    // Clear specific TinyMCE editors
+                                    // tinyMCE.get('dinfo').setContent('');
+                                    // tinyMCE.get('eol').setContent('');
+                                    
+                                });
+
+
+                                $('#submit_bill_of_material').on('click', function(e){
+                                    e.preventDefault();
+                                    // Serialize form data
+                                    // Serialize form data
+                                    var formData = $(this).serialize();
+                                    // console.log(formData);
+                                    var dataToSend = [];
+
+                                    // Loop through each row of the table
+                                    $("#BOMListsTableItem tr").each(function() {
+                                        var rowData = {};
+
+                                        // Loop through each cell of the current row
+                                        $(this).find("td").each(function() {
+                                            // Get the column name from the table header
+                                            var columnName = $(this).closest('table').find('th').eq($(this).index()).text().trim();
+                                            
+                                            // Get the text content of the cell
+                                            var cellData = $(this).text().trim();
+                                            
+                                            // Add cell data to rowData with column name as key
+                                            rowData[columnName] = cellData;
+                                        });
+
+                                        // Push the rowData object to dataToSend array
+                                        dataToSend.push(rowData);
+                                    });
+                                    // console.log(dataToSend);
+                                    if(dataToSend.length > 0){
+                                       createABOMLists(dataToSend);
+                                       console.log(dataToSend);
+                                    }else{
+                                        toastr.options = {
+                                                "timeOut": "5000",
+                                                "toastClass": "toast-red",
+                                                "extendedTimeOut": "1000",
+                                                "progressBar": true,
+                                                "closeButton": true,
+                                                "positionClass": "toast-top-right",
+                                                "showDuration": "300",
+                                                "hideDuration": "1000",
+                                                "showEasing": "swing",
+                                                "hideEasing": "linear",
+                                                "showMethod": "fadeIn",
+                                                "hideMethod": "fadeOut",
+                                                "preventDuplicates": true,
+                                            };
+                                            toastr.success('Oops! No items added to the BOM Lists action can performae add some items');
+                                    }
+                                });
+
+
+
+
+                                function createABOMLists(data){  
+                                    $.ajax({
+                                        url: '/save_bom_item_lists',
+                                        type: 'POST',
+                                        contentType: 'application/json',
+                                        dataType: 'json', // Specify that you're expecting JSON data in the response
+                                        data: JSON.stringify({ data: data }),
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                        },
+                                        success: function(response) {
+                                            console.clear();
+                                            console.log('BOM Listes created Successfully:', response);
+                                            if(response.success){
+                                                toastr.options = {
+                                                "timeOut": "5000",
+                                                "toastClass": "toast-green",
+                                                "extendedTimeOut": "1000",
+                                                "progressBar": true,
+                                                "closeButton": true,
+                                                "positionClass": "toast-top-right",
+                                                "showDuration": "300",
+                                                "hideDuration": "1000",
+                                                "showEasing": "swing",
+                                                "hideEasing": "linear",
+                                                "showMethod": "fadeIn",
+                                                "hideMethod": "fadeOut",
+                                                "preventDuplicates": true,
+                                                "onHidden": function() {
+                                                    window.location.reload(); // Reload the page when the toastr is hidden
+                                                }
+                                            };
+                                            toastr.success(response.message);
+                                            $('#auctionInitiate').modal('hide');
+                                            }else{
+                                                toastr.options = {
+                                                "timeOut": "5000",
+                                                "toastClass": "toast-red",
+                                                "extendedTimeOut": "1000",
+                                                "progressBar": true,
+                                                "closeButton": true,
+                                                "positionClass": "toast-top-right",
+                                                "showDuration": "300",
+                                                "hideDuration": "1000",
+                                                "showEasing": "swing",
+                                                "hideEasing": "linear",
+                                                "showMethod": "fadeIn",
+                                                "hideMethod": "fadeOut",
+                                                "preventDuplicates": true,
+                                                "onHidden": function() {
+                                                    window.location.reload(); // Reload the page when the toastr is hidden
+                                                }
+                                            };
+                                            toastr.success('Failed to create BOM Lists try after some time or contact administrator.');
+                                            }
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error('Error sending data:', error);
+                                        }
+                                    });
+                                }
+
+
+
+                            $(document).on('change', '#bom_part_creation #parts', function(){
+                                alert('hi');
+
+                                var name = $(this).children('option:selected').val();
+
+                                var content = '';
+                                if(name !== ''){
+                                    content += '<div class="row col-12">';
+                                    content += '<div class="form-control col-4">';
+                                    content += '<lable for="'+name+'">'+name+'</lable>';
+                                    content += '<input type="text" name="'+name+'" id="'+name+'">';
+                                    content += '</div>';
+                                }
+
+                                $('#rest_items').append(content);
+                            });
+
+
+
+
+
+
                             $('#compareAuctionBTN').on('click', function(event) {
                                 event.preventDefault();
                                 $('#bidder_name').html('Lowest BID');
@@ -1939,37 +2252,45 @@ function toggleAccordion(element) {
                                             });
 
                                             var groupedContent = [];
-                                            var headings = ["Details", "Bidding Amount (rs.)", "Delivery Term <b>(days)</b>", "Payment before Delivery <b>(%)</b>:", "Quality :", "Rating :", "Supplier :", "Limit Amount <b>(rs.)</b> :"];
+                                            var headings = ["Details", "Bidding Amount (rs.)", "Delivery Term <b>(days)</b>", "Payment before Delivery <b>(%)</b>:", "Quality :", "Rating :", "Supplier :", "Limit Amount <b>(rs.)</b> :", "Unique BID Number:"];
                                             groupedContent.push(headings);
 
                                             $.each(response.data, function(index, item) {
-                                                tableBody1 += '<tr>';
-                                                tableBody1 += '<td>' + (index + 1) + '</td>';
-                                                tableBody1 += '<td>' + item.supplierName + '</td>';
-                                                tableBody1 += '<td>' + item.qut_num + '</td>';
-                                                if (item.QutApproval == 1) {
-                                                    tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
-                                                } else {
-                                                    tableBody1 += '<td class="text-center"><a class="btn btn-success text-center SApprovalQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Approval </a></td>';
-                                                }
-                                                if (item.QutNego == 1) {
-                                                    tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
-                                                } else {
-                                                    tableBody1 += '<td class="text-center"><a class="btn btn-primary text-center SNegoQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Negotiation </a></td>';
-                                                }
-                                                tableBody1 += '</tr>';
+
+                                                    var bid_num = item.ubn || '';
+                                               
+                                                    tableBody1 += '<tr>';
+                                                    tableBody1 += '<td>' + (index + 1) + '</td>';
+                                                    tableBody1 += '<td>' + item.supplier_name + '</td>';
+                                                    tableBody1 += '<td>' + item.auction_number_bid + '</td>';
+                                                    tableBody1 += '<td>' + bid_num + '</td>';
+                                                    if (item.approval == 1) {
+                                                        tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                                    } else {
+                                                        tableBody1 += '<td class="text-center"><a class="btn btn-success text-center apprAuctBtn" data-id="'+bid_num+'"> Send For Approval </a></td>';
+                                                    }
+                                                    if (item.negotiation == 1) {
+                                                        tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                                    } else {
+                                                        tableBody1 += '<td class="text-center"><a class="btn btn-primary text-center negoAuctBtn" data-id="'+bid_num+'"> Send For Negotiation </a></td>';
+                                                    }
+                                                    tableBody1 += '</tr>';
+                                               
                                             });
 
-                                            $('#actionOnQuot').html(tableBody1);
+                                            $('#actionOnAuctBID').html(tableBody1);
 
                                             var lowestValueCounts = [];
 
                                             $.each(response.data, function(index, item) {
+
                                                 var BidAmount = parseFloat(item.bidding_amount);
                                                 var delivery_term = item.delivery_terms || 0;
                                                 var limit = item.limit || 0;
+                                                var bid_num = item.ubn || '';
                                                 var quality = 'Good';
                                                 var rating = 'Excellent';
+                                                
                                                 groupedContent.push([
                                                     item.auction_number_bid,
                                                     BidAmount,
@@ -1979,6 +2300,7 @@ function toggleAccordion(element) {
                                                     rating,
                                                     item.supplier_name,
                                                     limit,
+                                                    bid_num
                                                 ]);
 
                                                 lowestValueCounts.push(0);
@@ -2051,7 +2373,7 @@ function toggleAccordion(element) {
                                                         var lowestValueCount = 0;
                                                         var greatestValueCount = 0;
 
-                                                        if ([1, 2, 3, 7].includes(i)) {
+                                                        if ([1, 2, 3].includes(i)) {
                                                             for (var k = 1; k < groupedContent.length; k++) {
                                                                 var value = parseFloat(groupedContent[k][i]);
                                                                 if (!isNaN(value) && isFinite(value)) {
@@ -2077,6 +2399,7 @@ function toggleAccordion(element) {
                                                                 }
                                                             }
                                                         }
+                                                        
 
                                                         if (allValuesEqual && ![0, 1, 3, 2].includes(i)) {
                                                             if ([0, 2, 3].includes(i)) {
@@ -2116,7 +2439,6 @@ function toggleAccordion(element) {
                                                 }
                                                 tableBody += '</tr>';
                                             }
-
                                             $('#CompSupplierList').html(tableBody);
 
                                             $('#staticBackdrop').modal('show');
@@ -2131,7 +2453,130 @@ function toggleAccordion(element) {
                             });
 
 
+                            $(document).on('click', '.negoAuctBtn', function() {
+    var bidNum = $(this).data('id');
+    var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
+    $.ajax({
+        url: '/send_auct_for_nego',
+        type: 'POST',
+        data: {
+            id: bidNum,
+            _token: csrfToken
+        },
+        success: function(response) {
+            toastr.options = {
+                "timeOut": "5000",
+                "toastClass": "toast-green",
+                "extendedTimeOut": "1000",
+                "progressBar": true,
+                "closeButton": true,
+                "positionClass": "toast-top-right",
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut",
+                "preventDuplicates": true,
+                "onHidden": function() {
+                    window.location.reload(); // Reload the page when the toastr is hidden
+                }
+            };
+            
+            if(response.success) {
+                toastr.success(response.message);
+                console.log(response);
+            } else {
+                toastr.error(response.message || 'An error occurred.');
+                console.error(response);
+            }
+        },
+        error: function(xhr, status, error) {
+            toastr.options = {
+                "timeOut": "5000",
+                "toastClass": "toast-red",
+                "extendedTimeOut": "1000",
+                "progressBar": true,
+                "closeButton": true,
+                "positionClass": "toast-top-right",
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut",
+                "preventDuplicates": true,
+                
+            };
+
+            toastr.error('Unique BID Number validation failed.');
+            console.error(xhr.responseText);
+        }
+    });
+});
+
+$(document).on('click', '.apprAuctBtn', function() {
+    var id = $(this).data('id');
+    var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+    $.ajax({
+        url: '/send_auct_for_approval',
+        type: 'POST',
+        data: {
+            id: id,
+            _token: csrfToken
+        },
+        success: function(response) {
+            toastr.options = {
+                "timeOut": "5000",
+                "toastClass": "toast-green",
+                "extendedTimeOut": "1000",
+                "progressBar": true,
+                "closeButton": true,
+                "positionClass": "toast-top-right",
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut",
+                "preventDuplicates": true,
+                "onHidden": function() {
+                    window.location.reload(); // Reload the page when the toastr is hidden
+                }
+            };
+
+            if(response.success) {
+                toastr.success(response.message);
+                console.log(response);
+            } else {
+                toastr.error(response.message || 'An error occurred.');
+                console.error(response);
+            }
+        },
+        error: function(xhr, status, error) {
+            toastr.options = {
+                "timeOut": "5000",
+                "toastClass": "toast-red",
+                "extendedTimeOut": "1000",
+                "progressBar": true,
+                "closeButton": true,
+                "positionClass": "toast-top-right",
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut",
+                "preventDuplicates": true,
+            };
+
+            toastr.error('Unique BID Number validation failed.');
+            console.error(xhr.responseText);
+        }
+    });
+});
 
 
 
@@ -2166,34 +2611,38 @@ function toggleAccordion(element) {
                                             });
 
                                             var groupedContent = [];
-                                            var headings = ["Details", "Bidding Amount (rs.)", "Delivery Term <b>(days)</b>", "Payment before Delivery <b>(%)</b>:", "Quality :", "Rating :", "Supplier :", "Limit Amount <b>(rs.)</b> :"];
+                                            var headings = ["Details", "Bidding Amount (rs.)", "Delivery Term <b>(days)</b>", "Payment before Delivery <b>(%)</b>:", "Quality :", "Rating :", "Supplier :", "Start Amount <b>(rs.)</b> :", "Unique BID Number :"];
                                             groupedContent.push(headings);
 
                                             $.each(response.data, function(index, item) {
-                                                tableBody1 += '<tr>';
-                                                tableBody1 += '<td>' + (index + 1) + '</td>';
-                                                tableBody1 += '<td>' + item.supplierName + '</td>';
-                                                tableBody1 += '<td>' + item.qut_num + '</td>';
-                                                if (item.QutApproval == 1) {
-                                                    tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
-                                                } else {
-                                                    tableBody1 += '<td class="text-center"><a class="btn btn-success text-center SApprovalQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Approval </a></td>';
-                                                }
-                                                if (item.QutNego == 1) {
-                                                    tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
-                                                } else {
-                                                    tableBody1 += '<td class="text-center"><a class="btn btn-primary text-center SNegoQutFromModal" data-qutnum="'+item.qut_num+'"> Send For Negotiation </a></td>';
-                                                }
-                                                tableBody1 += '</tr>';
-                                            });
 
-                                            $('#actionOnQuot').html(tableBody1);
+                                                var ubn_number = item.ubn || '';
+                                               
+                                               tableBody1 += '<tr>';
+                                               tableBody1 += '<td>' + (index + 1) + '</td>';
+                                               tableBody1 += '<td>' + item.supplier_name + '</td>';
+                                               tableBody1 += '<td>' + item.auction_number_bid + '</td>';
+                                               tableBody1 += '<td>' + ubn_number + '</td>';
+                                               if (item.approval == 1) {
+                                                   tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                               } else {
+                                                   tableBody1 += '<td class="text-center"><a class="btn btn-success text-center apprAuctBtn" data-id="'+ ubn_number +'"> Send For Approval </a></td>';
+                                               }
+                                               if (item.negotiation == 1) {
+                                                   tableBody1 += '<td class="text-center"><a class="btn mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>';
+                                               } else {
+                                                   tableBody1 += '<td class="text-center"><a class="btn btn-primary text-center negoAuctBtn" data-id="'+ ubn_number +'"> Send For Negotiation </a></td>';
+                                               }
+                                               tableBody1 += '</tr>';
+                                          
+                                       });
 
+                                       $('#actionOnAuctBID').html(tableBody1);
                                             var lowestValueCounts = [];
-
                                             $.each(response.data, function(index, item) {
                                                 var BidAmount = parseFloat(item.bidding_amount);
                                                 var delivery_term = item.delivery_terms || 0;
+                                                var bid_num = item.ubn || '';
                                                 var limit = item.limit || 0;
                                                 var quality = 'Good';
                                                 var rating = 'Excellent';
@@ -2205,7 +2654,8 @@ function toggleAccordion(element) {
                                                     quality,
                                                     rating,
                                                     item.supplier_name,
-                                                    limit,
+                                                    item.start_price,
+                                                    bid_num
                                                 ]);
 
                                                 lowestValueCounts.push(0);
@@ -2278,7 +2728,7 @@ function toggleAccordion(element) {
                                                         var lowestValueCount = 0;
                                                         var greatestValueCount = 0;
 
-                                                        if ([1, 2, 3, 7].includes(i)) {
+                                                        if ([1, 2, 3].includes(i)) {
                                                             for (var k = 1; k < groupedContent.length; k++) {
                                                                 var value = parseFloat(groupedContent[k][i]);
                                                                 if (!isNaN(value) && isFinite(value)) {
@@ -2306,13 +2756,13 @@ function toggleAccordion(element) {
                                                         }
 
                                                         if (allValuesEqual && ![0, 1, 3, 2].includes(i)) {
-                                                            if ([0, 2, 3].includes(i)) {
+                                                            if ([0, 2, 3, 7].includes(i)) {
                                                                 tableBody += '<td class="text-center"><b>' + numberFormatter.format(groupedContent[j][i]) + '</b></td>';
                                                             } else {
                                                                 tableBody += '<td class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
                                                             }
                                                         } else if (cellValue === greatestValue) {
-                                                            if (![7].includes(i)) {
+                                                            if (![8].includes(i)) {
                                                             if ([0, 2].includes(i)) {
                                                                 tableBody += '<td style="background-color: #90ee90;" class="text-center"><b>' + groupedContent[j][i] + '</b></td>';
                                                             } else {
@@ -2325,7 +2775,7 @@ function toggleAccordion(element) {
                                                             tableBody += '<td style="background-color: #8BDCF1;" class="text-center">' + groupedContent[j][i] + '</td>';
                                                         }  else {
                                                             if ([0, 2].includes(i)) {
-                                                                if (![7].includes(i)) {
+                                                                if (![8].includes(i)) {
                                                                 if ([0].includes(i)) {
                                                                     tableBody += '<th class="text-center">' + groupedContent[j][i] + '</th>';
                                                                 } else {
@@ -3236,13 +3686,82 @@ function toggleAccordion(element) {
 
 
 
+                    $('.viewBomLists').on('click', function(e){
+                        e.preventDefault();
+                        var id = $(this).data('id');
+                        
+                              // Get CSRF token value from meta tag
+                        var csrfToken = $('meta[name="csrf-token"]').attr('content'); // Get CSRF token
+                       // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/view_bom_lists',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: id,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // Handle the AJAX response here
+                                    console.clear();
+                                    console.log(response);
+                                    $.each(response.data, function(index, item){
+                                        $('.product_name').text(item.product_name);
+                                        $('#product_code').text(item.product_id);
+                                        $('#model_year').text(item.year_of_model);
+                                        $('#mileage').text(item.mileage_of_bike);
+                                        $('#sp').text(parseFloat(item.selling_price));
+                                        $('#color').css('background-color', item.color);
+                                    });
+
+                                    var tbody = '';
+                                    $.each(response.data, function(index, item) {
+                                        tbody += '<tr>';
+                                        tbody += '<td>' + (item.part || '') + '</td>';
+                                        tbody += '<td>' + (item.item_number || '') + '</td>';
+                                        tbody += '<td>' + (item.serial_number || '') + '</td>';
+                                        tbody += '<td>' + (item.category || '') + '</td>';
+                                        tbody += '<td>' + (item.quantity || '') + '</td>';
+                                        tbody += '<td>' + (item.unit_of_measure || '') + '</td>';
+                                        tbody += '<td>' + (item.parent_item || '') + '</td>';
+                                        tbody += '<td>' + (item.child_item || '') + '</td>';
+                                        tbody += '<td>' + (item.unit_cost_rs || '') + '</td>';
+                                        tbody += '<td>' + (item.total_cost_rs || '') + '</td>';
+                                        tbody += '<td>' + (item.dependencies || '') + '</td>';
+                                        tbody += '<td>' + (item.constraints || '') + '</td>';
+                                        tbody += '<td>' + (item.hazardous_material || '') + '</td>';
+                                        tbody += '<td>' + (item.life_cycle_stage || '') + '</td>';
+                                        tbody += '<td>' + (item.supplier_name || '') + '</td>';
+                                        tbody += '<td>' + (item.supplier_part_number || '') + '</td>';
+                                        tbody += '<td>' + (item.lead_time_days || '') + '</td>';
+                                        tbody += '<td>' + (item.disposable_info || '') + '</td>';
+                                        tbody += '<td>' + (item.eol_info || '') + '</td>';
+                                        tbody += '<td>' + (item.created_at || '') + '</td>';
+                                        tbody += '</tr>';
+                                    });
+
+
+                                    $('#BOMViewModal .BOMItemLists').html(tbody);
+
+                                    $('#BOMViewModal').modal('show');
+
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                       
+                    })
+
+
+
 
                     $('#auctionInitiate .addAuctionItem').on('click', function(){
                         // alert('hi');
                         var auction_id = $('#createEAuction #auction_id').val();
                         var auction_item = $('#createEAuction #auction_item').val();
                         var quantity = $('#createEAuction #quantity').val();
-                        var features = tinymce.get('features').getContent();
+                        var features =$('features').val();
 
                         console.clear();
                         // console.log(features);
@@ -3264,7 +3783,7 @@ function toggleAccordion(element) {
                         // var auction_id = $('#createRFQModalForm #auction_id').val('');
                         var auction_item = $('#createEAuction #auction_item').val('');
                         var quantity = $('#createEAuction #quantity').val('');
-                        var features = tinymce.get('features').setContent('');
+                        var features = $('features').val('');
                     })
 
                     $(document).on('click', '.delete-link-po', function(e){
@@ -3823,7 +4342,7 @@ $('#fetchSupplierDetails').on('click', function() {
                         var item_description = $('#PRAddModalForm #item_des').val();
                         var pr_number = $('#PRAddModalForm #pr_num').val();
 
-                        var item_feature = tinymce.get('item_feature').getContent();
+                        var item_feature = $('item_feature').val();
                      
                         var item_qty = $('#PRAddModalForm #item_qty').val();
 

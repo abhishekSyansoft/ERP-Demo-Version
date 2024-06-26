@@ -27,16 +27,23 @@
                         <h4 class="card-title float-left m-0 p-0" style="color:white;">Request For Quotation</h4>
                         </div>
                          <!-- Button to open the modal -->
-                        <div class="col-md-6">
+                        <div class="col-md-6 mx-auto">
    
+                        
+                        <button type="button" class="btn btn-primary" id="compareAuctionBTN" style="float:right;margin-left:10px;">
+                        <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-compare"></a></b>
+                        Compare Reverse Bidding
+                        </button>
+                        <button type="button" class="btn btn-primary" id="compareForwardBTN" style="float:right;margin-left:10px;">
+                        <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-compare"></a></b>  
+                            Compare Forward Bidding
+                        </button> 
                         <button style="float:right;" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#auctionInitiate">
                           <b style="color:white;font-size:20px;"><a style="color:white;" class="mdi mdi-plus-circle"></a></b>New
-                        </button>  
-                       
+                        </button> 
                         </div>
                         <!-- <hr>   -->
-                      </div>     
-                           
+                      </div>                                
                         <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editSupplierModal">
                         Edit Supplier
                         </button>   -->
@@ -52,9 +59,12 @@
                                 <th rowspan="2">S. No.</throws>
                                 <th rowspan="2">Details Preview</th>
                                 <th rowspan="2">Compare</th>
+                                <th rowspan="2">unique BID Number</th>
                                 <th colspan="4">Auction</th>
                                 <th colspan="3">Item</th>
                                 <th colspan="4">Supplier</th>
+                                <th rowspan="2">Approval</th>
+                                <th rowspan="2">Negotiation</th>
                                 <th rowspan="2">Action</th>
                             </tr>
                             <tr>
@@ -76,6 +86,7 @@
                                 <td>{{$a++}}</td>
                                 <td><a class="mdi mdi-eye btn btn-primary auctionDetails" data-bs-toggle="modal" data-bs-target="#suppliersModal" data-autno="{{$detail->auction_number_bid}}"></a></td>
                                 <td><input type="checkbox" class="compareAuction" data-id="{{$detail->auction_number_bid}}" value="Compare"></td>
+                                <td>{{$detail->ubn}}</td>
                                 <td>{{$detail->auction_number_bid}}</td>
                                 <td>{{$detail->auction_type}}</td>
                                 <td>{{$detail->bidding_type}}</td>
@@ -87,6 +98,19 @@
                                 <td>{{$detail->phone}}</td>
                                 <td>{{$detail->email}}</td>
                                 <td>{{$detail->contact_person}}</td>
+
+                                @if($detail->approval == 1)
+                                <td><a class="mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>
+                                @else
+                                <td><a class="btn btn-primary apprAuctBtn" data-id="{{$detail->ubn}}">Send For Approval</a></td>
+                                @endif
+
+                                @if($detail->negotiation == 1)
+                                <td><a class="mdi mdi-check-circle" style="color:green;font-size:20px;"></a></td>
+                                @else
+                                <td><a class="btn btn-success negoAuctBtn" data-id="{{$detail->ubn}}">Send For Negotiation</a></td>
+                                @endif
+
                                 <td>
                                   <a class="btn btn-primary">Edit</a>
                                   <a class="btn btn-danger">Delete</a>
@@ -94,8 +118,7 @@
                               </tr> 
                               @endforeach
                         </table>
-                        <a class="btn btn-primary mt-3" id="compareAuctionBTN">Compare Reverse Bidding</a>
-                        <a class="btn btn-primary mt-3" id="compareForwardBTN">Compare Forward Bidding</a>
+                       
                   </div>
                  
                 </div>
@@ -230,12 +253,13 @@
                               <tr>
                                 <th>Serial No</th>
                                 <th>Vendor Name</th>
-                                <th>Quotation Number</th>
+                                <th>Auction Number</th>
+                                <th>Unique BID Number</th>
                                 <th class="text-center">Send For Approval</th>
                                 <th class="text-center">Send For Negotiation</th>
                               </tr>
                           </thead>
-                        <tbody id="actionOnCompQuot">
+                        <tbody id="actionOnAuctBID">
                         </tbody>
                         </table>
                         </div>

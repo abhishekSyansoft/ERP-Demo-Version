@@ -2357,7 +2357,6 @@ function toggleAccordion(element) {
                                 }
                             });
 
-
                             
                     $('.SApprovalQut').on('click',function(event){
                         event.preventDefault();

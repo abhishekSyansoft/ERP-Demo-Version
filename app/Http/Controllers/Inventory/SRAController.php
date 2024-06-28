@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Inventory;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inventory\Vehicles;
+use App\Models\supplier\supplier;
 use Illuminate\Http\Request;
 use App\Models\Inventory\Parts;
 use App\Models\Inventory\Allocation;
@@ -19,7 +21,9 @@ class SRAController extends Controller
     ->select(['allocations.*','parts.part_name as item_name'])
     ->get();
     $parts = Parts::get();
-    return view("supply.inventory.sra.sra",compact('parts','allocations'));
+    $vehicles = Vehicles::get();
+    $suppliers = supplier::get(); 
+    return view("supply.inventory.sra.sra",compact('parts', 'allocations', 'vehicles', 'suppliers'));
    }
 
 

@@ -389,6 +389,8 @@ route::post('mrp/store',[MRPController::class ,'MRPAdd'])->name('mrp.store');
 route::get('edit-mrp/{encryptedId}',[MRPController::class ,'MRPEdit']);
 route::post('mrp/update/{encryptedId}',[MRPController::class ,'MRPUpdate']);
 route::get('delete-mrp/{encryptedId}',[MRPController::class ,'MRPDelete']);
+route::POST('/mrp_item_lists',[MRPController::class ,'MRPListItems']);
+
 // End Material Requirment Planning Management
 
 // Capacity Planning Management 

@@ -44,7 +44,9 @@
                         <label for="vehicle" class="form-label">{{ __('Product') }}<sup class="text-danger">*</sup></label>
                         <select id="vehicle" class="form-control p-3" name="vehicle" placeholder="" required autofocus>
                             <option value="">--Select Vehicle--</option>
-                            <option value="pulsar"{{$part->vehicle == "pulsar" ? 'Selected' : ''}}>Pulsar</option>
+                            @foreach($vehicles as $vehicle)
+                                <option value="{{$vehicle->model}}"{{$part->vehicle == $vehicle->model ? 'Selected' : ''}}>{{$part->vehicle}}</option>
+                            @endforeach
                             <option value="discover"{{$part->vehicle == "discover" ? 'Selected' : ''}}>Discover</option>
                             <option value="platina"{{$part->vehicle == "platina" ? 'Selected' : ''}}>Platina</option>
                             <option value="avenger"{{$part->vehicle == "avenger" ? 'Selected' : ''}}>Avenger</option>
@@ -63,17 +65,9 @@
                           <select id="category" class="form-control p-3" name="category" placeholder="" required autofocus>
                               <option value="">--Select Category--</option>
                               @foreach($categories as $category)
-                              @if($category->parent_id == 0)
-                              @php($label = $category->category_name)
-                              @php($parent_id = $category->id)
-                              @endif 
-                              <optgroup label="{{$label}}">
-                              @foreach($sub_categories as $subcategory)
-                              @if($parent_id == $subcategory->parent_id)
-                                  <option value="{{$subcategory->category_name}}"{{$subcategory->category_name == $part->category ? 'Selected' : ''}}>{{$subcategory->category_name}}</option>
-                                  @endif
-                              @endforeach
-                              </optgroup>
+                                @if($category->parent_id == 0)
+                                    <option value="{{$category->category_name}}"{{$category->category_name == $part->category ? 'Selected' : ''}}>{{$category->category_name}}</option>
+                                @endif
                               @endforeach
                               <!-- Add more Bajaj bike types as needed -->
                           </select>
@@ -97,8 +91,13 @@
                         </div>
 
                         <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="location" class="form-label">{{ __('Location') }}<sup class="text-danger">*</sup></label>
-                            <input id="location" type="text" class="form-control" name="location" value="{{$part->location}}" placeholder="The physical location within the warehouse or storage facility where the part is stored." required>
+                            <label for="location" class="form-label">{{ __('Warehouse Location') }}<sup class="text-danger">*</sup></label>
+                            <select id="location" type="text" class="form-control p-3" name="location" value="{{$part->location}}" placeholder="The physical location within the warehouse or storage facility where the part is stored.">
+                                <option value="">--Select warehouse--</option>
+                                @foreach($warehouses as $warehouse)
+                                    <option value="{{$warehouse->warehouse_id}}">{{$warehouse->warehouse_name}}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="mb-3 col-md-6 col-lg-3">
@@ -222,10 +221,9 @@
                             <label for="supplier_id" class="form-label">{{ __('Supplier') }}<sup class="text-danger">*</sup></label>
                             <select id="supplier_id" class="form-control p-3" name="supplier_id" placeholder="The category or classification of the part (e.g., engine parts, body parts, electrical components)." required autofocus>
                                 <option value="">--Select Supplier--</option> 
-                                <option value="engine_parts"{{$part->supplier_id == "engine_parts" ? 'Selected' : ''}}>supplier 1</option>
-                                <option value="body_parts"{{$part->supplier_id == "body_parts" ? 'Selected' : ''}}>supplier 2</option>
-                                <option value="electrical_components"{{$part->supplier_id == "electrical_components" ? 'Selected' : ''}}>supplier 3</option>
-                                <option value="suspension_systems"{{$part->supplier_id == "suspension_systems" ? 'Selected' : ''}}>supplier 4</option>
+                                @foreach($suppliers as $supplier)
+                                    <option value="{{$supplier->supplier_name}}"{{$part->supplier_name == $supplier->supplier_name ? 'Selected' : ''}}>{{$supplier->supplier_name}}</option>
+                                @endforeach
                             </select>
                         </div>
 

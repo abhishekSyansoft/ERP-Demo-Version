@@ -10,6 +10,7 @@ use App\Models\supplier\resource;
 use App\Models\PPS\MRP;
 use App\Models\RawMaterial;;
 use App\Models\Products;
+use App\Models\Inventory\Vehicles;
 use DB;
 use Carbon\Carbon;
 class MRPController extends Controller
@@ -29,14 +30,34 @@ class MRPController extends Controller
                 ->select('m_rps.*', 'raw_materials.material_name as material')
                 ->get();
                 $materials = RawMaterial::all();
+                $vehicles  = Vehicles::all();
 
                 // Return the view with the list of suppliers
-                return view("pps.mrp.mrp",compact("mrp",'materials'));
+                return view("pps.mrp.mrp",compact("mrp",'materials','vehicles'));
             } catch (\Exception $e) {
                 // Log the error or handle it in any other appropriate way
                 // For example, you can return an error view or redirect with an error message
                 return view("error")->with("error", "Failed to fetch resources: ".$e->getMessage());
             }
+        }
+
+
+
+        public function MRPListItems(Request $request){
+            $product_id = $request->input('id');
+
+            $items = DB::table('bom_lists')
+            ->join('allocations', DB::raw('CONVERT(bom_lists.product_name USING utf8mb4) COLLATE utf8mb4_unicode_ci'), '=', DB::raw('CONVERT(allocations.category USING utf8mb4) COLLATE utf8mb4_unicode_ci'))
+            ->where('bom_lists.product_id', $product_id)
+            ->select(['bom_lists.*', 'allocations.current_stock_level as current_stock'])
+            ->get();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Fetched successfully',
+                'product_id' => $product_id,
+                'items' => $items
+            ]);
         }
 
 

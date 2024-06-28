@@ -382,7 +382,7 @@ function toggleAccordion(element) {
                             // console.log(response.part);
                             var part = response.part;
 
-                            $('#TACForm #serial_number').val(part.serial_number);
+                            // $('#TACForm #serial_number').val(part.serial_number);
                             $('#TACForm #vehicle').val(part.vehicle);
                             var createdDate = new Date(part.created_at);
                             var formattedCreatedDate = createdDate.toISOString().slice(0,10); // toISOString() provides the date in "YYYY-MM-DDTHH:mm:ss" format
@@ -395,6 +395,7 @@ function toggleAccordion(element) {
                             $('#TACForm #condition').val(part.condition);
                             $('#TACForm #location').val(part.location);
                             $('#TACForm #availability').val(part.condition);
+                            $('#TACForm #current_stock_level').val(part.qty_on_hand);
                             $('#TACForm #min_stock_level').val(part.min_stock_level);
                             $('#TACForm #max_stock_level').val(part.max_stock_level);
                             $('#TACForm #part_description').val(part.part_description);
@@ -411,8 +412,8 @@ function toggleAccordion(element) {
                             var total_cost = part.unit_cost * part.qty_on_hand;
                             // Set total cost in number format
                             $('#TACForm #total_cost').val(total_cost);
-                            // $('#TACForm #condition').val(part.condition);
-                            // $('#TACForm #condition').val(part.condition);
+                            $('#TACForm #demand_variability').val(part.shelf_number);
+                            $('#TACForm #lead_time').val(part.lead_time);
                             // $('#TACForm #condition').val(part.condition);
                             // $('#TACForm #condition').val(part.condition);
                             // $('#TACForm #condition').val(part.condition);
@@ -3686,6 +3687,75 @@ $(document).on('click', '.apprAuctBtn', function() {
 
 
 
+                    $('#mrpAddForm #material_id').on('change', function(e){
+                        e.preventDefault();
+
+                        var id = $(this).children('option:Selected').val();
+
+                          // Get CSRF token value from meta tag
+                          var csrfToken = $('meta[name="csrf-token"]').attr('content'); // Get CSRF token
+                       // Make AJAX call with the id and CSRF token
+                            $.ajax({
+                                url: '/mrp_item_lists',
+                                type: 'POST', // or 'GET', depending on your server endpoint
+                                data: {
+                                    id: id,
+                                    _token: csrfToken // Include the CSRF token in the data
+                                },
+                                success: function(response) {
+                                    // Handle the AJAX response here
+                                    console.clear();
+                                    console.log(response);
+                                    // $.each(response.data, function(index, item){
+                                        $('#mrpAddForm #product_id').val(response.product_id);
+                                    //     $('#product_code').text(item.product_id);
+                                    //     $('#model_year').text(item.year_of_model);
+                                    //     $('#mileage').text(item.mileage_of_bike);
+                                    //     $('#sp').text(parseFloat(item.selling_price).toLocaleString('en-IN'));
+                                    //     $('#color').css('background-color', item.color);
+
+                                    // });
+
+                                   
+
+                                    var tbody = '';
+                                    $.each(response.items, function(index, item) {
+                                        var quantity = $('#mrpAddForm #quantity').val();
+                                        var requiredQTY = item.quantity *  quantity;
+                                        
+                                        tbody += '<tr>';
+                                        tbody += '<td class="text-start">' + (item.part || '') + '</td>';
+                                        tbody += '<td class="text-start">' + (item.item_number || '') + '</td>';
+                                        tbody += '<td class="text-start">' + (item.serial_number || '') + '</td>';
+                                        tbody += '<td class="text-start">' + (item.category || '') + '</td>';
+                                        tbody += '<td>' + (item.quantity || '') + '</td>';
+                                        tbody += '<td>' + (item.unit_of_measure || '') + '</td>';
+                                        if(requiredQTY != 0){
+                                        tbody += '<td>' + (requiredQTY || '') + '</td>';
+                                        }else{
+                                            tbody += '<td>' + (item.quantity || '') + '</td>';   
+                                        }
+                                        tbody += '<td></td>';
+                                        tbody += '</tr>';
+                                    });
+
+
+                                    $('#mrpAddForm #mrp_item_lists').html(tbody);
+
+                                    // $('#BOMViewModal').modal('show');
+
+                                },
+                                error: function(xhr, status, error) {
+                                    // Handle AJAX errors here
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                       
+
+                    })
+
+
+
                     $('.viewBomLists').on('click', function(e){
                         e.preventDefault();
                         var id = $(this).data('id');
@@ -3704,13 +3774,24 @@ $(document).on('click', '.apprAuctBtn', function() {
                                     // Handle the AJAX response here
                                     console.clear();
                                     console.log(response);
+                                    let totalCost = 0;
                                     $.each(response.data, function(index, item){
+                                        // Calculate line item total cost
+                                        let lineItemTotal = parseFloat(item.total_cost_rs);
+
+                                        // Add to the total cost accumulator
+                                        totalCost += lineItemTotal;
+
+                                        var line_item_total =parseFloat(totalCost).toLocaleString('en-IN');
+
                                         $('.product_name').text(item.product_name);
                                         $('#product_code').text(item.product_id);
                                         $('#model_year').text(item.year_of_model);
                                         $('#mileage').text(item.mileage_of_bike);
-                                        $('#sp').text(parseFloat(item.selling_price));
+                                        $('#sp').text(parseFloat(item.selling_price).toLocaleString('en-IN'));
                                         $('#color').css('background-color', item.color);
+                                        $('#material_cost').text(line_item_total);
+
                                     });
 
                                     var tbody = '';
@@ -3720,12 +3801,14 @@ $(document).on('click', '.apprAuctBtn', function() {
                                         tbody += '<td>' + (item.item_number || '') + '</td>';
                                         tbody += '<td>' + (item.serial_number || '') + '</td>';
                                         tbody += '<td>' + (item.category || '') + '</td>';
-                                        tbody += '<td>' + (item.quantity || '') + '</td>';
-                                        tbody += '<td>' + (item.unit_of_measure || '') + '</td>';
+                                       
+                                       
                                         tbody += '<td>' + (item.parent_item || '') + '</td>';
                                         tbody += '<td>' + (item.child_item || '') + '</td>';
-                                        tbody += '<td>' + (item.unit_cost_rs || '') + '</td>';
-                                        tbody += '<td>' + (item.total_cost_rs || '') + '</td>';
+                                        tbody += '<td>' + (parseFloat(item.unit_cost_rs).toLocaleString('en-IN') || '') + '</td>';
+                                        tbody += '<td>' + (item.quantity || '') + '</td>';
+                                        tbody += '<td>' + (item.unit_of_measure || '') + '</td>';
+                                        tbody += '<td>' + (parseFloat(item.total_cost_rs).toLocaleString('en-IN') || '') + '</td>';
                                         tbody += '<td>' + (item.dependencies || '') + '</td>';
                                         tbody += '<td>' + (item.constraints || '') + '</td>';
                                         tbody += '<td>' + (item.hazardous_material || '') + '</td>';

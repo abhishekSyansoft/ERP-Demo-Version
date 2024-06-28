@@ -94,10 +94,10 @@
       </div>
       <div class="modal-body">
         <!-- Rescource Form -->
-                <form method="POST" action="{{route('mrp.store')}}" class="row mx-auto">
+                <form method="POST" action="{{route('mrp.store')}}" class="row mx-auto" id="mrpAddForm">
                         @csrf
 
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-3">
                             <label for="order_type" class="form-label">{{ __('Order Type') }}</label>
                             <select id="order_type" class="form-control p-3" name="order_type" required>
                                 <option value="0">--Select Option--</option>
@@ -106,79 +106,63 @@
                             </select>
                         </div>
 
+                        <div class="mb-3 col-md-3">
+                            <label for="quantity" class="form-label">{{ __('Product Manufacturing Volume') }}</label>
+                            <input type="text" id="quantity" class="form-control" name="quantity" placeholder="Product quantity required for manufacturing">
+                        </div>
 
-
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-3">
                             <label for="material_id" class="form-label">{{ __('Product') }}</label>
                             <select id="material_id"  class="form-control p-3" name="material_id" required>
                                 <option value="0">--Select Product--</option>
                                 <!-- <option value="4">--Select Product--</option> -->
-                                <option value="4">Bajaj Pulsar</option>
-                                <option value="4">Bajaj Dominar</option>
-                                <option value="4">Bajaj Platina</option>
-                                <option value="4">Bajaj Avenger</option>
-                                <option value="4">Bajaj CT</option>
-                                <option value="4">Bajaj Chetak</option>
+                                  @foreach($vehicles as $vehicle)
+                                    <option value="{{$vehicle->vin}}">{{$vehicle->model}}</option>
+                                  @endforeach
                             </select>
                         </div>
 
-
-                        <!-- <div class="mb-3 col-md-6">
-                            <label for="product_name" class="form-label">{{ __('Product Name') }}</label>
-                            <input type="text" id="product_name" class="form-control" name="product_name" value="Laptop 2 in 1 touch"  required>
-                        </div> -->
-
-                        <div class="mb-3 col-md-6">
-                            <label for="product_id_dummy" class="form-label">{{ __('Product Id') }}</label>
-                            <input type="text" id="product_id_dummy" class="form-control" name="product_id_dummy" value="{{uniqid().Carbon\Carbon::now()}}"  placeholder="Quantity Required  for order" required></textarea>
+                        <div class="mb-3 col-md-3">
+                            <label for="product_id" class="form-label">{{ __('Product Id') }}</label>
+                            <input type="text" id="product_id" class="form-control" name="product_id"  placeholder="Uniquie Identity for the product"></textarea>
                         </div>
 
 
-                        <div class="mb-3 col-md-6 row">
-                            <label for="items" class="form-label">{{ __('Items') }}</label>
-                           <div class="col-md-10">
-                           <select id="todoInputMR"  class="form-control p-3 col-md-8" name="items" required>
-                                <option value="0">--Select Item--</option> 
-                                <option value="4">Engine</option>
-                                <option value="engine">Engine</option>
-                                <option value="transmission">Transmission</option>
-                                <option value="brakes">Brakes</option>
-                                <option value="suspension">Suspension</option>
-                                <option value="steering">Steering</option>
-                                <option value="electrical">Electrical System</option>
-                                <option value="cooling">Cooling System</option>
-                                <option value="exhaust">Exhaust System</option>
-                                <option value="fuel">Fuel System</option>
-                                <option value="body">Body Parts</option>
-                            </select>
-                           </div>
-                           <div class="col-md-2">
-                              <a class="btn btn-primary" style="width:100%;" id="addBtninMR">Add</a>
-                           </div>
+                        <div class="mb-3 col-md-3">
+                            <label for="due_date" class="form-label">{{ __('MRP Date') }}</label>
+                            <input type="date" id="due_date" class="form-control" name="due_date" value="{{ now()->format('Y-m-d') }}" placeholder="Mention due date" required>
                         </div>
 
-                        <div class="mb-3 col-md-6">
-                            <label for="quantity_required" class="form-label">{{ __('Quantity Required') }}</label>
-                            <input type="text" id="quantity_required" class="form-control" name="quantity_required"  placeholder="Quantity Required  for order" required></textarea>
+                        <div class="col-12">
+                          <hr>
+                          <h3>Bill If Materials :</h3>
+                          <hr>
                         </div>
 
                         <center>
-                        <table id="todoListMR" class="col-md-11 table table-bordered mx-auto mb-3" style="width:100%;">
+                        <div class="table-wrapper" style="height:auto;margin:0px !important;">
+                        <table class="col-md-11 table table-bordered border-primary mx-auto mb-3" style="width:100%;text-align:left !important;">
                               <tr>
-                                <th>S no.</th>
-                                <th>Item Code</th>
                                 <th>Item Name</th>
-                                <th>Unit</th>
-                                <!-- <th>dummy</th> -->
+                                <th>Item Code</th>
+                                <th>Serial Number</th>
+                                <th>Item Category</th>
+                                <th>Quantity/Product</th>
+                                <th>Unit Of Measure</th>
+                                <th>Quantity/Total Product</th>
+                                <th>Stock In Inventory</th>
+                                <th>Forecasted Quantity</th>
                               </tr>
+
+                              <tbody id="mrp_item_lists">
+
+                              </tbody>
                         </table>
+                        </div>
                         </center>
 
 
-                        <div class="mb-3 col-md-6">
-                            <label for="due_date" class="form-label">{{ __('Due Date') }}</label>
-                            <input type="date" id="due_date" class="form-control" name="due_date" placeholder="Mention due date" required>
-                        </div>
+                       
 
                         <div class="form-group">
                         <button type="submit" class="btn btn-primary">

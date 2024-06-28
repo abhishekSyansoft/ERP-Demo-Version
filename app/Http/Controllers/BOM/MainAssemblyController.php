@@ -114,8 +114,7 @@ class MainAssemblyController extends Controller
     
                 try {
 
-                     // Generate result file with success and error rows
-                    $resultFilePath = $this->generateResultFile($successRows, $failedRows);
+                     
                     // Insert into the database table 'products' (adjust the table name accordingly)
                    DB::table('bom_lists')->insert([
                         'product_name' => $processData['Product Name'],
@@ -146,6 +145,20 @@ class MainAssemblyController extends Controller
                         'created_at' => Carbon::now(),
                     ]);
 
+
+                    $partsExists = DB::table('parts')->where('part_number', $processData['Part Number'])->exists();
+                        if(!$partsExists){
+                            DB::table('parts')->insert([
+                            'vehicle' => $processData['Product Name'],         
+                            'part_name' =>  $processData['Part Description'],                                // Part: Engine
+                            'part_number' => $processData['Part Number'],                  // Item Number: KJSHKJS837S
+                            'serial_number' => $processData['Serial Number'],                  // Item Number: KJSHKJS837S
+                            'category' => $processData['Category'],  
+                            'unit_cost' => $processData['Unit Cost(Rs.)'],     
+                            'created_at' => Carbon::now()
+                            ]);
+                        }
+
                    // Check if the vehicle already exists
                     $vehicleExists = DB::table('vehicles')->where('vin', $processData['Product ID'])->exists();
                     if (!$vehicleExists) {
@@ -170,7 +183,8 @@ class MainAssemblyController extends Controller
             }
     
            
-    
+            // Generate result file with success and error rows
+            $resultFilePath = $this->generateResultFile($successRows, $failedRows);
             // Store the result file path in the database
             DB::table('error_files')->insert([
                 'file_path' => $resultFilePath,
@@ -406,7 +420,7 @@ class MainAssemblyController extends Controller
             $join->on('bom_lists.product_id', '=', 'error_files.product_ids')
                  ->orWhereRaw('FIND_IN_SET(bom_lists.product_id, error_files.product_ids)');
         })
-        ->select(['error_files.*','bom_lists.product_id as product_id'])
+        ->select(['bom_lists.product_id', 'error_files.file_path'])
         ->distinct()
         ->get();
         return view('supply.BOM.createbom',compact('categories','sub_categories','boms'));

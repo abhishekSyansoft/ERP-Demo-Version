@@ -280,7 +280,7 @@
                             <input list="part_number_list" id="part_number" class="form-control" name="part_number" placeholder="The part number or identifier assigned to each inventory item." required>
                             <datalist id="part_number_list">
                                 @foreach($parts as $part)
-                                    <option value="{{$part->part_number}}">
+                                    <option value="{{$part->part_number}}">{{$part->part_name}} ======>>>> {{$part->vehicle}}
                                 @endforeach
                                 <!-- Add more options as needed -->
                             </datalist>
@@ -290,22 +290,18 @@
                         <label for="vehicle" class="form-label">{{ __('Product') }}<sup class="text-danger">*</sup></label>
                         <select id="vehicle" class="form-control p-3" name="vehicle" placeholder="" required autofocus>
                             <option value="">--Select Vehicle--</option>
-                            <option value="pulsar">Pulsar</option>
-                            <option value="discover">Discover</option>
-                            <option value="platina">Platina</option>
-                            <option value="avenger">Avenger</option>
-                            <option value="dominar">Dominar</option>
-                            <option value="ct_100">CT 100</option>
-                            <option value="kratos">Kratos</option>
+                            @foreach($vehicles as $vehicle)
+                            <option value="{{$vehicle->model}}">{{$vehicle->model}}</option>
+                            @endforeach
                             <!-- Add more Bajaj bike types as needed -->
                         </select>
                         </div>
                         
 
-                        <div class="mb-3 col-md-6 col-lg-3">
+                        <!-- <div class="mb-3 col-md-6 col-lg-3">
                             <label for="location" class="form-label">{{ __('Location') }}<sup class="text-danger">*</sup></label>
                             <input id="location" type="text" class="form-control" name="location" placeholder="The physical location within the warehouse or storage facility where the part is stored." required>
-                        </div>
+                        </div> -->
 
 
                         <div class="mb-3 col-md-6 col-lg-3">
@@ -328,25 +324,22 @@
                             <input id="reorder_point" type="text" class="form-control" name="reorder_point" placeholder="The inventory level at which a reorder of the item should be triggered." required>
                         </div>
 
-                        <div class="mb-3 col-md-6 col-lg-3">
-                            <label for="lead_time" class="form-label">{{ __('Lead Time') }}<sup class="text-danger">*</sup></label>
-                            <input id="lead_time" type="text" class="form-control" name="lead_time" placeholder="The lead time or delivery time for replenishing the inventory item from the supplier." required>
-                        </div>
+                        
                         
                         <div class="mb-3 col-md-6 col-lg-3">
                             <label for="last_replenishment_date" class="form-label">{{ __('Last Replenishment date') }}<sup class="text-danger">*</sup></label>
                             <input id="last_replenishment_date" type="date" class="form-control" name="last_replenishment_date" placeholder="The date when the inventory item was last replenished." required>
                         </div>
 
-                        <div class="mb-3 col-md-6 col-lg-3">
+                        <!-- <div class="mb-3 col-md-6 col-lg-3">
                             <label for="demand_forecast" class="form-label">{{ __('Demand Forecast') }}<sup class="text-danger">*</sup></label>
                             <input id="demand_forecast" type="text" class="form-control" name="demand_forecast" placeholder="Forecasted demand for the inventory item over a specific period." required>
-                        </div>
+                        </div> -->
 
-                        <div class="mb-3 col-md-6 col-lg-3">
+                        <!-- <div class="mb-3 col-md-6 col-lg-3">
                             <label for="sales_channels" class="form-label">{{ __('Sales Channels') }}<sup class="text-danger">*</sup></label>
                             <input id="sales_channels" type="text" class="form-control" name="sales_channels" placeholder="The sales channel or distribution channel through which the inventory item is sold (e.g., retail stores, online marketplace)." required>
-                        </div>
+                        </div> -->
 
                         <div class="mb-3 col-md-6 col-lg-3">
                             <label for="allocation_qty" class="form-label">{{ __('Allocation Quantity') }}<sup class="text-danger">*</sup></label>
@@ -402,11 +395,15 @@
                             <label for="supplier_id" class="form-label">{{ __('Supplier') }}<sup class="text-danger">*</sup></label>
                             <select id="supplier_id" class="form-control p-3" name="supplier_id" placeholder="The category or classification of the part (e.g., engine parts, body parts, electrical components)." required autofocus>
                                 <option value="">--Select Supplier--</option> 
-                                <option value="Abhishek">Abhishek</option>
-                                <option value="Priyanka">Priyanka</option>
-                                <option value="Kalpana">Kalpana</option>
-                                <option value="Arush">Arush</option>
+                                  @foreach($suppliers as $supplier)
+                                    <option value="{{$supplier->supplier_name}}">{{$supplier->supplier_name}}</option>
+                                  @endforeach
                             </select>
+                        </div>
+
+                        <div class="mb-3 col-md-6 col-lg-3">
+                            <label for="lead_time" class="form-label">{{ __('Lead Time') }}<sup class="text-danger">*</sup></label>
+                            <input id="lead_time" type="text" class="form-control" name="lead_time" placeholder="The lead time or delivery time for replenishing the inventory item from the supplier." required>
                         </div>
 
                         <div class="col-12"><hr></div>

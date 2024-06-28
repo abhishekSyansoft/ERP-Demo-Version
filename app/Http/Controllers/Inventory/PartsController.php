@@ -15,6 +15,9 @@ use BaconQrCode\Writer;
 use Intervention\Image\ImageManagerStatic as Image;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Category;
+use App\Models\Inventory\Vehicles;
+use App\Models\supplier\supplier;
+use App\Models\Inventory\WM;
 
 use App\Models\Inventory\Parts;
 
@@ -25,6 +28,7 @@ class PartsController extends Controller
          $categories = Category::where('parent_id',0)->get();
          $sub_categories = Category::where('parent_id', '!=', 0)->get();
          $parts = Parts::get();
+       
          return view("supply.inventory.parts.parts",compact('parts','categories','sub_categories'));
     }
 
@@ -97,7 +101,10 @@ class PartsController extends Controller
         $part = Parts::where('id',$id)->first();
         $categories = Category::where('parent_id',0)->get();
         $sub_categories = Category::where('parent_id', '!=', 0)->get();
-        return view("supply.inventory.parts.edit_update.parts_update",compact('part','categories','sub_categories'));
+        $vehicles = Vehicles::get();
+        $suppliers = Supplier::get();
+        $warehouses = WM::get();
+        return view("supply.inventory.parts.edit_update.parts_update",compact('part','categories','sub_categories','vehicles','suppliers', 'warehouses'));
    }
 
    public function PartsInvUpdate(Request $request, $encryptedId){
@@ -127,7 +134,9 @@ class PartsController extends Controller
      if ($request->hasFile('image')) {
         // Upload the new image
          // Delete the old image file from storage
-         Storage::disk('public')->delete($oldImage);
+        //  if($oldImage !== ''){
+        //  Storage::disk('public')->delete($oldImage);
+        //  }
         $image = $request->file('image');
         $imagedata = $image->getContent();
         $name_gen = hexdec(uniqid());

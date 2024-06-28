@@ -64,18 +64,16 @@
                             </tr>
                             @php($a=1)
                               @foreach($boms as $bom)
-                              <tr>
-                                <td>{{$a++}}</td>
-                                <td>{{$bom->product_id}}</td>
-                                <td><a class="btn btn-primary mdi mdi-eye" href="{{asset($bom->file_path)}}"></a></td>
-                               
-                                <td><a class="mdi mdi-eye btn btn-primary viewBomLists" data-id="{{$bom->product_id}}"></a></td>
-                               
-                                <td>
-                                    <a class="btn btn-primary">Edit</a>
-                                    <a class="btn btn-danger">Delete</a>
-                                </td>
-                              </tr>
+                                <tr>
+                                  <td>{{$a++}}</td>
+                                  <td>{{$bom->product_id}}</td>
+                                  <td><a class="btn btn-primary mdi mdi-eye" href="{{asset($bom->file_path)}}"></a></td>
+                                  <td><a class="mdi mdi-eye btn btn-primary viewBomLists" data-id="{{$bom->product_id}}"></a></td>
+                                  <td>
+                                      <a class="btn btn-primary">Edit</a>
+                                      <a class="btn btn-danger">Delete</a>
+                                  </td>
+                                </tr>
                               @endforeach
                         </table>
                        
@@ -112,7 +110,7 @@
             <td id="desc"></td>
             <td id="features"></td>
             <td id="quantity"></td>
-          </tr>\
+          </tr>
           
         </table>
         </div>
@@ -257,12 +255,14 @@
                 
                 <div class="row mx-auto">
                   <div class="col-md-6 row">
-                        <h5 class="col-12"><b>Product Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="product_name"></span></h5>
-                        <h5 class="col-12"><b>Product Code &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id="product_code"></span></h5>
-                        <h5 class="col-12"><b>Model Year & Date &nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id="model_year"></span>km/hr.</h5>
+                        <h5 class="col-12"><b>Product Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="product_name"></span></h5>
+                        <h5 class="col-12"><b>Product Code &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id="product_code"></span></h5>
+                        <h5 class="col-12"><b>Model Year & Date &nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id="model_year"></span></h5>
+                        <h5 class="col-12"><b>Total Cost Of Material &nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rs. <span id="material_cost"></span></h5>
+
                   </div>
                   <div class="col-md-6 row">
-                        <h5 class="col-12"><b>Mileage Of Bike &nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id="mileage"></span></h5>
+                        <h5 class="col-12"><b>Mileage Of Bike &nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span id="mileage"></span>km/hr.</h5>
                         <h5 class="col-12"><b>Selling Price &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rs.<span id="sp"></span></h5>
                         <h5 class="col-12">
                           <b>Color of Bike &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b>
@@ -276,25 +276,25 @@
                   <div class="table-wrapper" style="height:auto !important;">
                     <table class="table table-bordered border-primary">
                     <th>Part Name</th>
-                    <th>item_number</th>
-                    <th>serial_number</th>
-                    <th>category</th>
-                    <th>quantity</th>
-                    <th>unit_of_measure</th>
-                    <th>parent_item</th>
-                    <th>child_item</th>
-                    <th>unit_cost_rs</th>
-                    <th>total_cost_rs</th>
-                    <th>dependencies</th>
-                    <th>constraints</th>
-                    <th>hazardous_material</th>
-                    <th>life_cycle_stage</th>
-                    <th>supplier_name</th>
-                    <th>supplier_part_number</th>
-                    <th>lead_time_days</th>
-                    <th>disposable_info</th>
-                    <th>eol_info</th>
-                    <th>created_at</th>
+                    <th>Item Number</th>
+                    <th>Serial Number</th>
+                    <th>Category</th>
+                    <th>Parent Item</th>
+                    <th>Child Item</th>
+                    <th>Unit Cost (₹)</th>
+                    <th>Quantity</th>
+                    <th>Unit of Measure</th>
+                    <th>Total Cost (₹)</th>
+                    <th>Dependencies</th>
+                    <th>Constraints</th>
+                    <th>Hazardous Material</th>
+                    <th>Life Cycle Stage</th>
+                    <th>Supplier Name</th>
+                    <th>Supplier Part Number</th>
+                    <th>Lead Time (Days)</th>
+                    <th>Disposable Info</th>
+                    <th>EOL Info</th>
+                    <th>Created At</th>
                       <tbody class="BOMItemLists">
 
                       </tbody>
@@ -406,10 +406,10 @@
                                 <input type="varchar" name="mileage" id="mileage" class="form-control" placeholder="Mileage of the bike">
                             </div>
 
-                            <div class="form-group col-md-3">
+                            <!-- <div class="form-group col-md-3">
                                 <label for="sprice" class="form-control-label"><b> Selling Price of the bike : <sup style="color:red;font-size:15px;">*</sup></b></label>
                                 <input type="text" name="sprice" id="sprice" class="form-control" placeholder="Price of the bike">
-                            </div>
+                            </div> -->
 
                             <div class="form-group col-md-3">
                                 <label for="status" class="form-control-label"><b> Bike status : <sup style="color:red;font-size:15px;">*</sup></b></label>

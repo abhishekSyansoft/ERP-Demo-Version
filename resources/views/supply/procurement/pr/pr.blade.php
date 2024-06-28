@@ -376,7 +376,7 @@
                       </div>
                       
                     <div class="modal-body">
-                      <div class="container p-3" style="border:1px solid black;">
+                      <div class="container p-3 row mx-auto" style="border:1px solid black;">
                         <h2 class="text-center">Purchase Requisition</h2>
                         <h6 class="text-center">The Owner's Corporation of SyanSoft Pvt. Ltd.</h6>
                         <div style="float:right;"><b>PR No. </b><span id="pr_number">  PR_6647027e0e15e  </span></div><br><br><br>
@@ -402,7 +402,7 @@
 
                         <br><br>
                         <h5><b>Item Lists</b></h5>
-                       <div class="table-wrapper" style="height:auto;">
+                       <div class="table-wrapper" style="height:auto;margin:auto !important;">
                        <table class="table table-bordered border-primary">
                           <!-- <thead> -->
                             <th>S No.</th>
@@ -422,7 +422,7 @@
 
 
                         <h5><b>Vendor Details</b></h5>
-                        <div class="table-wrapper" style="height:auto;">
+                        <div class="table-wrapper" style="height:auto;margin:auto !important;">
                         <table class="table table-bordered border-primary">
                           <!-- <thead> -->
                             <!-- <th>S No.</th> -->
